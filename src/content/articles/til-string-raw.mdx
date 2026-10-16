@@ -1,0 +1,27 @@
+---
+title: "TIL: String.raw"
+date: "2026.10.16"
+description: String.raw preserves backslashes in template literals while allowing interpolation, making dynamic regex patterns easier to read.
+tags:
+  - til
+keywords:
+  - JavaScript
+  - String.raw
+  - template literals
+  - regular expressions
+---
+
+I've always used `\\` to keep backslashes literal in strings. That works great until you're writing dynamic regex patterns and all those backslashes become hard to read.
+
+Today, while reviewing a PR, I learned about [String.raw](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw). It preserves backslashes while still letting me interpolate variables:
+
+```javascript
+const prefix = "invoice";
+
+const doubled = new RegExp(`^${prefix}-\\d+$`);
+const raw = new RegExp(String.raw`^${prefix}-\d+$`);
+
+console.log(raw); // /^invoice-\d+$/
+console.log(doubled.source === raw.source); // true
+console.log(raw.test("invoice-123")); // true
+```
