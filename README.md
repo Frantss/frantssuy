@@ -1,4 +1,4 @@
-# [frantssb](https://frantss.uy)
+# [frantssuy](https://frantss.uy)
 
 Personal website with an about page, work history, projects, and writing.
 

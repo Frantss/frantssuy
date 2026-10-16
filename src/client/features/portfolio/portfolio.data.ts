@@ -169,9 +169,9 @@ function portfolio_projects(): Project[] {
       kind: "oss",
     },
     {
-      name: "frantssb",
+      name: "frantssuy",
       description: m.project_frantssb_description(),
-      href: "https://github.com/Frantss/frantssb",
+      href: "https://github.com/Frantss/frantssuy",
       kind: "oss",
     },
     {
