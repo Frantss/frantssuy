@@ -1,0 +1,41 @@
+---
+title: "Log #002: Back to Game Dev"
+date: "2026.10.16"
+description: After years of strictly web, I'm getting back into game development, and the ECS architecture has changed how I think about structuring code.
+tags:
+  - log
+  - gamedev
+keywords:
+  - game development
+  - ECS
+  - entity component system
+  - Godot
+  - GDScript
+---
+
+For the past month I've been getting back into game development, a hobby I hadn't touched since 2018, back when I was first getting into programming. It's been an interesting experience after so many years of doing strictly web.
+
+I've been diving into [Godot](https://godotengine.org/) and [GDScript](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html), and checking on the current state of C# in it. But what really caught my attention is the [ECS architecture](https://en.wikipedia.org/wiki/Entity_component_system), which is quite simple in principle. You have entities, which are little more than IDs. Those entities are composed of pure-data structures called components. Everything lives in a global registry, usually called a store or a world. And you define systems, which run over every entity that has a given set of components.
+
+Here's what that looks like in [Friflo.ECS](https://github.com/friflo/Friflo.Engine.ECS), one of the libraries I've tried out, a component and a system that moves anything with a position and a velocity:
+
+```csharp
+public struct Velocity : IComponent { public Vector3 value; }
+
+class MoveSystem : QuerySystem<Position, Velocity>
+{
+    protected override void OnUpdate() {
+        Query.ForEachEntity((ref Position position, ref Velocity velocity, Entity entity) => {
+            position.value += velocity.value;
+        });
+    }
+}
+```
+
+While the basic pattern is simple enough, there are plenty of ways to implement it. I've tried out a few so far: [GECS](https://github.com/csprance/gecs), [Flecs](https://github.com/SanderMertens/flecs), [Arch](https://github.com/genaray/Arch) and Friflo.ECS. I've even [vibe coded an implementation](https://github.com/Frantss/archy/) trying to get a more flexible API.
+
+Structuring a game around it requires a shift in how you think. These are not classes interacting with each other. A player isn't a `Player` class extending `Character` with methods that call into other objects. It's an entity that happens to have a position, a velocity, and some health. The game itself is a set of pipelines, each system taking the data it cares about and transforming it, one step after the other, every frame.
+
+Coming from web, this feels odd. In React, a component bundles state and behavior together, it's the unit you build everything out of. In ECS, a component is just data. It has no behavior at all, instead, it lives in a system.
+
+I've always struggled with data-oriented architectures, mostly because of the paradigm switch and never giving it enough time to click, but this time it is clicking, so I'm quite excited to continue with it.
