@@ -218,7 +218,11 @@ describe("article like button", () => {
 
     await vi.waitFor(() => expect(container.querySelector("[role='alert']")).not.toBeNull());
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(container.querySelector("button")?.textContent).toBe("Recargar me gusta");
+    expect(container.querySelector("[role='alert']")?.textContent).toBe("Me gusta no disponibles");
+    expect(container.querySelector("button")?.getAttribute("aria-label")).toBe("Recargar me gusta");
+    expect(container.querySelector("button")?.getAttribute("aria-describedby")).toBe(
+      container.querySelector("[role='alert']")?.id,
+    );
     container.querySelector("button")!.click();
     await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("12"));
     expect(container.querySelector("button")?.getAttribute("aria-label")).toBe(

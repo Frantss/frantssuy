@@ -1,4 +1,4 @@
-import { IconHeart, IconHeartFilled } from "@tabler/icons-solidjs";
+import { IconHeart, IconHeartFilled, IconRefresh } from "@tabler/icons-solidjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/solid-query";
 import {
   createSignal,
@@ -13,6 +13,7 @@ import {
 import { orpc } from "@/client/orpc/orpc.query";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
 import { IconButton } from "@/client/ui/icon-button";
+import { Tooltip } from "@/client/ui/tooltip";
 import { cn } from "@/client/lib/cn";
 import { article_likesQueryOptions } from "@/client/features/portfolio/article-likes.query";
 import { m } from "@/paraglide/messages";
@@ -43,24 +44,33 @@ export function ArticleLikeButton(props: { slug: string; size?: "sm" | "md" }) {
 
 function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "sm" | "md" }) {
   const cooldown = createRateLimitCooldown();
+  const errorId = createUniqueId();
 
   onMount(() => cooldown.handle(props.error));
 
   return (
-    <div class="grid justify-items-end gap-2">
-      <LikeButton
-        size={props.size}
-        disabled={cooldown.remaining() > 0}
-        aria-label={m.article_likes_retry()}
-        onClick={props.reset}
-      >
-        {m.article_likes_retry()}
-      </LikeButton>
+    <div class="flex min-w-0 items-center gap-2">
       <Show when={!cooldown.limited()}>
-        <p role="alert" class="m-0 max-w-[28ch] text-right text-xs text-muted">
+        <p id={errorId} role="alert" class="m-0 max-w-[24ch] text-right text-xs text-muted">
           {m.article_likes_load_error()}
         </p>
       </Show>
+      <Tooltip label={m.article_likes_retry()}>
+        {(triggerProps) => (
+          <IconButton
+            {...triggerProps({ onClick: props.reset })}
+            disabled={cooldown.remaining() > 0}
+            aria-label={m.article_likes_retry()}
+            aria-describedby={!cooldown.limited() ? errorId : undefined}
+            class={cn(
+              "size-11 shrink-0 disabled:cursor-wait",
+              props.size === "sm" ? "sm:size-6" : "sm:size-[34px]",
+            )}
+          >
+            <IconRefresh size={props.size === "sm" ? 14 : 18} aria-hidden="true" />
+          </IconButton>
+        )}
+      </Tooltip>
     </div>
   );
 }

@@ -112,7 +112,7 @@
   "article_likes_count": "{count} likes",
   "article_likes_loading": "Loading likes",
   "article_likes_retry": "Reload likes",
-  "article_likes_load_error": "Could not load likes. Try reloading them.",
+  "article_likes_load_error": "Likes unavailable",
   "article_likes_save_error": "Could not save a like. Click the heart to try again.",
   "api_rate_limited": "Too many requests. Try again in {seconds}s.",
   "toast_notifications": "Notifications",
