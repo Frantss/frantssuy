@@ -138,7 +138,7 @@ export function portfolio_jobs(): Job[] {
   ];
 }
 
-type ProjectKind = "oss" | "client" | "snippets" | "misc";
+type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "misc";
 
 export type Project = {
   name: string;
@@ -199,6 +199,12 @@ function portfolio_projects(): Project[] {
       kind: "client",
     },
     {
+      name: "archy",
+      description: m.project_archy_description(),
+      href: "https://github.com/Frantss/archy",
+      kind: "experiments",
+    },
+    {
       name: "StoreAttachment",
       description: m.project_store_attachment_description(),
       href: "https://gist.github.com/Frantss/7c71fa69fd8cf754a55acf4557e2111f",
@@ -213,6 +219,7 @@ export function portfolio_project_groups() {
   return [
     { kind: "oss", label: m.project_group_oss() },
     { kind: "client", label: m.project_group_client() },
+    { kind: "experiments", label: m.project_group_experiments() },
     { kind: "snippets", label: m.project_group_snippets() },
     { kind: "misc", label: m.project_group_misc() },
   ]
