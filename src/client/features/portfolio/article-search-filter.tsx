@@ -1,6 +1,6 @@
 import { IconCheck, IconSearch, IconAdjustmentsHorizontal } from "@tabler/icons-solidjs";
 import { createDebouncer } from "@tanstack/solid-pacer/debouncer";
-import { createEffect, createSignal, createUniqueId, For, Show } from "solid-js";
+import { createEffect, createSignal, createUniqueId, For, Show, type JSX } from "solid-js";
 import { cn } from "@/client/lib/cn";
 import { IconButton } from "@/client/ui/icon-button";
 import { Tooltip } from "@/client/ui/tooltip";
@@ -11,6 +11,7 @@ export function ArticleSearchFilter(props: {
   search: ArticleSearch;
   tags: string[];
   onChange: (search: ArticleSearch, replace: boolean) => void;
+  children?: JSX.Element;
 }) {
   const [draft, setDraft] = createSignal(props.search.q ?? "");
   const [expanded, setExpanded] = createSignal(false);
@@ -114,18 +115,21 @@ export function ArticleSearchFilter(props: {
           </div>
         </div>
       </div>
-      <Show when={draft() || props.search.tag}>
-        <button
-          type="button"
-          class="mt-3 justify-self-end cursor-pointer border-0 bg-transparent p-0 font-[inherit] text-xs text-link pointer-coarse:min-h-11"
-          onClick={() => {
-            setDraft("");
-            change(undefined, false);
-          }}
-        >
-          {m.writing_clear_filters()}
-        </button>
-      </Show>
+      <div class="mt-3 flex min-h-6 items-center justify-between gap-3 pointer-coarse:min-h-11">
+        {props.children}
+        <Show when={draft() || props.search.tag}>
+          <button
+            type="button"
+            class="ml-auto shrink-0 cursor-pointer border-0 bg-transparent p-0 font-[inherit] text-xs text-link pointer-coarse:min-h-11"
+            onClick={() => {
+              setDraft("");
+              change(undefined, false);
+            }}
+          >
+            {m.writing_clear_filters()}
+          </button>
+        </Show>
+      </div>
     </div>
   );
 }

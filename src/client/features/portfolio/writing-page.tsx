@@ -1,12 +1,14 @@
 import { Link, useNavigate, useRouterState, useSearch } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
 import { createEffect, For, Show, Suspense } from "solid-js";
+import { IconCheck } from "@tabler/icons-solidjs";
+import { cn } from "@/client/lib/cn";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { ToastProvider } from "@/client/ui/toast";
+import { Tags } from "@/client/ui/tags";
 import { ArticleDate } from "@/client/features/portfolio/article-date";
-import { ArticleTags } from "@/client/features/portfolio/article-tags";
 import { ArticleLikeButton } from "@/client/features/portfolio/article-like-button";
 import { ArticleSearchFilter } from "@/client/features/portfolio/article-search-filter";
 import {
@@ -57,7 +59,25 @@ function WritingArticles() {
 
   return (
     <>
-      <ArticleSearchFilter search={search()} tags={tags} onChange={change} />
+      <ArticleSearchFilter search={search()} tags={tags} onChange={change}>
+        <Suspense
+          fallback={
+            <p class="m-0 text-xs text-muted" role="status">
+              {m.writing_loading()}
+            </p>
+          }
+        >
+          <Show when={!query.isError}>
+            <p class="m-0 text-xs text-faint" role="status">
+              {pending()
+                ? m.writing_updating()
+                : query.data?.total === 1
+                  ? m.writing_one_article()
+                  : m.writing_articles_count({ count: query.data?.total ?? 0 })}
+            </p>
+          </Show>
+        </Suspense>
+      </ArticleSearchFilter>
       <Suspense
         fallback={
           <p class="m-0 text-xs text-muted" role="status">
@@ -84,13 +104,6 @@ function WritingArticles() {
             </div>
           </Show>
           <Show when={!query.isError}>
-            <p class="m-0 text-xs text-faint" role="status">
-              {pending()
-                ? m.writing_updating()
-                : query.data?.total === 1
-                  ? m.writing_one_article()
-                  : m.writing_articles_count({ count: query.data?.total ?? 0 })}
-            </p>
             <Show
               when={query.data?.items.length}
               fallback={<p class="m-0 text-muted">{m.writing_no_results()}</p>}
@@ -112,7 +125,37 @@ function WritingArticles() {
                           {article.title}
                         </Link>
                         <div class="flex flex-wrap items-center gap-1.5">
-                          <ArticleTags tags={article.tags} />
+                          <Tags.List>
+                            <For each={article.tags}>
+                              {(tag) => {
+                                const selected = () => search().tag === tag;
+
+                                return (
+                                  <li>
+                                    <button
+                                      type="button"
+                                      aria-pressed={selected()}
+                                      class={cn(
+                                        "inline-flex min-h-6 cursor-pointer items-center gap-1 border border-line bg-transparent px-1.5 font-[inherit] text-xs text-muted hover:border-faint hover:text-fg pointer-coarse:min-h-11",
+                                        { "border-accent text-accent": selected() },
+                                      )}
+                                      onClick={() =>
+                                        change({
+                                          q: search().q,
+                                          tag: selected() ? undefined : tag,
+                                        })
+                                      }
+                                    >
+                                      <Show when={selected()}>
+                                        <IconCheck size={12} aria-hidden="true" />
+                                      </Show>
+                                      {tag}
+                                    </button>
+                                  </li>
+                                );
+                              }}
+                            </For>
+                          </Tags.List>
                           <ArticleLikeButton slug={article.slug} size="sm" />
                         </div>
                       </div>
