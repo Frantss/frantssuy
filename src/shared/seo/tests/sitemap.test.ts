@@ -11,6 +11,7 @@ describe("sitemap", () => {
       "https://frantss.uy/work",
       "https://frantss.uy/education",
       "https://frantss.uy/projects",
+      "https://frantss.uy/skills",
       "https://frantss.uy/writing",
       "https://frantss.uy/writing/hello-world",
       "https://frantss.uy/writing/another-article",
@@ -20,7 +21,7 @@ describe("sitemap", () => {
   });
 
   it("serves the public pages when there are no articles", () => {
-    expect(createSitemap([]).match(/<url>/g)).toHaveLength(5);
+    expect(createSitemap([]).match(/<url>/g)).toHaveLength(6);
   });
 
   it("keeps reserved characters inside the article slug and escapes XML text", () => {

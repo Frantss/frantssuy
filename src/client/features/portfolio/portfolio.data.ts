@@ -257,6 +257,41 @@ export function portfolio_education() {
   ];
 }
 
+export function portfolio_agent_skill_groups() {
+  return [
+    {
+      id: "communication",
+      label: m.skill_group_communication(),
+      skills: [{ name: "frantss-communicate", description: m.skill_communicate_description() }],
+    },
+    {
+      id: "planning",
+      label: m.skill_group_planning(),
+      skills: [{ name: "frantss-decompose", description: m.skill_decompose_description() }],
+    },
+    {
+      id: "tracking",
+      label: m.skill_group_tracking(),
+      skills: [
+        { name: "frantss-tracking-tasks", description: m.skill_tasks_description() },
+        { name: "frantss-tracking-collect", description: m.skill_collect_description() },
+        { name: "frantss-tracking-report", description: m.skill_report_description() },
+      ],
+    },
+    {
+      id: "tooling",
+      label: m.skill_group_tooling(),
+      description: m.skill_group_tooling_description(),
+      skills: [
+        { name: "frantss-configure", description: m.skill_configure_description() },
+        { name: "frantss-update", description: m.skill_update_description() },
+        { name: "frantss-persistance", description: m.skill_persist_description() },
+        { name: "frantss-persistance-obsidian", description: m.skill_obsidian_description() },
+      ],
+    },
+  ];
+}
+
 export function portfolio_skills() {
   return [
     { label: m.cv_skills_languages(), items: ["TypeScript", "JavaScript", "C#", "Python"] },

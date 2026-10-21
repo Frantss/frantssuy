@@ -14,7 +14,16 @@ import { cache_personalContent } from "./src/shared/cache-control";
 import paraglideOptions from "./paraglide.config";
 import { mdxPlugins } from "./mdx.config";
 
-const pages = ["/", "/work", "/education", "/projects", "/writing", "/writing/**", "/cv"];
+const pages = [
+  "/",
+  "/work",
+  "/education",
+  "/projects",
+  "/skills",
+  "/writing",
+  "/writing/**",
+  "/cv",
+];
 
 function posthogSourceMapsPlugin() {
   const personalApiKey = process.env.POSTHOG_API_KEY?.trim();
