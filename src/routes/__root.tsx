@@ -15,15 +15,27 @@ import { console_install } from "@/client/features/console/console";
 import { theme_script } from "@/client/features/theme/theme";
 import geistMonoUrl from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url";
 import { getLocale } from "@/paraglide/runtime";
+import { m } from "@/paraglide/messages";
+import { NotFoundPage } from "@/client/features/portfolio/not-found-page";
+import { PortfolioLayout } from "@/client/features/portfolio/portfolio-layout";
+import { profile } from "@/client/features/portfolio/portfolio.data";
 
 import "@/client/styles/global.css";
 import "virtual:highlight.css";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient; orpc: typeof orpc }>()({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      // Set on the root match whenever it renders notFoundComponent, for unmatched paths and loader notFound() alike.
+      ...(match._notFound
+        ? [
+            { title: `${m.not_found_title()} · ${profile.name}` },
+            { name: "description", content: m.meta_not_found({ name: profile.name }) },
+            { name: "robots", content: "noindex" },
+          ]
+        : []),
     ],
     links: [
       {
@@ -39,7 +51,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient; orpc
   }),
   shellComponent: RootComponent,
   component: Outlet,
+  notFoundComponent: RootNotFound,
 });
+
+function RootNotFound() {
+  return (
+    <PortfolioLayout>
+      <NotFoundPage />
+    </PortfolioLayout>
+  );
+}
 
 function RootComponent(props: ParentProps) {
   const locale = getLocale();
