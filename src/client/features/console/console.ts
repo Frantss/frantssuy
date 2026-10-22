@@ -22,7 +22,7 @@ const stack = [
   ["Solid", "https://www.solidjs.com/"],
   ["TanStack Start", "https://tanstack.com/start"],
   ["Vite+", "https://viteplus.dev/"],
-  ["Tailwind CSS", "https://tailwindcss.com/"],
+  ["StyleX", "https://stylexjs.com/"],
   ["Paraglide", "https://inlang.com/m/gerre34r/library-inlang-paraglideJs"],
   ["PostHog", "https://posthog.com/"],
   ["Railway", "https://railway.com/"],

@@ -57,7 +57,7 @@ describe("article search filters", () => {
     button("Filters").click();
     expect(group.inert).toBe(true);
     expect(group.getAttribute("aria-hidden")).toBe("true");
-    expect(button("Filters").className).toContain("text-accent");
+    expect(getComputedStyle(button("Filters")).borderColor).toBe("rgb(109, 40, 217)");
   });
 
   it("debounces typing and flushes the latest query when a tag is selected", () => {

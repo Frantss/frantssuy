@@ -1,3 +1,5 @@
+import { dimensions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { useLocation } from "@tanstack/solid-router";
 import { For } from "solid-js";
 import { LocaleToggle } from "@/client/features/localization/locale-toggle";
@@ -6,6 +8,13 @@ import { Dock } from "@/client/ui/dock";
 import { Rail } from "@/client/ui/rail";
 import { m } from "@/paraglide/messages";
 import { analytics_autocapture } from "@/client/analytics/analytics";
+
+const styles = stylex.create({
+  touch: {
+    width: dimensions.sizeTouch,
+    height: dimensions.sizeTouch,
+  },
+});
 
 const pages = [
   { to: "/", label: m.nav_about },
@@ -77,8 +86,8 @@ export function SiteDock() {
           </For>
         </Dock.List>
         <Dock.Footer>
-          <LocaleToggle class="size-11" placement="dock" />
-          <ThemeToggle class="size-11" />
+          <LocaleToggle styles={styles.touch} placement="dock" />
+          <ThemeToggle styles={styles.touch} />
         </Dock.Footer>
       </Dock.Sheet>
     </Dock.Root>

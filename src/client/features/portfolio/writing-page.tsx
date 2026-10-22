@@ -1,8 +1,16 @@
+import {
+  colors,
+  spacing,
+  typography,
+  dimensions,
+  borders,
+  conditions,
+} from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { Link, useNavigate, useRouterState, useSearch } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
 import { createEffect, For, Show, Suspense } from "solid-js";
 import { IconCheck } from "@tabler/icons-solidjs";
-import { cn } from "@/client/lib/cn";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
@@ -19,6 +27,130 @@ import { article_list } from "@/lib/articles/article-metadata";
 import { m } from "@/paraglide/messages";
 import { analytics_autocapture } from "@/client/analytics/analytics";
 
+const styles = stylex.create({
+  tag: {
+    display: "inline-flex",
+    minHeight: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
+    cursor: "pointer",
+    alignItems: "center",
+    gap: spacing.space1,
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: {
+      default: colors.line,
+      [conditions.hover]: { default: null, ":hover": colors.faint },
+    },
+    backgroundColor: "transparent",
+    paddingInline: spacing.space1_5,
+    fontFamily: "inherit",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: {
+      default: colors.muted,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+    },
+  },
+  selected: {
+    borderColor: {
+      default: colors.accent,
+      [conditions.hover]: { default: null, ":hover": colors.faint },
+    },
+    color: {
+      default: colors.accent,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+    },
+  },
+
+  empty: {
+    margin: 0,
+    color: colors.muted,
+  },
+  loading: {
+    margin: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  status: {
+    margin: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.faint,
+  },
+  results: {
+    display: "grid",
+    gap: spacing.space4,
+  },
+  error: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: spacing.space2,
+  },
+  errorMessage: {
+    margin: 0,
+    fontSize: typography.fontSm,
+    lineHeight: typography.leadingSm,
+    color: colors.muted,
+  },
+  retry: {
+    cursor: { default: "pointer", ":disabled": "wait" },
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: colors.lineStrong,
+    backgroundColor: "transparent",
+    paddingInline: spacing.space2,
+    paddingBlock: spacing.space1,
+    fontFamily: "inherit",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: {
+      default: colors.muted,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+    },
+  },
+  entry: {
+    display: "grid",
+    minWidth: 0,
+    gap: spacing.space1_5,
+  },
+  link: {
+    color: {
+      default: colors.fg,
+      [conditions.hover]: { default: null, ":hover": colors.link },
+      ":focus-visible": colors.link,
+    },
+  },
+  tags: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: spacing.space1_5,
+  },
+  pagination: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: spacing.space2,
+  },
+  paginationButton: {
+    cursor: { default: "pointer", ":disabled": "default" },
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: colors.lineStrong,
+    backgroundColor: "transparent",
+    paddingInline: spacing.space2,
+    paddingBlock: spacing.space1,
+    fontFamily: "inherit",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: {
+      default: colors.muted,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+    },
+    opacity: { default: null, ":disabled": 0.5 },
+  },
+});
+
 export function WritingPage() {
   return (
     <ToastProvider>
@@ -26,7 +158,7 @@ export function WritingPage() {
         <PageTitle>{m.page_writing()}</PageTitle>
         <Show
           when={article_list().length > 0}
-          fallback={<p class="m-0 text-muted">{m.writing_empty()}</p>}
+          fallback={<p {...stylex.attrs(styles.empty)}>{m.writing_empty()}</p>}
         >
           <WritingArticles />
         </Show>
@@ -62,13 +194,13 @@ function WritingArticles() {
       <ArticleSearchFilter search={search()} tags={tags} onChange={change}>
         <Suspense
           fallback={
-            <p class="m-0 text-xs text-muted" role="status">
+            <p {...stylex.attrs(styles.loading)} role="status">
               {m.writing_loading()}
             </p>
           }
         >
           <Show when={!query.isError}>
-            <p class="m-0 text-xs text-faint" role="status">
+            <p {...stylex.attrs(styles.status)} role="status">
               {pending()
                 ? m.writing_updating()
                 : query.data?.total === 1
@@ -80,23 +212,23 @@ function WritingArticles() {
       </ArticleSearchFilter>
       <Suspense
         fallback={
-          <p class="m-0 text-xs text-muted" role="status">
+          <p {...stylex.attrs(styles.loading)} role="status">
             {m.writing_loading()}
           </p>
         }
       >
-        <div class="grid gap-4" aria-busy={pending()}>
+        <div {...stylex.attrs(styles.results)} aria-busy={pending()}>
           <Show when={query.isError}>
-            <div class="flex flex-wrap items-center gap-2">
+            <div {...stylex.attrs(styles.error)}>
               <Show when={!cooldown.limited()}>
-                <p role="alert" class="m-0 text-sm text-muted">
+                <p role="alert" {...stylex.attrs(styles.errorMessage)}>
                   {m.writing_search_error()}
                 </p>
               </Show>
               <button
                 type="button"
                 disabled={cooldown.remaining() > 0}
-                class="cursor-pointer border border-line-strong bg-transparent px-2 py-1 font-[inherit] text-xs text-muted hover:text-fg disabled:cursor-wait"
+                {...stylex.attrs(styles.retry)}
                 onClick={() => void query.refetch()}
               >
                 {m.writing_retry()}
@@ -106,17 +238,17 @@ function WritingArticles() {
           <Show when={!query.isError}>
             <Show
               when={query.data?.items.length}
-              fallback={<p class="m-0 text-muted">{m.writing_no_results()}</p>}
+              fallback={<p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>}
             >
               <IndexList.Root>
                 <For each={query.data?.items ?? []}>
                   {(article) => (
                     <IndexList.Row>
-                      <div class="grid min-w-0 gap-1.5">
+                      <div {...stylex.attrs(styles.entry)}>
                         <Link
                           to="/writing/$slug"
                           params={{ slug: article.slug }}
-                          class="text-fg hover:text-link focus-visible:text-link"
+                          {...stylex.attrs(styles.link)}
                           {...analytics_autocapture({
                             id: "article-link",
                             article_slug: article.slug,
@@ -124,7 +256,7 @@ function WritingArticles() {
                         >
                           {article.title}
                         </Link>
-                        <div class="flex flex-wrap items-center gap-1.5">
+                        <div {...stylex.attrs(styles.tags)}>
                           <Tags.List>
                             <For each={article.tags}>
                               {(tag) => {
@@ -135,10 +267,7 @@ function WritingArticles() {
                                     <button
                                       type="button"
                                       aria-pressed={selected()}
-                                      class={cn(
-                                        "inline-flex min-h-6 cursor-pointer items-center gap-1 border border-line bg-transparent px-1.5 font-[inherit] text-xs text-muted hover:border-faint hover:text-fg pointer-coarse:min-h-11",
-                                        { "border-accent text-accent": selected() },
-                                      )}
+                                      {...stylex.attrs(styles.tag, selected() && styles.selected)}
                                       onClick={() =>
                                         change({
                                           q: search().q,
@@ -169,11 +298,11 @@ function WritingArticles() {
               </IndexList.Root>
             </Show>
             <Show when={(query.data?.total ?? 0) > 20 || offset() > 0}>
-              <nav aria-label={m.writing_pagination()} class="flex justify-between gap-2">
+              <nav aria-label={m.writing_pagination()} {...stylex.attrs(styles.pagination)}>
                 <button
                   type="button"
                   disabled={offset() === 0 || pending() || query.isPlaceholderData}
-                  class="cursor-pointer border border-line-strong bg-transparent px-2 py-1 font-[inherit] text-xs text-muted hover:text-fg disabled:cursor-default disabled:opacity-50"
+                  {...stylex.attrs(styles.paginationButton)}
                   onClick={() =>
                     change({ ...search(), offset: Math.max(0, offset() - 20) || undefined })
                   }
@@ -187,7 +316,7 @@ function WritingArticles() {
                     pending() ||
                     query.isPlaceholderData
                   }
-                  class="cursor-pointer border border-line-strong bg-transparent px-2 py-1 font-[inherit] text-xs text-muted hover:text-fg disabled:cursor-default disabled:opacity-50"
+                  {...stylex.attrs(styles.paginationButton)}
                   onClick={() => change({ ...search(), offset: offset() + 20 })}
                 >
                   {m.writing_next()}

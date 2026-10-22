@@ -1,3 +1,5 @@
+import { spacing, dimensions, conditions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { createSignal, onCleanup, Show } from "solid-js";
 import { IconCheck, IconLink } from "@tabler/icons-solidjs";
 import { IconButton } from "@/client/ui/icon-button";
@@ -7,6 +9,24 @@ import type { Article } from "@/lib/articles/article-metadata";
 import { site } from "@/shared/seo/site";
 import { getLocale } from "@/paraglide/runtime";
 import { m } from "@/paraglide/messages";
+
+const styles = stylex.create({
+  button: {
+    width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+    height: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+  },
+  status: {
+    position: "absolute",
+    width: dimensions.sizeScreenReader,
+    height: dimensions.sizeScreenReader,
+    padding: 0,
+    margin: spacing.screenReaderOffset,
+    overflow: "hidden",
+    clipPath: "inset(50%)",
+    whiteSpace: "nowrap",
+    borderWidth: 0,
+  },
+});
 
 export function ArticleShare(props: { article: Article }) {
   const [copy, setCopy] = createSignal<"idle" | "copied" | "failed">("idle");
@@ -42,7 +62,7 @@ export function ArticleShare(props: { article: Article }) {
           <IconButton
             {...triggerProps({ onClick: copyLink })}
             aria-label={m.article_copy_link()}
-            class="size-11 sm:size-[34px]"
+            styles={styles.button}
           >
             <Show when={copy() === "copied"} fallback={<IconLink size={18} aria-hidden="true" />}>
               <IconCheck size={18} aria-hidden="true" />
@@ -50,7 +70,7 @@ export function ArticleShare(props: { article: Article }) {
           </IconButton>
         )}
       </Tooltip>
-      <span role="status" class="sr-only">
+      <span role="status" {...stylex.attrs(styles.status)}>
         {status()}
       </span>
     </>

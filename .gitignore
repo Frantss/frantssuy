@@ -19,3 +19,4 @@ output/playwright/
 .vitest/
 src/paraglide/
 .generated/
+.scratch/

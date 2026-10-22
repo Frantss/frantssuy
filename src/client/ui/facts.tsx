@@ -1,23 +1,48 @@
+import { colors, spacing, typography, dimensions, borders } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import type { ParentProps } from "solid-js";
-import { cn } from "@/client/lib/cn";
+
+const styles = stylex.create({
+  label: {
+    display: "grid",
+    width: dimensions.sizeLabel,
+    flexShrink: 0,
+    placeItems: "center",
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: colors.line,
+    fontSize: typography.fontLabel,
+    color: colors.faint,
+    textTransform: "uppercase",
+  },
+
+  list: {
+    margin: 0,
+    display: "grid",
+    gap: spacing.space1_5,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  item: {
+    display: "flex",
+    gap: spacing.space3,
+  },
+  value: {
+    margin: 0,
+  },
+});
 
 // Label/value pairs with boxed labels.
 function FactsList(props: ParentProps) {
-  return <dl class="m-0 grid gap-1.5 text-xs text-muted">{props.children}</dl>;
+  return <dl {...stylex.attrs(styles.list)}>{props.children}</dl>;
 }
 
-function FactsItem(props: ParentProps<{ label: string; labelClass?: string }>) {
+function FactsItem(props: ParentProps<{ label: string; labelStyles?: stylex.StyleXStyles }>) {
   return (
-    <div class="flex gap-3">
-      <dt
-        class={cn(
-          "grid w-12 shrink-0 place-items-center border border-line text-[10px] text-faint uppercase",
-          props.labelClass,
-        )}
-      >
-        {props.label}
-      </dt>
-      <dd class="m-0">{props.children}</dd>
+    <div {...stylex.attrs(styles.item)}>
+      <dt {...stylex.attrs(styles.label, props.labelStyles)}>{props.label}</dt>
+      <dd {...stylex.attrs(styles.value)}>{props.children}</dd>
     </div>
   );
 }

@@ -1,18 +1,92 @@
+import { colors, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import type { JSX, ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
+
+const styles = stylex.create({
+  band: {
+    display: "flex",
+    flexDirection: "column",
+    borderBottomWidth: { default: borders.borderRule, ":last-child": 0 },
+    borderBottomStyle: "solid",
+    borderColor: colors.line,
+  },
+
+  root: {
+    display: "flex",
+    height: { default: "100dvh", [conditions.print]: "auto" },
+    flexDirection: "column",
+  },
+  column: {
+    marginInline: "auto",
+    display: "flex",
+    width: "100%",
+    maxWidth: dimensions.sizeFrame,
+    flex: "1",
+    flexDirection: "column",
+    borderLeftWidth: borders.borderRule,
+    borderRightWidth: borders.borderRule,
+    borderLeftStyle: "solid",
+    borderRightStyle: "solid",
+    borderColor: colors.line,
+  },
+  fill: {
+    position: "relative",
+    display: "flex",
+    minHeight: 0,
+    flex: "1",
+    flexDirection: "column",
+    borderBottomWidth: { default: borders.borderRule, ":last-child": 0 },
+    borderBottomStyle: "solid",
+    borderColor: colors.line,
+  },
+  rules: {
+    pointerEvents: "none",
+    position: "absolute",
+    insetBlock: 0,
+    left: "50%",
+    zIndex: 10,
+    display: { default: "flex", [conditions.print]: "none" },
+    width: "100%",
+    maxWidth: dimensions.sizeFrame,
+    translate: "-50% 0",
+    borderLeftWidth: borders.borderRule,
+    borderRightWidth: borders.borderRule,
+    borderLeftStyle: "solid",
+    borderRightStyle: "solid",
+    borderColor: colors.line,
+  },
+  scroller: {
+    minHeight: 0,
+    flex: "1",
+    overflowY: { default: "auto", [conditions.print]: "visible" },
+    overflowX: { default: null, [conditions.print]: "visible" },
+  },
+  content: {
+    marginInline: "auto",
+    display: "flex",
+    minHeight: "100%",
+    width: "100%",
+    maxWidth: dimensions.sizeFrame,
+    flexDirection: "column",
+    borderLeftWidth: borders.borderRule,
+    borderRightWidth: borders.borderRule,
+    borderLeftStyle: "solid",
+    borderRightStyle: "solid",
+    borderColor: { default: "transparent", [conditions.print]: colors.line },
+  },
+});
 
 // Full-bleed horizontal rules with a centered column framed by vertical rules.
 // Viewport-tall: the bands stay put and only the fill scrolls. Print falls back to document flow.
 function FrameRoot(props: ParentProps) {
-  return <div class="flex h-dvh flex-col print:h-auto">{props.children}</div>;
+  return <div {...stylex.attrs(styles.root)}>{props.children}</div>;
 }
 
 function BandShell(props: ParentProps<{ class?: string }>) {
   return (
-    <div class={cn("flex flex-col border-b border-line last:border-b-0", props.class)}>
-      <div class="mx-auto flex w-full max-w-4xl flex-1 flex-col border-x border-line">
-        {props.children}
-      </div>
+    <div class={cn(stylex.attrs(styles.band).class, props.class)}>
+      <div {...stylex.attrs(styles.column)}>{props.children}</div>
     </div>
   );
 }
@@ -27,18 +101,13 @@ const fillId = "frame-fill";
 
 function FrameFill(props: ParentProps<{ overlay?: JSX.Element }>) {
   return (
-    <div class="relative flex min-h-0 flex-1 flex-col border-b border-line last:border-b-0">
+    <div {...stylex.attrs(styles.fill)}>
       {/* Rules stay outside the scroll layer so native overscroll cannot expose a gap. */}
-      <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-y-0 left-1/2 z-10 flex w-full max-w-4xl -translate-x-1/2 border-x border-line print:hidden"
-      >
+      <div aria-hidden="true" {...stylex.attrs(styles.rules)}>
         {props.overlay}
       </div>
-      <div id={fillId} class="min-h-0 flex-1 overflow-y-auto print:overflow-visible">
-        <div class="mx-auto flex min-h-full w-full max-w-4xl flex-col border-x border-transparent print:border-line">
-          {props.children}
-        </div>
+      <div id={fillId} {...stylex.attrs(styles.scroller)}>
+        <div {...stylex.attrs(styles.content)}>{props.children}</div>
       </div>
     </div>
   );

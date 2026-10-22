@@ -21,6 +21,10 @@ import { PortfolioLayout } from "@/client/features/portfolio/portfolio-layout";
 import { profile } from "@/client/features/portfolio/portfolio.data";
 
 import "@/client/styles/global.css";
+import "@/client/styles/article.css";
+import "@/client/styles/stylex.css";
+import * as stylex from "@stylexjs/stylex";
+import { documentTheme } from "@/client/styles/document-theme";
 import "virtual:highlight.css";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient; orpc: typeof orpc }>()({
@@ -69,7 +73,7 @@ function RootComponent(props: ParentProps) {
   onMount(console_install);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} class={stylex.attrs(documentTheme.root).class}>
       <head>
         <ScriptOnce>{theme_script}</ScriptOnce>
         <HydrationScript />

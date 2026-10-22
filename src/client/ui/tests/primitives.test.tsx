@@ -1,11 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { render } from "solid-js/web";
-import type { JSX } from "solid-js";
+import { createSignal, type JSX } from "solid-js";
+import * as stylex from "@stylexjs/stylex";
 import { ButtonLink } from "@/client/ui/button-link";
 import { Entry } from "@/client/ui/entry";
 import { Facts } from "@/client/ui/facts";
 import { IconButton } from "@/client/ui/icon-button";
 import { IndexList } from "@/client/ui/index-list";
+import { colors, dimensions } from "@/client/styles/theme.stylex";
+
+const styles = stylex.create({
+  full: { width: "100%" },
+  touch: {
+    width: dimensions.sizeTouch,
+    height: dimensions.sizeTouch,
+  },
+  active: { color: colors.accent },
+  dynamic: (width: string) => ({ width }),
+});
 
 let dispose: (() => void) | undefined;
 
@@ -28,7 +40,12 @@ afterEach(() => dispose?.());
 describe("ButtonLink", () => {
   it("forwards anchor attributes and merges classes", () => {
     const container = mount(() => (
-      <ButtonLink.Solid href="mailto:a@b.c" target="_blank" class="w-full">
+      <ButtonLink.Solid
+        href="mailto:a@b.c"
+        target="_blank"
+        class="caller-hook"
+        styles={styles.full}
+      >
         Mail
       </ButtonLink.Solid>
     ));
@@ -36,16 +53,16 @@ describe("ButtonLink", () => {
 
     expect(anchor.getAttribute("href")).toBe("mailto:a@b.c");
     expect(anchor.target).toBe("_blank");
-    expect(anchor.classList).toContain("bg-accent");
-    expect(anchor.classList).toContain("w-full");
+    expect(getComputedStyle(anchor).backgroundColor).toBe("rgb(109, 40, 217)");
+    expect(anchor.classList).toContain("caller-hook");
   });
 
   it("keeps the variants visually distinct", () => {
     const container = mount(() => <ButtonLink.Outline href="#">CV</ButtonLink.Outline>);
     const anchor = container.querySelector("a")!;
 
-    expect(anchor.classList).toContain("border-accent");
-    expect(anchor.classList).not.toContain("bg-accent");
+    expect(getComputedStyle(anchor).borderColor).toBe("rgb(109, 40, 217)");
+    expect(getComputedStyle(anchor).backgroundColor).toBe("rgba(0, 0, 0, 0)");
   });
 });
 
@@ -63,6 +80,39 @@ describe("IconButton", () => {
     expect(button.getAttribute("aria-label")).toBe("Toggle");
     button.click();
     expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("composes reactive caller styles after its defaults", async () => {
+    const [active, setActive] = createSignal(false);
+    const container = mount(() => (
+      <IconButton aria-label="Toggle" styles={[styles.touch, active() && styles.active]} />
+    ));
+    const button = container.querySelector("button")!;
+
+    expect(getComputedStyle(button).width).toBe("44px");
+    expect(getComputedStyle(button).height).toBe("44px");
+    expect(getComputedStyle(button).color).toBe("rgb(77, 77, 77)");
+    setActive(true);
+    await expect.poll(() => getComputedStyle(button).color).toBe("rgb(109, 40, 217)");
+  });
+
+  it("preserves vendor inline styles alongside dynamic StyleX variables", () => {
+    const [width, setWidth] = createSignal("48px");
+    const container = mount(() => (
+      <IconButton
+        aria-label="Positioned"
+        styles={styles.dynamic(width())}
+        style={{ "--arrow-size": "6px", transform: "translateX(2px)" }}
+      />
+    ));
+    const button = container.querySelector("button")!;
+
+    expect(getComputedStyle(button).width).toBe("48px");
+    expect(button.style.getPropertyValue("--arrow-size")).toBe("6px");
+    expect(button.style.transform).toBe("translateX(2px)");
+    setWidth("52px");
+    expect(getComputedStyle(button).width).toBe("52px");
+    expect(button.style.getPropertyValue("--arrow-size")).toBe("6px");
   });
 });
 

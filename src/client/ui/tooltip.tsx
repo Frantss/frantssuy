@@ -1,6 +1,37 @@
+import { colors, spacing, typography, dimensions, borders } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { createEffect, onCleanup, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { Tooltip as ArkTooltip, useTooltip, type TooltipTriggerProps } from "@ark-ui/solid/tooltip";
+
+const styles = stylex.create({
+  positioner: {
+    zIndex: 30,
+  },
+  arrow: {
+    "--arrow-size": "6px",
+    "--arrow-background": colors.fg,
+  },
+  arrowTip: {
+    borderTopWidth: borders.borderRule,
+    borderTopStyle: "solid",
+    borderLeftWidth: borders.borderRule,
+    borderLeftStyle: "solid",
+    borderColor: colors.lineStrong,
+  },
+  content: {
+    maxWidth: `min(${dimensions.sizeTooltip}, calc(100vw - ${spacing.space4}))`,
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: colors.lineStrong,
+    backgroundColor: colors.fg,
+    paddingInline: spacing.space2,
+    paddingBlock: spacing.space1,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.bg,
+  },
+});
 
 export function Tooltip(props: {
   label: string;
@@ -37,16 +68,11 @@ export function Tooltip(props: {
             document.body
           }
         >
-          <ArkTooltip.Positioner class="z-30">
-            <ArkTooltip.Arrow
-              aria-hidden="true"
-              class="[--arrow-size:6px] [--arrow-background:var(--fg)]"
-            >
-              <ArkTooltip.ArrowTip class="border-t border-l border-line-strong" />
+          <ArkTooltip.Positioner {...stylex.attrs(styles.positioner)}>
+            <ArkTooltip.Arrow aria-hidden="true" {...stylex.attrs(styles.arrow)}>
+              <ArkTooltip.ArrowTip {...stylex.attrs(styles.arrowTip)} />
             </ArkTooltip.Arrow>
-            <ArkTooltip.Content class="max-w-[min(32ch,calc(100vw-1rem))] border border-line-strong bg-fg px-2 py-1 text-xs text-bg">
-              {props.label}
-            </ArkTooltip.Content>
+            <ArkTooltip.Content {...stylex.attrs(styles.content)}>{props.label}</ArkTooltip.Content>
           </ArkTooltip.Positioner>
         </Portal>
       </Show>

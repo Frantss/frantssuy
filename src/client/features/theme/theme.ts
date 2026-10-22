@@ -1,3 +1,4 @@
+import { motionValues } from "@/client/styles/theme.stylex";
 import { aria_prefersReduced } from "@/client/lib/motion";
 
 export type Theme = "light" | "dark";
@@ -49,7 +50,7 @@ export async function theme_reveal(theme: Theme, button: HTMLElement) {
     animation = root.animate(
       { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
       {
-        duration: 550,
+        duration: motionValues.themeReveal,
         easing: "ease-in-out",
         fill: "both",
         pseudoElement: "::view-transition-new(root)",

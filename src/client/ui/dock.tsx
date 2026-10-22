@@ -1,3 +1,5 @@
+import { colors, spacing, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { createLink } from "@tanstack/solid-router";
 import {
   createContext,
@@ -22,15 +24,106 @@ function useDock() {
   return context;
 }
 
-const barHeight = "h-[calc(3rem+env(safe-area-inset-bottom))]";
+const styles = stylex.create({
+  root: {
+    display: { default: null, [conditions.wide]: "none" },
+  },
+  spacer: {
+    height: `calc(${dimensions.sizeDock} + env(safe-area-inset-bottom))`,
+  },
+  bar: {
+    insetInline: 0,
+    bottom: 0,
+    zIndex: 10,
+    height: `calc(${dimensions.sizeDock} + env(safe-area-inset-bottom))`,
+    paddingBottom: spacing.safeBottom,
+    position: "fixed",
+    borderTopWidth: borders.borderRule,
+    borderTopStyle: "solid",
+    borderColor: colors.line,
+    backgroundColor: colors.bg,
+  },
+  trigger: {
+    display: "flex",
+    height: "100%",
+    width: "100%",
+    cursor: "pointer",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.space4,
+    borderWidth: 0,
+    backgroundColor: {
+      default: "transparent",
+      [conditions.hover]: { default: null, ":hover": colors.surface },
+      ":focus-visible": colors.surface,
+    },
+    paddingInline: spacing.space4,
+    fontFamily: "inherit",
+    color: colors.fg,
+  },
+  menuLabel: {
+    color: colors.muted,
+  },
+  closeLabel: {
+    display: "none",
+    color: colors.muted,
+  },
+  sheet: {
+    insetInline: 0,
+    top: "auto",
+    bottom: `calc(${dimensions.sizeDock} + env(safe-area-inset-bottom))`,
+    margin: 0,
+    width: "100%",
+    maxWidth: "none",
+    overflow: "hidden",
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    padding: 0,
+  },
+  panel: {
+    borderTopWidth: borders.borderRule,
+    borderTopStyle: "solid",
+    borderColor: colors.line,
+    backgroundColor: colors.bg,
+    paddingInline: spacing.space4,
+    paddingBlock: spacing.space2,
+    color: colors.fg,
+  },
+  list: {
+    margin: 0,
+    display: "grid",
+    listStyleType: "none",
+    padding: 0,
+  },
+  anchor: {
+    display: "block",
+    paddingBlock: spacing.space3,
+    color: {
+      default: colors.faint,
+      [conditions.hover]: { default: null, ":hover": colors.muted },
+      ":focus-visible": colors.muted,
+    },
+    textDecoration: "none",
+  },
+  footer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: spacing.space2,
+    borderTopWidth: borders.borderRule,
+    borderTopStyle: "solid",
+    borderColor: colors.line,
+    paddingBlock: spacing.space2,
+  },
+});
 
 function DockRoot(props: ParentProps) {
   const sheetId = createUniqueId();
 
   return (
     <DockContext.Provider value={{ sheetId }}>
-      <div class="group sm:hidden">
-        <div class={barHeight} aria-hidden="true" />
+      <div {...stylex.attrs(styles.root)} class={cn("dock-root", stylex.attrs(styles.root).class)}>
+        <div {...stylex.attrs(styles.spacer)} aria-hidden="true" />
         {props.children}
       </div>
     </DockContext.Provider>
@@ -38,16 +131,7 @@ function DockRoot(props: ParentProps) {
 }
 
 function DockBar(props: ParentProps) {
-  return (
-    <div
-      class={cn(
-        "fixed inset-x-0 bottom-0 z-10 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]",
-        barHeight,
-      )}
-    >
-      {props.children}
-    </div>
-  );
+  return <div {...stylex.attrs(styles.bar)}>{props.children}</div>;
 }
 
 function DockTrigger(props: ComponentProps<"button"> & { menuLabel: string; closeLabel: string }) {
@@ -59,14 +143,15 @@ function DockTrigger(props: ComponentProps<"button"> & { menuLabel: string; clos
       {...rest}
       type="button"
       popoverTarget={dock.sheetId}
-      class={cn(
-        "flex h-full w-full cursor-pointer items-center justify-between gap-4 border-0 bg-transparent px-4 font-[inherit] text-fg hover:bg-surface focus-visible:bg-surface",
-        local.class,
-      )}
+      class={cn(stylex.attrs(styles.trigger).class, local.class)}
     >
       <span>{local.children}</span>
-      <span class="text-muted group-has-[:popover-open]:hidden">{local.menuLabel} ≡</span>
-      <span class="hidden text-muted group-has-[:popover-open]:inline">{local.closeLabel} ×</span>
+      <span class={cn("dock-menu-label", stylex.attrs(styles.menuLabel).class)}>
+        {local.menuLabel} ≡
+      </span>
+      <span class={cn("dock-close-label", stylex.attrs(styles.closeLabel).class)}>
+        {local.closeLabel} ×
+      </span>
     </button>
   );
 }
@@ -86,9 +171,13 @@ function DockSheet(props: ParentProps<{ label: string }>) {
       onClick={(event) => {
         if ((event.target as Element).closest("a")) event.currentTarget.hidePopover();
       }}
-      class="group/sheet inset-x-0 top-auto bottom-[calc(3rem+env(safe-area-inset-bottom))] m-0 w-full max-w-none overflow-hidden border-0 bg-transparent p-0 transition-[display,overlay] transition-discrete duration-200 motion-reduce:transition-none"
+      {...stylex.attrs(styles.sheet)}
+      class={cn("dock-sheet", stylex.attrs(styles.sheet).class)}
     >
-      <div class="translate-y-full border-t border-line bg-bg px-4 py-2 text-fg transition-[translate] duration-200 ease-in group-open/sheet:translate-y-0 group-open/sheet:duration-300 group-open/sheet:ease-[cubic-bezier(0.32,0.72,0,1)] starting:group-open/sheet:translate-y-full motion-reduce:transition-none">
+      <div
+        {...stylex.attrs(styles.panel)}
+        class={cn("dock-panel", stylex.attrs(styles.panel).class)}
+      >
         {props.children}
       </div>
     </nav>
@@ -96,7 +185,7 @@ function DockSheet(props: ParentProps<{ label: string }>) {
 }
 
 function DockList(props: ParentProps) {
-  return <ul class="m-0 grid list-none p-0">{props.children}</ul>;
+  return <ul {...stylex.attrs(styles.list)}>{props.children}</ul>;
 }
 
 // The router sets aria-current on the active link; styling keys off it.
@@ -105,23 +194,13 @@ function DockAnchor(props: ComponentProps<"a">) {
 
   return (
     <li>
-      <a
-        {...rest}
-        class={cn(
-          "block py-3 text-faint no-underline hover:text-muted focus-visible:text-muted aria-[current=page]:text-fg aria-[current=page]:before:content-['▸_']",
-          local.class,
-        )}
-      />
+      <a {...rest} class={cn("nav-link", stylex.attrs(styles.anchor).class, local.class)} />
     </li>
   );
 }
 
 function DockFooter(props: ParentProps) {
-  return (
-    <div class="flex items-center justify-end gap-2 border-t border-line py-2">
-      {props.children}
-    </div>
-  );
+  return <div {...stylex.attrs(styles.footer)}>{props.children}</div>;
 }
 
 export const Dock = {

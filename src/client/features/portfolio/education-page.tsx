@@ -1,12 +1,26 @@
+import { colors, spacing, dimensions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { For, Show } from "solid-js";
 import { Entry } from "@/client/ui/entry";
 import { Page, PageTitle } from "@/client/ui/page";
 import { m } from "@/paraglide/messages";
 import { portfolio_education } from "./portfolio.data";
 
+const styles = stylex.create({
+  root: {
+    maxWidth: dimensions.sizeArticle,
+    gap: spacing.space8,
+    overflowWrap: "anywhere",
+  },
+  description: {
+    margin: 0,
+    color: colors.muted,
+  },
+});
+
 export function EducationPage() {
   return (
-    <Page class="max-w-[64ch] gap-8 wrap-anywhere">
+    <Page styles={styles.root}>
       <PageTitle>{m.page_education()}</PageTitle>
       <For each={portfolio_education()}>
         {(education) => (
@@ -20,7 +34,7 @@ export function EducationPage() {
               <span>{education.level ?? education.field}</span>
             </Entry.Meta>
             <Show when={education.description}>
-              <p class="m-0 text-muted">{education.description}</p>
+              <p {...stylex.attrs(styles.description)}>{education.description}</p>
             </Show>
           </Entry.Root>
         )}

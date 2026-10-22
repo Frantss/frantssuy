@@ -1,3 +1,4 @@
+import * as stylex from "@stylexjs/stylex";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { IconMoon, IconSun } from "@tabler/icons-solidjs";
 import { IconButton } from "@/client/ui/icon-button";
@@ -5,7 +6,7 @@ import { Tooltip } from "@/client/ui/tooltip";
 import { theme_current, theme_observe, theme_reveal, type Theme } from "./theme";
 import { m } from "@/paraglide/messages";
 
-export function ThemeToggle(props: { class?: string }) {
+export function ThemeToggle(props: { class?: string; styles?: stylex.StyleXStyles }) {
   const [theme, setTheme] = createSignal<Theme>();
 
   onMount(() => {
@@ -24,7 +25,12 @@ export function ThemeToggle(props: { class?: string }) {
   return (
     <Tooltip label={label()}>
       {(triggerProps) => (
-        <IconButton {...triggerProps({ onClick: toggle })} aria-label={label()} class={props.class}>
+        <IconButton
+          {...triggerProps({ onClick: toggle })}
+          aria-label={label()}
+          class={props.class}
+          styles={props.styles}
+        >
           <Show when={theme() === "light"} fallback={<IconMoon size={18} aria-hidden="true" />}>
             <IconSun size={18} aria-hidden="true" />
           </Show>

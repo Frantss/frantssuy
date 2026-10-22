@@ -1,0 +1,69 @@
+@layer components {
+  .article-body {
+    overflow-wrap: anywhere;
+  }
+
+  .article-body > :first-child {
+    margin-top: 0;
+  }
+
+  .article-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  .article-body :is(p, ul, ol, blockquote, pre, table) {
+    margin-block: var(--space-5);
+  }
+
+  .article-body :is(h2, h3, h4, h5, h6) {
+    margin-block: var(--space-8) var(--space-3);
+    font-size: 1em;
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-heading);
+  }
+
+  .article-body :is(ul, ol) {
+    padding-left: var(--space-6);
+  }
+
+  .article-body ul {
+    list-style: disc;
+  }
+
+  .article-body ol {
+    list-style: decimal;
+  }
+
+  .article-body li + li {
+    margin-top: var(--space-1-5);
+  }
+
+  .article-body blockquote {
+    margin-inline: 0;
+    border-left: var(--border-emphasis) solid var(--line-strong);
+    padding-left: var(--space-4);
+    color: var(--muted);
+  }
+
+  .article-body :not(pre) > code {
+    background: var(--surface);
+    padding: var(--space-0-5) var(--space-1);
+  }
+
+  .article-body pre.th-code {
+    max-width: 100%;
+    border: var(--border-rule) solid var(--line);
+    font-family: inherit;
+    font-size: 0.875em;
+    overflow-wrap: normal;
+  }
+
+  .article-body .th-line--highlighted {
+    box-shadow: inset var(--border-emphasis) 0 var(--accent);
+  }
+
+  .article-body img {
+    max-width: 100%;
+    height: auto;
+  }
+}

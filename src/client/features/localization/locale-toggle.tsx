@@ -1,11 +1,25 @@
-import { cn } from "@/client/lib/cn";
+import { typography } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { IconButton } from "@/client/ui/icon-button";
 import { Tooltip } from "@/client/ui/tooltip";
 import { m } from "@/paraglide/messages";
 import { getLocale, setLocale } from "@/paraglide/runtime";
 import { analytics_autocapture } from "@/client/analytics/analytics";
 
-export function LocaleToggle(props: { class?: string; placement: "header" | "dock" }) {
+const styles = stylex.create({
+  root: {
+    flexShrink: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    fontWeight: typography.weightBold,
+  },
+});
+
+export function LocaleToggle(props: {
+  class?: string;
+  styles?: stylex.StyleXStyles;
+  placement: "header" | "dock";
+}) {
   const toggle = () => {
     void setLocale(getLocale() === "en" ? "es" : "en");
   };
@@ -18,7 +32,8 @@ export function LocaleToggle(props: { class?: string; placement: "header" | "doc
         <IconButton
           {...triggerProps({ onClick: toggle })}
           {...analytics_autocapture({ id: "locale-toggle", placement: props.placement })}
-          class={cn("shrink-0 text-xs font-bold", props.class)}
+          class={props.class}
+          styles={[styles.root, props.styles]}
           aria-label={label()}
         >
           <span aria-hidden="true">{getLocale().toUpperCase()}</span>

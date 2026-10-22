@@ -1,25 +1,81 @@
+import { colors, spacing, typography } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import type { ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
 
+const styles = stylex.create({
+  root: {
+    display: "grid",
+    gap: spacing.space2,
+  },
+
+  header: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    columnGap: spacing.space4,
+  },
+  title: {
+    margin: 0,
+    fontSize: typography.fontSm,
+    lineHeight: typography.leadingSm,
+    fontWeight: typography.weightBold,
+  },
+  aside: {
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.faint,
+  },
+  meta: {
+    display: "flex",
+    flexWrap: "wrap",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  bullets: {
+    margin: 0,
+    display: "grid",
+    listStyleType: "none",
+    gap: spacing.space1,
+    padding: 0,
+    color: colors.muted,
+  },
+  bullet: {
+    display: "flex",
+    gap: spacing.space2,
+  },
+  marker: {
+    color: colors.accent,
+  },
+});
+
 // A titled record (job, role, education): header row, subtitle, meta line, bullets.
-function EntryRoot(props: ParentProps<{ id?: string; class?: string }>) {
+function EntryRoot(
+  props: ParentProps<{ id?: string; class?: string; styles?: stylex.StyleXStyles }>,
+) {
   return (
-    <article id={props.id} class={cn("grid gap-2", props.class)}>
+    <article
+      id={props.id}
+      {...stylex.attrs(styles.root, props.styles)}
+      class={cn(stylex.attrs(styles.root, props.styles).class, props.class)}
+    >
       {props.children}
     </article>
   );
 }
 
 function EntryHeader(props: ParentProps) {
-  return <div class="flex flex-wrap items-baseline justify-between gap-x-4">{props.children}</div>;
+  return <div {...stylex.attrs(styles.header)}>{props.children}</div>;
 }
 
 function EntryTitle(props: ParentProps) {
-  return <h2 class="m-0 text-sm font-bold">{props.children}</h2>;
+  return <h2 {...stylex.attrs(styles.title)}>{props.children}</h2>;
 }
 
 function EntryAside(props: ParentProps) {
-  return <span class="text-xs text-faint">{props.children}</span>;
+  return <span {...stylex.attrs(styles.aside)}>{props.children}</span>;
 }
 
 function EntrySubtitle(props: ParentProps) {
@@ -29,20 +85,20 @@ function EntrySubtitle(props: ParentProps) {
 // Children are separated by a faint pipe.
 function EntryMeta(props: ParentProps) {
   return (
-    <div class="flex flex-wrap text-xs text-muted [&>*+*]:before:mx-1.5 [&>*+*]:before:text-faint [&>*+*]:before:content-['|']">
+    <div {...stylex.attrs(styles.meta)} class={cn("entry-meta", stylex.attrs(styles.meta).class)}>
       {props.children}
     </div>
   );
 }
 
 function EntryBullets(props: ParentProps) {
-  return <ul class="m-0 grid list-none gap-1 p-0 text-muted">{props.children}</ul>;
+  return <ul {...stylex.attrs(styles.bullets)}>{props.children}</ul>;
 }
 
 function EntryBullet(props: ParentProps) {
   return (
-    <li class="flex gap-2">
-      <span class="text-accent" aria-hidden="true">
+    <li {...stylex.attrs(styles.bullet)}>
+      <span {...stylex.attrs(styles.marker)} aria-hidden="true">
         ›
       </span>
       <span>{props.children}</span>

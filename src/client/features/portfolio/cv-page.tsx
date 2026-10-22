@@ -1,3 +1,12 @@
+import {
+  colors,
+  spacing,
+  typography,
+  dimensions,
+  borders,
+  conditions,
+} from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { For, Show, type JSX, type ParentProps } from "solid-js";
 import { links_openInNewTab } from "@/client/lib/links";
 import { Entry } from "@/client/ui/entry";
@@ -15,6 +24,123 @@ import {
 } from "./portfolio.data";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
+
+const styles = stylex.create({
+  factLabel: {
+    width: dimensions.sizeCvLabel,
+    fontSize: typography.fontCvLabel,
+  },
+
+  root: {
+    marginInline: "auto",
+    display: "grid",
+    maxWidth: { default: dimensions.sizeCvPage, [conditions.print]: "none" },
+    gap: { default: spacing.space6, [conditions.print]: spacing.space3 },
+    paddingInline: {
+      default: spacing.space4,
+      [conditions.wide]: { default: spacing.spaceCvHorizontal, [conditions.print]: 0 },
+      [conditions.print]: 0,
+    },
+    paddingBlock: { default: spacing.spaceCvVertical, [conditions.print]: 0 },
+    overflowWrap: "anywhere",
+    fontSize: { default: null, [conditions.print]: typography.fontCvPrint },
+  },
+  header: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: spacing.space6,
+  },
+  identity: {
+    display: "grid",
+    minWidth: 0,
+    gap: spacing.space3,
+  },
+  printMailSpace: {
+    display: { default: "none", [conditions.print]: "inline" },
+    position: { default: null, [conditions.print]: "absolute" },
+  },
+  monogram: {
+    display: "grid",
+    width: dimensions.sizeMonogram,
+    height: dimensions.sizeMonogram,
+    flexShrink: 0,
+    placeItems: "center",
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: colors.lineStrong,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    fontWeight: typography.weightBold,
+  },
+  paragraph: {
+    margin: 0,
+  },
+  experience: {
+    display: "grid",
+    gap: { default: spacing.space4, [conditions.print]: spacing.space2_5 },
+  },
+  note: {
+    margin: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  strong: {
+    fontWeight: typography.weightBold,
+    color: colors.fg,
+  },
+  projects: {
+    margin: 0,
+    display: "grid",
+    listStyleType: "none",
+    gap: { default: spacing.space1, [conditions.print]: spacing.space0_5 },
+    padding: 0,
+    color: colors.muted,
+  },
+  section: {
+    display: "grid",
+    gap: { default: spacing.space4, [conditions.print]: spacing.space2 },
+    borderTopWidth: borders.borderRule,
+    borderTopStyle: "solid",
+    borderColor: colors.line,
+    paddingTop: { default: spacing.space4, [conditions.print]: spacing.space2_5 },
+  },
+  sectionTitle: {
+    margin: 0,
+    fontSize: typography.fontLabel,
+    fontWeight: typography.weightNormal,
+    color: colors.faint,
+    textTransform: "uppercase",
+    breakAfter: "avoid",
+  },
+  job: {
+    breakInside: "avoid",
+  },
+  entry: {
+    gap: { default: spacing.space1, [conditions.print]: spacing.space0_5 },
+  },
+  jobTitle: {
+    margin: 0,
+    fontSize: typography.fontSm,
+    lineHeight: typography.leadingSm,
+    fontWeight: typography.weightBold,
+  },
+  meta: {
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  bold: {
+    fontWeight: typography.weightBold,
+  },
+  muted: {
+    color: colors.muted,
+  },
+  printSpace: {
+    display: { default: "none", [conditions.print]: "inline" },
+  },
+});
 
 // Source document for the generated CV PDF; sized to fit one A4 sheet.
 export function CvPage() {
@@ -37,9 +163,9 @@ export function CvPage() {
   );
 
   return (
-    <main class="mx-auto grid max-w-[210mm] gap-6 px-4 py-[12mm] wrap-anywhere sm:px-[14mm] print:max-w-none print:gap-3 print:p-0 print:text-[11px]">
-      <header class="flex items-start justify-between gap-6">
-        <div class="grid min-w-0 gap-3">
+    <main {...stylex.attrs(styles.root)}>
+      <header {...stylex.attrs(styles.header)}>
+        <div {...stylex.attrs(styles.identity)}>
           <PageTitle>{profile.name}</PageTitle>
           <Facts.List>
             <Facts.Item label={m.fact_role()}>{bio().role}</Facts.Item>
@@ -48,7 +174,7 @@ export function CvPage() {
             </Facts.Item>
             <Facts.Item label={m.fact_mail()}>
               <a href={`mailto:${profile.email}`}>
-                <span class="hidden print:absolute print:inline">{" "}</span>
+                <span {...stylex.attrs(styles.printMailSpace)}>{" "}</span>
                 {profile.email}
               </a>
             </Facts.Item>
@@ -67,20 +193,17 @@ export function CvPage() {
             </Facts.Item>
           </Facts.List>
         </div>
-        <span
-          aria-hidden="true"
-          class="grid size-9 shrink-0 place-items-center border border-line-strong text-xs font-bold"
-        >
+        <span aria-hidden="true" {...stylex.attrs(styles.monogram)}>
           FB
         </span>
       </header>
 
       <CvSection title={m.cv_summary()}>
-        <p class="m-0">{m.cv_summary_text()}</p>
+        <p {...stylex.attrs(styles.paragraph)}>{m.cv_summary_text()}</p>
       </CvSection>
 
       <CvSection title={m.cv_experience()}>
-        <div class="grid gap-4 print:gap-2.5">
+        <div {...stylex.attrs(styles.experience)}>
           <CvJob
             job={guildara()}
             role={guildara().role}
@@ -99,8 +222,8 @@ export function CvPage() {
               <CvClient job={datum()} text={m.cv_datum()} />,
             ]}
           />
-          <p class="m-0 text-xs text-muted">
-            <span class="font-bold text-fg">{m.cv_earlier()}:</span>{" "}
+          <p {...stylex.attrs(styles.note)}>
+            <span {...stylex.attrs(styles.strong)}>{m.cv_earlier()}:</span>{" "}
             {earlier()
               .map(
                 (item) =>
@@ -115,7 +238,7 @@ export function CvPage() {
         <Facts.List>
           <For each={portfolio_skills()}>
             {(group) => (
-              <Facts.Item label={group.label} labelClass="w-30 text-[9px]">
+              <Facts.Item label={group.label} labelStyles={styles.factLabel}>
                 {group.items.join(", ")}
               </Facts.Item>
             )}
@@ -124,7 +247,7 @@ export function CvPage() {
       </CvSection>
 
       <CvSection title={m.page_projects()}>
-        <ul class="m-0 grid list-none gap-1 p-0 text-muted print:gap-0.5">
+        <ul {...stylex.attrs(styles.projects)}>
           <CvProject name="safeish" href="https://github.com/Frantss/safeish">
             {m.project_safeish_description()}
           </CvProject>
@@ -132,7 +255,7 @@ export function CvPage() {
             {m.project_oxform_description()}
           </CvProject>
           <li>
-            <span class="font-bold text-fg">{m.cv_client_websites()}</span>{" "}
+            <span {...stylex.attrs(styles.strong)}>{m.cv_client_websites()}</span>{" "}
             <a href="https://altereco.com.uy" {...links_openInNewTab}>
               altereco.com.uy
             </a>{" "}
@@ -162,10 +285,8 @@ export function CvPage() {
 
 function CvSection(props: ParentProps<{ title: string }>) {
   return (
-    <section class="grid gap-4 border-t border-line pt-4 print:gap-2 print:pt-2.5">
-      <h2 class="m-0 text-[10px] font-normal text-faint uppercase break-after-avoid">
-        {props.title}
-      </h2>
+    <section {...stylex.attrs(styles.section)}>
+      <h2 {...stylex.attrs(styles.sectionTitle)}>{props.title}</h2>
       {props.children}
     </section>
   );
@@ -173,10 +294,10 @@ function CvSection(props: ParentProps<{ title: string }>) {
 
 function CvJob(props: { job: Job; role: string; meta: string; bullets: JSX.Element[] }) {
   return (
-    <div class="break-inside-avoid">
-      <Entry.Root class="gap-1 print:gap-0.5">
+    <div {...stylex.attrs(styles.job)}>
+      <Entry.Root styles={styles.entry}>
         <Entry.Header>
-          <h3 class="m-0 text-sm font-bold">
+          <h3 {...stylex.attrs(styles.jobTitle)}>
             <Show when={props.job.href} fallback={props.job.company}>
               <a href={props.job.href} {...links_openInNewTab}>
                 {props.job.company}
@@ -187,7 +308,7 @@ function CvJob(props: { job: Job; role: string; meta: string; bullets: JSX.Eleme
         </Entry.Header>
         <Entry.Subtitle>
           {props.role}
-          <span class="text-xs text-muted"> · {props.meta}</span>
+          <span {...stylex.attrs(styles.meta)}> · {props.meta}</span>
         </Entry.Subtitle>
         <Entry.Bullets>
           <For each={props.bullets}>{(bullet) => <Entry.Bullet>{bullet}</Entry.Bullet>}</For>
@@ -200,7 +321,7 @@ function CvJob(props: { job: Job; role: string; meta: string; bullets: JSX.Eleme
 function CvClient(props: { job: Job; text: string }) {
   return (
     <>
-      <span class="font-bold text-fg">
+      <span {...stylex.attrs(styles.strong)}>
         {m.cv_client()}: {props.job.company}
       </span>{" "}
       ({cv_dates(props.job)}) — {props.text}
@@ -211,7 +332,7 @@ function CvClient(props: { job: Job; text: string }) {
 function CvProject(props: ParentProps<{ name: string; href: string }>) {
   return (
     <li>
-      <span class="font-bold text-fg">{props.name}</span> {props.children}{" "}
+      <span {...stylex.attrs(styles.strong)}>{props.name}</span> {props.children}{" "}
       <a href={props.href} {...links_openInNewTab}>
         {cv_url(props.href)}
       </a>
@@ -223,11 +344,12 @@ function CvEducation(props: { title: string; detail: string; year: string }) {
   return (
     <IndexList.Row>
       <span>
-        <span class="font-bold">{props.title}</span> <span class="text-muted">{props.detail}</span>
+        <span {...stylex.attrs(styles.bold)}>{props.title}</span>{" "}
+        <span {...stylex.attrs(styles.muted)}>{props.detail}</span>
       </span>
       <IndexList.Leader />
       <IndexList.Value>
-        <span class="hidden print:inline">{" "}</span>
+        <span {...stylex.attrs(styles.printSpace)}>{" "}</span>
         {props.year}
       </IndexList.Value>
     </IndexList.Row>

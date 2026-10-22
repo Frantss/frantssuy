@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig, lazyPlugins } from "vite-plus";
 import { playwright } from "vite-plus/test/browser-playwright";
 import { varlockVitePlugin } from "@varlock/vite-integration";
-import tailwindcss from "@tailwindcss/vite";
+import { stylexPlugin } from "./stylex.config";
 import posthog from "@posthog/rollup-plugin";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 
@@ -77,6 +77,7 @@ export default defineConfig(({ mode }) => ({
       {
         test: {
           name: "browser",
+          setupFiles: ["./src/client/tests/styles.setup.ts"],
           include: ["src/client/**/*.test.{ts,tsx}"],
           browser: {
             enabled: true,
@@ -93,9 +94,65 @@ export default defineConfig(({ mode }) => ({
     jsPlugins: [
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
       "@stylistic/eslint-plugin",
+      "@stylexjs/eslint-plugin",
     ],
     rules: {
       "vite-plus/prefer-vite-plus-imports": "error",
+      "@stylexjs/valid-styles": [
+        "error",
+        {
+          propLimits: {
+            "*Color": {
+              limit: ["transparent", "currentColor", "inherit"],
+              reason: "Use a color variable from theme.stylex.ts.",
+            },
+            color: {
+              limit: ["transparent", "currentColor", "inherit"],
+              reason: "Use a color variable from theme.stylex.ts.",
+            },
+            "+(padding|margin)*": {
+              limit: [0, "auto"],
+              reason: "Use a spacing variable from theme.stylex.ts.",
+            },
+            "+(gap|rowGap|columnGap)": {
+              limit: [0, "normal"],
+              reason: "Use a spacing variable from theme.stylex.ts.",
+            },
+            fontSize: {
+              limit: ["inherit"],
+              reason: "Use a typography variable from theme.stylex.ts.",
+            },
+            fontWeight: {
+              limit: ["inherit", "normal", "bolder"],
+              reason: "Use a typography variable from theme.stylex.ts.",
+            },
+            "+(width|height|minWidth|minHeight|maxWidth|maxHeight)": {
+              limit: [
+                0,
+                "auto",
+                "none",
+                "100%",
+                "100dvh",
+                "fit-content",
+                "min-content",
+                "max-content",
+              ],
+              reason: "Use a dimension variable from theme.stylex.ts.",
+            },
+            "+(border*Width|outlineWidth|outlineOffset)": {
+              limit: [0],
+              reason: "Use a border variable from theme.stylex.ts.",
+            },
+            "+(animation|transition)Duration": {
+              limit: [0],
+              reason: "Use a motion variable from theme.stylex.ts.",
+            },
+          },
+        },
+      ],
+      "@stylexjs/valid-shorthands": "error",
+      "@stylexjs/no-unused": "error",
+      "@stylexjs/enforce-extension": ["error", { themeFileExtension: ".stylex.ts" }],
       "@stylistic/padding-line-between-statements": [
         "error",
         { blankLine: "always", prev: "*", next: "return" },
@@ -119,7 +176,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: lazyPlugins(() => [
     varlockVitePlugin({ ssrInjectMode: "init-only" }),
-    tailwindcss(),
+    stylexPlugin(),
     paraglideVitePlugin(paraglideOptions),
     ...mdxPlugins,
     tanstackStart({ server: { build: { inlineCss: true } } }),

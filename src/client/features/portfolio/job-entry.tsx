@@ -1,3 +1,5 @@
+import { colors, spacing, dimensions, conditions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { For, Show } from "solid-js";
 import { IconLink } from "@tabler/icons-solidjs";
 import { links_openInNewTab } from "@/client/lib/links";
@@ -7,15 +9,38 @@ import { m } from "@/paraglide/messages";
 import { JobDuration } from "./job-duration";
 import type { Job } from "./portfolio.data";
 
+const styles = stylex.create({
+  root: {
+    scrollMarginTop: spacing.space6,
+  },
+  heading: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: spacing.space2,
+  },
+  permalink: {
+    display: "grid",
+    width: { default: dimensions.sizeTouch, [conditions.wide]: spacing.space5 },
+    height: { default: dimensions.sizeTouch, [conditions.wide]: spacing.space5 },
+    flexShrink: 0,
+    placeItems: "center",
+    color: {
+      default: colors.faint,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+      ":focus-visible": colors.fg,
+    },
+  },
+});
+
 export function JobEntry(props: { job: Job }) {
   const id = () =>
     `${props.job.company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${props.job.start.replace(".", "-")}`;
 
   return (
-    <Entry.Root id={id()} class="scroll-mt-6">
+    <Entry.Root id={id()} styles={styles.root}>
       <Entry.Header>
         <Entry.Title>
-          <span class="inline-flex items-center gap-2">
+          <span {...stylex.attrs(styles.heading)}>
             <Show when={props.job.href} fallback={props.job.company}>
               <a href={props.job.href} {...links_openInNewTab}>
                 {props.job.company}
@@ -24,7 +49,7 @@ export function JobEntry(props: { job: Job }) {
             <a
               href={`#${id()}`}
               aria-label={`${props.job.company} · ${props.job.role} · ${props.job.start}`}
-              class="grid size-11 shrink-0 place-items-center text-faint hover:text-fg focus-visible:text-fg sm:size-5"
+              {...stylex.attrs(styles.permalink)}
             >
               <IconLink size={14} aria-hidden="true" />
             </a>

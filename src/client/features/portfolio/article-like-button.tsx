@@ -1,3 +1,5 @@
+import { colors, spacing, typography, dimensions, conditions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { IconHeart, IconHeartFilled, IconRefresh } from "@tabler/icons-solidjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/solid-query";
 import {
@@ -17,6 +19,101 @@ import { Tooltip } from "@/client/ui/tooltip";
 import { cn } from "@/client/lib/cn";
 import { article_likesQueryOptions } from "@/client/features/portfolio/article-likes.query";
 import { m } from "@/paraglide/messages";
+
+const styles = stylex.create({
+  retry: {
+    width: dimensions.sizeTouch,
+    height: dimensions.sizeTouch,
+    flexShrink: 0,
+    cursor: { default: null, ":disabled": "wait" },
+  },
+  retrySmall: {
+    width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeSmall },
+    height: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeSmall },
+  },
+  retryMedium: {
+    width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+    height: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+  },
+  button: {
+    display: "inline-flex",
+    width: "auto",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: { default: null, ":disabled": "wait" },
+  },
+  small: {
+    height: dimensions.sizeSmall,
+    gap: spacing.space1_5,
+    paddingInline: spacing.space1_5,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+  },
+  medium: {
+    height: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+    gap: spacing.space2,
+    paddingInline: spacing.space2,
+    fontSize: typography.fontSm,
+    lineHeight: typography.leadingSm,
+  },
+  icon: {
+    display: "inline-flex",
+    flexShrink: 0,
+  },
+  iconSmall: {
+    width: dimensions.sizeIconSmall,
+    height: dimensions.sizeIconSmall,
+  },
+  iconMedium: {
+    width: dimensions.sizeIcon,
+    height: dimensions.sizeIcon,
+  },
+
+  error: {
+    display: "flex",
+    minWidth: 0,
+    alignItems: "center",
+    gap: spacing.space2,
+  },
+  loadError: {
+    margin: 0,
+    maxWidth: dimensions.sizeLoadError,
+    textAlign: "right",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  counter: {
+    display: "grid",
+    justifyItems: "end",
+    gap: spacing.space2,
+  },
+  status: {
+    position: "absolute",
+    width: dimensions.sizeScreenReader,
+    height: dimensions.sizeScreenReader,
+    padding: 0,
+    margin: spacing.screenReaderOffset,
+    overflow: "hidden",
+    clipPath: "inset(50%)",
+    whiteSpace: "nowrap",
+    borderWidth: 0,
+  },
+  saveError: {
+    margin: 0,
+    maxWidth: dimensions.sizeSaveError,
+    textAlign: "right",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+  liked: {
+    color: colors.liked,
+  },
+  count: {
+    fontVariantNumeric: "tabular-nums",
+  },
+});
 
 export function ArticleLikeButton(props: { slug: string; size?: "sm" | "md" }) {
   return (
@@ -49,9 +146,9 @@ function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "s
   onMount(() => cooldown.handle(props.error));
 
   return (
-    <div class="flex min-w-0 items-center gap-2">
+    <div {...stylex.attrs(styles.error)}>
       <Show when={!cooldown.limited()}>
-        <p id={errorId} role="alert" class="m-0 max-w-[24ch] text-right text-xs text-muted">
+        <p id={errorId} role="alert" {...stylex.attrs(styles.loadError)}>
           {m.article_likes_load_error()}
         </p>
       </Show>
@@ -62,10 +159,7 @@ function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "s
             disabled={cooldown.remaining() > 0}
             aria-label={m.article_likes_retry()}
             aria-describedby={!cooldown.limited() ? errorId : undefined}
-            class={cn(
-              "size-11 shrink-0 disabled:cursor-wait",
-              props.size === "sm" ? "sm:size-6" : "sm:size-[34px]",
-            )}
+            styles={[styles.retry, props.size === "sm" ? styles.retrySmall : styles.retryMedium]}
           >
             <IconRefresh size={props.size === "sm" ? 14 : 18} aria-hidden="true" />
           </IconButton>
@@ -121,7 +215,7 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
   }
 
   return (
-    <div class="grid justify-items-end gap-2">
+    <div {...stylex.attrs(styles.counter)}>
       <LikeButton
         size={props.size}
         liked={liked()}
@@ -133,11 +227,11 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
       >
         {query.data?.count}
       </LikeButton>
-      <span role="status" class="sr-only">
+      <span role="status" {...stylex.attrs(styles.status)}>
         {m.article_likes_count({ count: query.data?.count ?? 0 })}
       </span>
       <Show when={failed()}>
-        <p id={errorId} role="alert" class="m-0 max-w-[28ch] text-right text-xs text-muted">
+        <p id={errorId} role="alert" {...stylex.attrs(styles.saveError)}>
           {m.article_likes_save_error()}
         </p>
       </Show>
@@ -158,26 +252,32 @@ function LikeButton(
   return (
     <IconButton
       {...rest}
-      class={cn(
-        "inline-flex w-auto items-center justify-center disabled:cursor-wait",
-        local.size === "sm" ? "h-6 gap-1.5 px-1.5 text-xs" : "h-11 gap-2 px-2 text-sm sm:h-[34px]",
-      )}
+      styles={[styles.button, local.size === "sm" ? styles.small : styles.medium]}
     >
       <Show when={local.animationKey ?? 1} keyed>
         {(key) => (
           <span
-            class={cn("inline-flex shrink-0", local.size === "sm" ? "size-3.5" : "size-[18px]", {
-              "article-like-heart": key > 1,
-            })}
+            {...stylex.attrs(
+              styles.icon,
+              local.size === "sm" ? styles.iconSmall : styles.iconMedium,
+            )}
+            class={cn(
+              stylex.attrs(styles.icon, local.size === "sm" ? styles.iconSmall : styles.iconMedium)
+                .class,
+              key > 1 && "article-like-heart",
+            )}
             aria-hidden="true"
           >
             <Show when={local.liked} fallback={<IconHeart size={local.size === "sm" ? 14 : 18} />}>
-              <IconHeartFilled size={local.size === "sm" ? 14 : 18} class="text-red-500" />
+              <IconHeartFilled
+                size={local.size === "sm" ? 14 : 18}
+                {...stylex.attrs(styles.liked)}
+              />
             </Show>
           </span>
         )}
       </Show>
-      <span class="tabular-nums" aria-hidden="true">
+      <span {...stylex.attrs(styles.count)} aria-hidden="true">
         {local.children}
       </span>
     </IconButton>

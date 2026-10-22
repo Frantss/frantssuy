@@ -1,3 +1,6 @@
+import { colors, spacing, typography, dimensions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
+import { cn } from "@/client/lib/cn";
 import { Link } from "@tanstack/solid-router";
 import { Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
@@ -11,25 +14,64 @@ import { ArticleLikeButton } from "@/client/features/portfolio/article-like-butt
 import type { Article } from "@/lib/articles/article-metadata";
 import { m } from "@/paraglide/messages";
 
+const styles = stylex.create({
+  root: {
+    minWidth: 0,
+    maxWidth: dimensions.sizeArticle,
+  },
+  meta: {
+    display: "grid",
+    gap: spacing.space2,
+  },
+  date: {
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.faint,
+  },
+  body: {
+    minWidth: 0,
+  },
+  footer: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.space4,
+  },
+  back: {
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+  },
+  actions: {
+    marginLeft: "auto",
+    display: "flex",
+    alignItems: "center",
+    gap: spacing.space2,
+  },
+});
+
 export function ArticlePage(props: { article: Article }) {
   return (
     <ToastProvider>
-      <Page class="min-w-0 max-w-[64ch]">
+      <Page styles={styles.root}>
         <PageTitle>{props.article.title}</PageTitle>
-        <div class="grid gap-2">
-          <ArticleDate date={props.article.date} class="text-xs text-faint" />
+        <div {...stylex.attrs(styles.meta)}>
+          <ArticleDate date={props.article.date} styles={styles.date} />
           <ArticleTags tags={props.article.tags} />
         </div>
-        <article class="article-body min-w-0">
+        <article
+          {...stylex.attrs(styles.body)}
+          class={cn("article-body", stylex.attrs(styles.body).class)}
+        >
           <Suspense fallback={<p role="status">Loading article…</p>}>
             <Dynamic component={article_content(props.article.slug)} />
           </Suspense>
         </article>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <Link to="/writing" class="text-xs">
+        <div {...stylex.attrs(styles.footer)}>
+          <Link to="/writing" {...stylex.attrs(styles.back)}>
             {m.article_all_writing()}
           </Link>
-          <div class="ml-auto flex items-center gap-2">
+          <div {...stylex.attrs(styles.actions)}>
             <ArticleLikeButton slug={props.article.slug} />
             <ArticleShare article={props.article} />
           </div>

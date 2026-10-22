@@ -1,4 +1,12 @@
+import { colors } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { createSignal, onCleanup, onMount } from "solid-js";
+
+const styles = stylex.create({
+  offset: {
+    color: colors.faint,
+  },
+});
 
 export function localTime_format(now: Date, utcOffset: number) {
   const shifted = new Date(now.getTime() + utcOffset * 3_600_000);
@@ -24,7 +32,7 @@ export function LocalTime(props: { utcOffset: number }) {
   return (
     <span>
       <time>{time()}</time>{" "}
-      <span class="text-faint">
+      <span {...stylex.attrs(styles.offset)}>
         // UTC{props.utcOffset >= 0 ? "+" : ""}
         {props.utcOffset}
       </span>

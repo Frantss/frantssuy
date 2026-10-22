@@ -1,3 +1,12 @@
+import {
+  colors,
+  spacing,
+  typography,
+  dimensions,
+  motion,
+  conditions,
+} from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { For, Match, Switch } from "solid-js";
 import {
   IconBrandOpenSource,
@@ -13,58 +22,136 @@ import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import { analytics_capture } from "@/client/analytics/analytics";
 
+const styles = stylex.create({
+  root: {
+    gap: spacing.space8,
+  },
+  section: {
+    display: "grid",
+    minWidth: 0,
+    scrollMarginTop: spacing.space6,
+    gridTemplateColumns: "minmax(0,1fr)",
+    gap: spacing.space3,
+  },
+  heading: {
+    margin: 0,
+    fontSize: typography.fontLabel,
+    fontWeight: typography.weightNormal,
+    textTransform: "uppercase",
+  },
+  anchor: {
+    display: "flex",
+    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
+    width: "fit-content",
+    alignItems: "center",
+    gap: spacing.space2,
+    color: {
+      default: colors.faint,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+      ":focus-visible": colors.fg,
+    },
+  },
+  icon: {
+    flexShrink: 0,
+    color: {
+      default: colors.muted,
+      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.fg },
+      [stylex.when.ancestor(":focus-visible")]: colors.fg,
+    },
+    transitionProperty:
+      "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke",
+    transitionDuration: motion.durationColor,
+    transitionTimingFunction: motion.easeColor,
+  },
+  staticIcon: {
+    flexShrink: 0,
+    color: colors.muted,
+  },
+  list: {
+    margin: 0,
+    display: "grid",
+    listStyleType: "none",
+    gridTemplateColumns: "minmax(0,1fr)",
+    gap: spacing.space4,
+    padding: 0,
+  },
+  project: {
+    display: "grid",
+    gap: spacing.space1,
+    color: colors.fg,
+    textDecoration: "none",
+  },
+  details: {
+    display: "flex",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    gap: spacing.space3,
+  },
+  name: {
+    minWidth: 0,
+    fontWeight: typography.weightBold,
+    overflowWrap: "break-word",
+    transitionProperty:
+      "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke",
+    transitionDuration: motion.durationColor,
+    transitionTimingFunction: motion.easeColor,
+    color: {
+      default: null,
+      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.link },
+      [stylex.when.ancestor(":focus-visible")]: colors.link,
+    },
+  },
+  year: {
+    flexShrink: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.faint,
+    fontVariantNumeric: "tabular-nums",
+  },
+  description: {
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: colors.muted,
+  },
+});
+
 export function ProjectsPage() {
   return (
-    <Page class="gap-8">
+    <Page styles={styles.root}>
       <PageTitle>{m.page_projects()}</PageTitle>
       <For each={portfolio_project_groups()}>
         {(group) => (
-          <section id={group.kind} class="grid min-w-0 scroll-mt-6 grid-cols-[minmax(0,1fr)] gap-3">
+          <section id={group.kind} {...stylex.attrs(styles.section)}>
             <h2
               id={group.kind === "misc" ? "miscellaneous" : undefined}
-              class="m-0 text-[10px] font-normal uppercase"
+              {...stylex.attrs(styles.heading)}
             >
-              <a
-                href={`#${group.kind}`}
-                class="group flex min-h-11 w-fit items-center gap-2 text-faint hover:text-fg focus-visible:text-fg sm:min-h-0"
-              >
+              <a href={`#${group.kind}`} {...stylex.attrs(styles.anchor, stylex.defaultMarker())}>
                 <Switch>
                   <Match when={group.kind === "oss"}>
                     <IconBrandOpenSource
                       size={14}
                       aria-hidden="true"
-                      class="shrink-0 text-muted transition-colors group-hover:text-fg group-focus-visible:text-fg"
+                      {...stylex.attrs(styles.icon)}
                     />
                   </Match>
                   <Match when={group.kind === "client"}>
-                    <IconBriefcase
-                      size={14}
-                      aria-hidden="true"
-                      class="shrink-0 text-muted transition-colors group-hover:text-fg group-focus-visible:text-fg"
-                    />
+                    <IconBriefcase size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
                   </Match>
                   <Match when={group.kind === "experiments"}>
-                    <IconFlask
-                      size={14}
-                      aria-hidden="true"
-                      class="shrink-0 text-muted transition-colors group-hover:text-fg group-focus-visible:text-fg"
-                    />
+                    <IconFlask size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
                   </Match>
                   <Match when={group.kind === "snippets"}>
-                    <IconCode size={14} aria-hidden="true" class="shrink-0 text-muted" />
+                    <IconCode size={14} aria-hidden="true" {...stylex.attrs(styles.staticIcon)} />
                   </Match>
                   <Match when={group.kind === "misc"}>
-                    <IconDots
-                      size={14}
-                      aria-hidden="true"
-                      class="shrink-0 text-muted transition-colors group-hover:text-fg group-focus-visible:text-fg"
-                    />
+                    <IconDots size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
                   </Match>
                 </Switch>
                 {group.label}
               </a>
             </h2>
-            <ul class="m-0 grid list-none grid-cols-[minmax(0,1fr)] gap-4 p-0">
+            <ul {...stylex.attrs(styles.list)}>
               <For each={group.projects}>
                 {(project) => (
                   <li>
@@ -78,15 +165,13 @@ export function ProjectsPage() {
                           project_kind: project.kind,
                         })
                       }
-                      class="group grid gap-1 text-fg no-underline"
+                      {...stylex.attrs(styles.project, stylex.defaultMarker())}
                     >
-                      <span class="flex items-baseline justify-between gap-3">
-                        <span class="min-w-0 font-bold break-words transition-colors group-hover:text-link group-focus-visible:text-link">
-                          {project.name}
-                        </span>
-                        <span class="shrink-0 text-xs text-faint tabular-nums">{project.year}</span>
+                      <span {...stylex.attrs(styles.details)}>
+                        <span {...stylex.attrs(styles.name)}>{project.name}</span>
+                        <span {...stylex.attrs(styles.year)}>{project.year}</span>
                       </span>
-                      <span class="text-xs text-muted">{project.description}</span>
+                      <span {...stylex.attrs(styles.description)}>{project.description}</span>
                     </a>
                   </li>
                 )}

@@ -1,3 +1,5 @@
+import { spacing, dimensions } from "@/client/styles/theme.stylex";
+import * as stylex from "@stylexjs/stylex";
 import { Link } from "@tanstack/solid-router";
 import type { ParentProps } from "solid-js";
 import {
@@ -18,11 +20,28 @@ import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import { analytics_autocapture, analytics_capture } from "@/client/analytics/analytics";
 
+const styles = stylex.create({
+  root: {
+    maxWidth: dimensions.sizeProse,
+  },
+  paragraph: {
+    margin: 0,
+  },
+  links: {
+    margin: 0,
+    display: "flex",
+    flexWrap: "wrap",
+    gap: spacing.space2,
+    padding: 0,
+    listStyleType: "none",
+  },
+});
+
 export function AboutPage() {
   const bio = () => portfolio_bio();
 
   return (
-    <Page class="max-w-[60ch]">
+    <Page styles={styles.root}>
       <PageTitle>{profile.name}</PageTitle>
       <Facts.List>
         <Facts.Item label={m.fact_role()}>{bio().role}</Facts.Item>
@@ -41,12 +60,12 @@ export function AboutPage() {
           </a>
         </Facts.Item>
       </Facts.List>
-      <p class="m-0">{m.profile_about_intro()}</p>
-      <p class="m-0">
+      <p {...stylex.attrs(styles.paragraph)}>{m.profile_about_intro()}</p>
+      <p {...stylex.attrs(styles.paragraph)}>
         <LocalizedMessage message={m.profile_about_background} />
       </p>
-      <p class="m-0">{m.profile_about_personal()}</p>
-      <p class="m-0">
+      <p {...stylex.attrs(styles.paragraph)}>{m.profile_about_personal()}</p>
+      <p {...stylex.attrs(styles.paragraph)}>
         {m.about_writing_intro()}{" "}
         <Link
           to="/writing"
@@ -71,7 +90,7 @@ export function AboutPage() {
           {m.about_writing_portfolio()}
         </Link>
       </p>
-      <p class="m-0">
+      <p {...stylex.attrs(styles.paragraph)}>
         {m.about_more()}{" "}
         <Link
           to="/work"
@@ -100,7 +119,7 @@ function ProfileLinks() {
   const [github, linkedin, x, instagram] = profile.links;
 
   return (
-    <ul aria-label={m.about_find()} class="m-0 flex flex-wrap gap-2 p-0 list-none">
+    <ul aria-label={m.about_find()} {...stylex.attrs(styles.links)}>
       <ProfileLink link={github}>
         <IconBrandGithub size={18} aria-hidden="true" />
       </ProfileLink>
