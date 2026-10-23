@@ -40,6 +40,7 @@ const styles = stylex.create({
     color: {
       default: colors.accent,
       [conditions.hover]: { default: null, ":hover": colors.fg },
+      ":focus-visible": colors.fg,
     },
   },
   expanded: {

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { page } from "vite-plus/test/browser";
 import { render } from "solid-js/web";
 import { createSignal, type JSX } from "solid-js";
 import * as stylex from "@stylexjs/stylex";
@@ -7,6 +8,7 @@ import { Entry } from "@/client/ui/entry";
 import { Facts } from "@/client/ui/facts";
 import { IconButton } from "@/client/ui/icon-button";
 import { IndexList } from "@/client/ui/index-list";
+import { Rail } from "@/client/ui/rail";
 import { colors, dimensions } from "@/client/styles/theme.stylex";
 
 const styles = stylex.create({
@@ -117,6 +119,32 @@ describe("IconButton", () => {
 });
 
 describe("compound parts", () => {
+  it("keeps the rail divider aligned when its width token changes", async () => {
+    const { innerWidth: width, innerHeight: height } = window;
+
+    await page.viewport(1024, 768);
+    try {
+      const container = mount(() => (
+        <>
+          <Rail.Root>
+            <Rail.Nav label="Pages">Navigation</Rail.Nav>
+            <Rail.Content>Content</Rail.Content>
+          </Rail.Root>
+          <Rail.Rule />
+        </>
+      ));
+
+      container.style.setProperty(dimensions.sizeRail.slice(4, -1), "176px");
+      const sidebar = container.querySelector("nav")!;
+      const divider = container.lastElementChild!;
+
+      expect(divider.getBoundingClientRect().width).toBe(176);
+      expect(sidebar.getBoundingClientRect().width).toBe(divider.getBoundingClientRect().width);
+    } finally {
+      await page.viewport(width, height);
+    }
+  });
+
   it("pairs fact labels with values in a definition list", () => {
     const container = mount(() => (
       <Facts.List>

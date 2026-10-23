@@ -78,8 +78,10 @@ describe("article like button", () => {
     vi.useFakeTimers({ toFake: ["Date", "setTimeout", "clearTimeout"] });
     const button = container.querySelector("button")!;
 
+    expect(getComputedStyle(button).cursor).toBe("pointer");
     button.click();
     await vi.waitFor(() => expect(button.disabled).toBe(true));
+    expect(getComputedStyle(button).cursor).toBe("wait");
     expect(document.querySelector("[data-part='title']")?.textContent).toContain("Try again in 2s");
     expect(container.querySelector("[role='alert']")).toBeNull();
     expect(button.textContent).toBe("4");
@@ -95,6 +97,7 @@ describe("article like button", () => {
     expect(button.disabled).toBe(true);
     await vi.advanceTimersByTimeAsync(1800);
     expect(button.disabled).toBe(false);
+    expect(getComputedStyle(button).cursor).toBe("pointer");
     expect(fetch).toHaveBeenCalledTimes(2);
     button.click();
     await vi.waitFor(() => expect(button.textContent).toBe("5"));
@@ -223,6 +226,7 @@ describe("article like button", () => {
     expect(container.querySelector("button")?.getAttribute("aria-describedby")).toBe(
       container.querySelector("[role='alert']")?.id,
     );
+    expect(getComputedStyle(container.querySelector("button")!).cursor).toBe("pointer");
     container.querySelector("button")!.click();
     await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("12"));
     expect(container.querySelector("button")?.getAttribute("aria-label")).toBe(

@@ -18,7 +18,7 @@ const styles = stylex.create({
     display: "grid",
     flex: "1",
     alignContent: { default: "start", [conditions.wide]: "stretch" },
-    gridTemplateColumns: { default: null, [conditions.wide]: "9rem 1fr" },
+    gridTemplateColumns: { default: null, [conditions.wide]: `${dimensions.sizeRail} 1fr` },
   },
   rule: {
     width: dimensions.sizeRail,

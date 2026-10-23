@@ -42,6 +42,16 @@ function mount(initial: ArticleSearch = {}) {
 }
 
 describe("article search filters", () => {
+  it("keeps the selected filter toggle's keyboard focus color", async () => {
+    const { button } = mount({ tag: "web" });
+    const toggle = button("Filters");
+
+    expect(getComputedStyle(toggle).color).toBe("rgb(109, 40, 217)");
+    toggle.focus();
+    expect(toggle.matches(":focus-visible")).toBe(true);
+    await expect.poll(() => getComputedStyle(toggle).color).toBe("rgb(23, 23, 23)");
+  });
+
   it("keeps tags collapsed and retains the selected filter after closing them", () => {
     const { container, button, change } = mount({ q: "solid", offset: 40 });
     const group = container.querySelector<HTMLElement>("[role='group']")!;

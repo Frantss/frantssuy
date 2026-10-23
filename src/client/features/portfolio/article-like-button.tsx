@@ -25,7 +25,7 @@ const styles = stylex.create({
     width: dimensions.sizeTouch,
     height: dimensions.sizeTouch,
     flexShrink: 0,
-    cursor: { default: null, ":disabled": "wait" },
+    cursor: { default: "pointer", ":disabled": "wait" },
   },
   retrySmall: {
     width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeSmall },
@@ -40,7 +40,7 @@ const styles = stylex.create({
     width: "auto",
     alignItems: "center",
     justifyContent: "center",
-    cursor: { default: null, ":disabled": "wait" },
+    cursor: { default: "pointer", ":disabled": "wait" },
   },
   small: {
     height: dimensions.sizeSmall,
