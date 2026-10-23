@@ -29,7 +29,7 @@ export async function theme_reveal(theme: Theme, button: HTMLElement) {
   const root = document.documentElement;
 
   if (!document.startViewTransition || aria_prefersReduced()) {
-    return void theme_set(theme);
+    return theme_set(theme);
   }
   if (root.hasAttribute("data-theme-transition")) return;
 
