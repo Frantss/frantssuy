@@ -181,6 +181,12 @@ function portfolio_projects(): Project[] {
       kind: "oss",
     },
     {
+      name: "frantss-skills",
+      description: m.project_frantss_skills_description(),
+      href: "https://github.com/Frantss/frantss-skills",
+      kind: "oss",
+    },
+    {
       name: "ruby-memcached",
       description: m.project_ruby_memcached_description(),
       href: "https://github.com/Frantss/ruby-memcached",
