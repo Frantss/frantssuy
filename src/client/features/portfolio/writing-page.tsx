@@ -10,7 +10,8 @@ import * as stylex from "@stylexjs/stylex";
 import { Link, useNavigate, useRouterState, useSearch } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
 import { createEffect, For, Show, Suspense } from "solid-js";
-import { IconCheck } from "@tabler/icons-solidjs";
+import { IconCheck, IconHourglass } from "@tabler/icons-solidjs";
+import { createDelayedPending } from "@/client/lib/create-delayed-pending";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
@@ -65,6 +66,11 @@ const styles = stylex.create({
     margin: 0,
     color: colors.muted,
   },
+  emptyResults: {
+    display: "grid",
+    gap: spacing.space2,
+    paddingBlock: spacing.space4,
+  },
   loading: {
     margin: 0,
     fontSize: typography.fontXs,
@@ -75,7 +81,30 @@ const styles = stylex.create({
     margin: 0,
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
-    color: colors.faint,
+    color: colors.muted,
+  },
+  statusGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: spacing.space2,
+  },
+  pending: {
+    display: "inline-flex",
+    width: dimensions.sizeIconSmall,
+    height: dimensions.sizeIconSmall,
+    flexShrink: 0,
+    color: colors.muted,
+  },
+  srOnly: {
+    position: "absolute",
+    width: dimensions.sizeScreenReader,
+    height: dimensions.sizeScreenReader,
+    padding: 0,
+    margin: spacing.screenReaderOffset,
+    overflow: "hidden",
+    clipPath: "inset(50%)",
+    whiteSpace: "nowrap",
+    borderWidth: 0,
   },
   results: {
     display: "grid",
@@ -176,6 +205,7 @@ function WritingArticles() {
   const tags = [...new Set(article_list().flatMap((article) => article.tags))].sort();
   const offset = () => search().offset ?? 0;
   const pending = () => isNavigating() || query.isFetching;
+  const showLoading = createDelayedPending(pending);
 
   createEffect(() => cooldown.handle(query.error));
 
@@ -192,23 +222,29 @@ function WritingArticles() {
   return (
     <>
       <ArticleSearchFilter search={search()} tags={tags} onChange={change}>
-        <Suspense
-          fallback={
-            <p {...stylex.attrs(styles.loading)} role="status">
-              {m.writing_loading()}
-            </p>
-          }
-        >
-          <Show when={!query.isError}>
-            <p {...stylex.attrs(styles.status)} role="status">
-              {pending()
-                ? m.writing_updating()
-                : query.data?.total === 1
+        <div {...stylex.attrs(styles.statusGroup)}>
+          <Suspense
+            fallback={
+              <p {...stylex.attrs(styles.loading)} role="status">
+                {m.writing_loading()}
+              </p>
+            }
+          >
+            <Show when={!query.isError}>
+              <p {...stylex.attrs(styles.status)} role="status">
+                {query.data?.total === 1
                   ? m.writing_one_article()
                   : m.writing_articles_count({ count: query.data?.total ?? 0 })}
-            </p>
-          </Show>
-        </Suspense>
+              </p>
+            </Show>
+          </Suspense>
+          <span role="status" {...stylex.attrs(styles.pending)}>
+            <Show when={showLoading()}>
+              <IconHourglass size={14} aria-hidden="true" />
+              <span {...stylex.attrs(styles.srOnly)}>{m.writing_updating()}</span>
+            </Show>
+          </span>
+        </div>
       </ArticleSearchFilter>
       <Suspense
         fallback={
@@ -238,7 +274,12 @@ function WritingArticles() {
           <Show when={!query.isError}>
             <Show
               when={query.data?.items.length}
-              fallback={<p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>}
+              fallback={
+                <div {...stylex.attrs(styles.emptyResults)}>
+                  <p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>
+                  <p {...stylex.attrs(styles.loading)}>{m.writing_no_results_hint()}</p>
+                </div>
+              }
             >
               <IndexList.Root>
                 <For each={query.data?.items ?? []}>

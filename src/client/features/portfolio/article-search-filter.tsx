@@ -8,11 +8,10 @@ import {
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { IconCheck, IconSearch, IconAdjustmentsHorizontal } from "@tabler/icons-solidjs";
+import { IconCheck, IconSearch, IconAdjustmentsHorizontal, IconX } from "@tabler/icons-solidjs";
 import { createDebouncer } from "@tanstack/solid-pacer/debouncer";
 import { createEffect, createSignal, createUniqueId, For, Show, type JSX } from "solid-js";
 import { IconButton } from "@/client/ui/icon-button";
-import { Tooltip } from "@/client/ui/tooltip";
 import { m } from "@/paraglide/messages";
 import type { ArticleSearch } from "@/client/features/portfolio/articles.query";
 
@@ -28,9 +27,32 @@ const styles = stylex.create({
     transitionTimingFunction: motion.easeOut,
   },
   toggle: {
-    width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
-    height: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+    display: "inline-flex",
+    minHeight: {
+      default: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
+      [conditions.wide]: dimensions.sizeControl,
+      [conditions.coarsePointer]: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
+    },
     flexShrink: 0,
+    alignItems: "center",
+    gap: spacing.space2,
+    cursor: "pointer",
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: {
+      default: colors.faint,
+      [conditions.hover]: { default: null, ":hover": colors.muted },
+    },
+    backgroundColor: "transparent",
+    paddingInline: spacing.space2_5,
+    fontFamily: "inherit",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    color: {
+      default: colors.muted,
+      [conditions.hover]: { default: null, ":hover": colors.fg },
+      ":focus-visible": colors.fg,
+    },
   },
   selected: {
     borderColor: {
@@ -53,6 +75,7 @@ const styles = stylex.create({
   },
   tag: {
     display: "inline-flex",
+    minWidth: { default: null, [conditions.coarsePointer]: dimensions.sizeTouch },
     minHeight: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
     cursor: "pointer",
     alignItems: "center",
@@ -60,7 +83,7 @@ const styles = stylex.create({
     borderWidth: borders.borderRule,
     borderStyle: "solid",
     borderColor: {
-      default: colors.lineStrong,
+      default: colors.faint,
       [conditions.hover]: { default: null, ":hover": colors.faint },
     },
     backgroundColor: "transparent",
@@ -84,15 +107,23 @@ const styles = stylex.create({
   },
   label: {
     display: "flex",
-    height: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeControl },
+    height: {
+      default: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
+      [conditions.wide]: dimensions.sizeControl,
+    },
+    minHeight: {
+      default: null,
+      [conditions.coarsePointer]: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
+    },
     minWidth: 0,
     flex: "1",
     alignItems: "center",
     gap: spacing.space2,
     borderWidth: borders.borderRule,
     borderStyle: "solid",
-    borderColor: colors.lineStrong,
-    paddingInline: spacing.space2_5,
+    borderColor: colors.faint,
+    paddingLeft: spacing.space2_5,
+    paddingRight: spacing.space1,
     outlineStyle: { default: null, ":has(:focus-visible)": "solid" },
     outlineWidth: { default: null, ":has(:focus-visible)": borders.borderEmphasis },
     outlineColor: { default: null, ":has(:focus-visible)": colors.accent },
@@ -125,6 +156,14 @@ const styles = stylex.create({
     lineHeight: { default: typography.leadingBase, [conditions.wide]: typography.leadingSm },
     color: { default: colors.fg, "::placeholder": colors.faint },
     outlineStyle: { default: null, ":focus-visible": "none" },
+    WebkitAppearance: { default: null, "::-webkit-search-cancel-button": "none" },
+  },
+  clearQuery: {
+    width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeSmall },
+    minWidth: { default: null, [conditions.coarsePointer]: dimensions.sizeTouch },
+    height: "100%",
+    flexShrink: 0,
+    borderWidth: 0,
   },
   clip: {
     minHeight: 0,
@@ -141,10 +180,15 @@ const styles = stylex.create({
   summary: {
     marginTop: spacing.space3,
     display: "flex",
+    flexWrap: "wrap",
     minHeight: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
     alignItems: "center",
     justifyContent: "space-between",
     gap: spacing.space3,
+  },
+  activeTag: {
+    maxWidth: "100%",
+    overflowWrap: "anywhere",
   },
   clear: {
     marginLeft: "auto",
@@ -170,6 +214,9 @@ export function ArticleSearchFilter(props: {
   const [draft, setDraft] = createSignal(props.search.q ?? "");
   const [expanded, setExpanded] = createSignal(false);
   const filtersId = createUniqueId();
+  const inputId = createUniqueId();
+  let input: HTMLInputElement | undefined;
+  let toggle: HTMLButtonElement | undefined;
   let submittedQuery = props.search.q ?? "";
   const debouncedSearch = createDebouncer(() => change(props.search.tag, true), { wait: 250 });
 
@@ -188,6 +235,12 @@ export function ArticleSearchFilter(props: {
     props.onChange({ q: submittedQuery || undefined, tag }, replace);
   }
 
+  function clearQuery() {
+    setDraft("");
+    change(props.search.tag, true);
+    input?.focus();
+  }
+
   return (
     <div {...stylex.attrs(styles.root)}>
       <form
@@ -198,11 +251,16 @@ export function ArticleSearchFilter(props: {
           change(props.search.tag, true);
         }}
       >
-        <label {...stylex.attrs(styles.label)}>
+        <div {...stylex.attrs(styles.label)}>
           <IconSearch size={16} {...stylex.attrs(styles.icon)} aria-hidden="true" />
-          <span {...stylex.attrs(styles.srOnly)}>{m.writing_search()}</span>
+          <label for={inputId} {...stylex.attrs(styles.srOnly)}>
+            {m.writing_search()}
+          </label>
           <input
+            ref={(element) => (input = element)}
+            id={inputId}
             type="search"
+            enterkeyhint="search"
             maxLength={200}
             value={draft()}
             placeholder={m.writing_search_placeholder()}
@@ -213,21 +271,33 @@ export function ArticleSearchFilter(props: {
             }}
             onCompositionStart={() => debouncedSearch.cancel()}
             onCompositionEnd={() => debouncedSearch.maybeExecute()}
+            onKeyDown={(event) => {
+              if (event.key !== "Escape" || event.isComposing || !draft()) return;
+              event.preventDefault();
+              clearQuery();
+            }}
           />
-        </label>
-        <Tooltip label={m.writing_filters()}>
-          {(triggerProps) => (
+          <Show when={draft()}>
             <IconButton
-              {...triggerProps({ onClick: () => setExpanded((value) => !value) })}
-              aria-label={m.writing_filters()}
-              aria-expanded={expanded()}
-              aria-controls={filtersId}
-              styles={[styles.toggle, (expanded() || !!props.search.tag) && styles.selected]}
+              aria-label={m.writing_clear_search()}
+              styles={styles.clearQuery}
+              onClick={clearQuery}
             >
-              <IconAdjustmentsHorizontal size={18} aria-hidden="true" />
+              <IconX size={16} aria-hidden="true" />
             </IconButton>
-          )}
-        </Tooltip>
+          </Show>
+        </div>
+        <button
+          ref={(element) => (toggle = element)}
+          type="button"
+          onClick={() => setExpanded((value) => !value)}
+          aria-expanded={expanded()}
+          aria-controls={filtersId}
+          {...stylex.attrs(styles.toggle, (expanded() || !!props.search.tag) && styles.selected)}
+        >
+          <IconAdjustmentsHorizontal size={16} aria-hidden="true" />
+          {m.writing_filters()}
+        </button>
       </form>
       <div
         id={filtersId}
@@ -248,7 +318,7 @@ export function ArticleSearchFilter(props: {
                     type="button"
                     aria-pressed={selected()}
                     {...stylex.attrs(styles.tag, selected() && styles.selected)}
-                    onClick={() => change(tag || undefined, false)}
+                    onClick={() => change(selected() ? undefined : tag || undefined, false)}
                   >
                     <Show when={selected()}>
                       <IconCheck size={12} aria-hidden="true" />
@@ -263,6 +333,22 @@ export function ArticleSearchFilter(props: {
       </div>
       <div {...stylex.attrs(styles.summary)}>
         {props.children}
+        <Show when={props.search.tag}>
+          {(tag) => (
+            <button
+              type="button"
+              aria-label={m.writing_remove_tag({ tag: tag() })}
+              {...stylex.attrs(styles.tag, styles.selected, styles.activeTag)}
+              onClick={() => {
+                change(undefined, false);
+                toggle?.focus();
+              }}
+            >
+              {tag()}
+              <IconX size={12} {...stylex.attrs(styles.icon)} aria-hidden="true" />
+            </button>
+          )}
+        </Show>
         <Show when={draft() || props.search.tag}>
           <button
             type="button"
@@ -270,6 +356,7 @@ export function ArticleSearchFilter(props: {
             onClick={() => {
               setDraft("");
               change(undefined, false);
+              input?.focus();
             }}
           >
             {m.writing_clear_filters()}

@@ -91,6 +91,59 @@ describe("article search filters", () => {
     expect(change).toHaveBeenLastCalledWith({ q: undefined, tag: undefined }, false);
   });
 
+  it("clears only the query, cancels pending typing, and returns focus to search", () => {
+    vi.useFakeTimers();
+    const { input, type, button, change } = mount({ q: "solid", tag: "web", offset: 20 });
+
+    type("pending");
+    button("Clear search").click();
+    expect(input.value).toBe("");
+    expect(document.activeElement).toBe(input);
+    expect(change).toHaveBeenLastCalledWith({ q: undefined, tag: "web" }, true);
+    vi.advanceTimersByTime(250);
+    expect(change).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears the query with Escape but leaves composed input alone", () => {
+    const { input, change } = mount({ q: "solid", tag: "web" });
+
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", isComposing: true, bubbles: true }),
+    );
+    expect(change).not.toHaveBeenCalled();
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    expect(input.value).toBe("");
+    expect(change).toHaveBeenLastCalledWith({ q: undefined, tag: "web" }, true);
+  });
+
+  it("removes the visible active tag while the filter panel is collapsed", () => {
+    const { container, button, change } = mount({ q: "solid", tag: "web", offset: 20 });
+
+    expect(container.querySelector<HTMLElement>("[role='group']")!.inert).toBe(true);
+    expect(button("Remove tag: web").closest("[inert]")).toBeNull();
+    button("Remove tag: web").click();
+    expect(change).toHaveBeenLastCalledWith({ q: "solid", tag: undefined }, false);
+    expect(document.activeElement).toBe(button("Filters"));
+    expect(container.querySelector('[aria-label="Remove tag: web"]')).toBeNull();
+  });
+
+  it("clears every filter and returns focus to search", () => {
+    const { input, button, change } = mount({ q: "solid", tag: "web", offset: 20 });
+
+    button("Clear filters").click();
+    expect(input.value).toBe("");
+    expect(change).toHaveBeenLastCalledWith({ q: undefined, tag: undefined }, false);
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("toggles the selected tag off without clearing the query", () => {
+    const { button, change } = mount({ q: "solid", tag: "web" });
+
+    button("Filters").click();
+    button("web").click();
+    expect(change).toHaveBeenLastCalledWith({ q: "solid", tag: undefined }, false);
+  });
+
   it("cancels a pending search when navigation restores another query or the control unmounts", () => {
     vi.useFakeTimers();
     const { input, type, change, setSearch } = mount({ q: "solid" });
