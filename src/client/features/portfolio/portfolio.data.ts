@@ -151,6 +151,12 @@ export type Project = {
 function portfolio_projects(): Project[] {
   return [
     {
+      name: "calendar-tsx",
+      description: m.project_calendar_tsx_description(),
+      href: "https://github.com/Frantss/calendar-tsx",
+      kind: "experiments",
+    },
+    {
       name: "safeish",
       description: m.project_safeish_description(),
       href: "https://github.com/Frantss/safeish",

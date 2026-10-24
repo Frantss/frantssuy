@@ -99,6 +99,7 @@
   "job_datum_mvp": "Como parte del equipo de Qubika, ayudé a entregar un MVP mientras cambiaban los requisitos del producto, manteniendo la coherencia del código y facilitando su mantenimiento.",
   "job_hulu_services": "Como parte del equipo de Qubika, desarrollé servicios de frontend y backend, diseñé nuevos servicios web y reduje la deuda técnica.",
   "job_hulu_practices": "Ayudé al equipo a adoptar mejores prácticas de desarrollo.",
+  "project_calendar_tsx_description": "Biblioteca experimental de calendarios sin interfaz predefinida, con integración para React y Solid.",
   "project_safeish_description": "Manejo de errores en TypeScript con resultados tipados de éxito y error.",
   "project_oxform_description": "Biblioteca de formularios con un núcleo independiente del framework e integración con React.",
   "project_frantssb_description": "Este sitio web, hecho con Solid y TanStack Start.",
