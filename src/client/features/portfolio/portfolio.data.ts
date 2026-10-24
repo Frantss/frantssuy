@@ -260,33 +260,38 @@ export function portfolio_education() {
 export function portfolio_agent_skill_groups() {
   return [
     {
-      id: "communication",
-      label: m.skill_group_communication(),
-      skills: [{ name: "frantss-communicate", description: m.skill_communicate_description() }],
+      id: "core",
+      label: m.skill_group_core(),
+      description: m.skill_group_core_description(),
+      skills: [{ name: "core-communicate", description: m.skill_communicate_description() }],
     },
     {
       id: "planning",
       label: m.skill_group_planning(),
-      skills: [{ name: "frantss-decompose", description: m.skill_decompose_description() }],
+      description: m.skill_group_planning_description(),
+      skills: [
+        { name: "bdd-frame-problem", description: m.skill_frame_description() },
+        { name: "bdd-design-solution", description: m.skill_design_description() },
+        { name: "bdd-discover-behavior", description: m.skill_discover_description() },
+        { name: "bdd-formulate-behavior", description: m.skill_formulate_description() },
+        { name: "bdd-slice-work", description: m.skill_slice_description() },
+        { name: "bdd-implement-ticket", description: m.skill_implement_description() },
+      ],
+    },
+    {
+      id: "git",
+      label: m.skill_group_git(),
+      description: m.skill_group_git_description(),
+      skills: [{ name: "atomic-commits", description: m.skill_atomic_commits_description() }],
     },
     {
       id: "tracking",
       label: m.skill_group_tracking(),
+      description: m.skill_group_tracking_description(),
       skills: [
-        { name: "frantss-tracking-tasks", description: m.skill_tasks_description() },
-        { name: "frantss-tracking-collect", description: m.skill_collect_description() },
-        { name: "frantss-tracking-report", description: m.skill_report_description() },
-      ],
-    },
-    {
-      id: "tooling",
-      label: m.skill_group_tooling(),
-      description: m.skill_group_tooling_description(),
-      skills: [
-        { name: "frantss-configure", description: m.skill_configure_description() },
-        { name: "frantss-update", description: m.skill_update_description() },
-        { name: "frantss-persistance", description: m.skill_persist_description() },
-        { name: "frantss-persistance-obsidian", description: m.skill_obsidian_description() },
+        { name: "tracking-tasks", description: m.skill_tasks_description() },
+        { name: "tracking-collect", description: m.skill_collect_description() },
+        { name: "tracking-report", description: m.skill_report_description() },
       ],
     },
   ];

@@ -93,7 +93,7 @@ export function SkillsPage() {
                           {...links_openInNewTab}
                           {...stylex.attrs(styles.link)}
                         >
-                          {skill.name.replace(/^frantss-/, "")}
+                          {skill.name.replace(/^(?:core|bdd)-/, "")}
                         </a>
                       </h3>
                       <p {...stylex.attrs(styles.description)}>{skill.description}</p>
