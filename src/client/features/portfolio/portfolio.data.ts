@@ -275,7 +275,10 @@ export function portfolio_agent_skill_groups() {
       id: "core",
       label: m.skill_group_core(),
       description: m.skill_group_core_description(),
-      skills: [{ name: "core-communicate", description: m.skill_communicate_description() }],
+      skills: [
+        { name: "core-communicate", description: m.skill_communicate_description() },
+        { name: "refactoring", description: m.skill_refactoring_description() },
+      ],
     },
     {
       id: "planning",
