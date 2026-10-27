@@ -15,9 +15,10 @@ import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { m } from "@/paraglide/messages";
 import { CopyCommand } from "./copy-command";
+import { InstallerToggle } from "./installer-toggle";
 import {
   portfolio_agent_instructions,
-  portfolio_agent_skill_groups,
+  portfolio_agent_skill_plugins,
   portfolio_agent_skills,
 } from "./portfolio.data";
 
@@ -119,18 +120,27 @@ const styles = stylex.create({
       [stylex.when.ancestor(":focus-visible")]: colors.link,
     },
   },
-  group: {
+  plugin: {
     display: "grid",
     minWidth: 0,
     gap: spacing.space3,
     marginTop: spacing.space2,
+    borderTopWidth: borders.borderRule,
+    borderTopStyle: "solid",
+    borderTopColor: colors.line,
+    paddingTop: spacing.space4,
   },
-  groupHeading: {
+  pluginHeading: {
     margin: 0,
-    fontSize: typography.fontLabel,
-    fontWeight: typography.weightNormal,
-    color: colors.muted,
-    textTransform: "uppercase",
+    fontSize: "inherit",
+  },
+  more: {
+    display: "inline-flex",
+    width: "fit-content",
+    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
+    alignItems: "center",
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
   },
   list: {
     margin: 0,
@@ -226,6 +236,9 @@ const styles = stylex.create({
 export function AgentsPage() {
   const instructions = portfolio_agent_instructions();
   const skills = portfolio_agent_skills();
+  const [installerId, setInstallerId] = createSignal(skills.installers[0].id);
+  const installer = () =>
+    skills.installers.find((candidate) => candidate.id === installerId()) ?? skills.installers[0];
 
   return (
     <Page styles={styles.root}>
@@ -272,31 +285,58 @@ export function AgentsPage() {
           {m.agents_skills()}
         </SectionHeading>
         <Repo name={skills.name} href={skills.href} value={m.agents_skills_status()} />
-        <CopyCommand command={skills.command} />
-        <For each={portfolio_agent_skill_groups()}>
-          {(group) => (
-            <div {...stylex.attrs(styles.group)}>
-              <h3 id={group.id} {...stylex.attrs(styles.groupHeading)}>
-                {group.label}
-              </h3>
-              <p {...stylex.attrs(styles.note)}>{group.description}</p>
+        <InstallerToggle
+          installers={skills.installers}
+          value={installer().id}
+          onChange={setInstallerId}
+        />
+        <CopyCommand command={installer().marketplace} />
+        <For each={portfolio_agent_skill_plugins()}>
+          {(plugin) => (
+            <section aria-labelledby={plugin.name} {...stylex.attrs(styles.plugin)}>
+              <div {...stylex.attrs(styles.repo)}>
+                <h3 id={plugin.name} {...stylex.attrs(styles.pluginHeading)}>
+                  <a
+                    href={pluginHref(plugin.name)}
+                    {...links_openInNewTab}
+                    {...stylex.attrs(styles.repoLink)}
+                  >
+                    {plugin.name}
+                  </a>
+                </h3>
+                <IndexList.Leader />
+                <span {...stylex.attrs(styles.repoValue)}>
+                  {m.agents_plugin_skill_count({ count: plugin.total })}
+                </span>
+              </div>
+              <p {...stylex.attrs(styles.note)}>{plugin.description}</p>
+              <CopyCommand command={installer().plugin(plugin.name)} />
               <Show
-                when={group.kind === "steps"}
+                when={plugin.kind === "steps"}
                 fallback={
                   <ul {...stylex.attrs(styles.list)}>
-                    <For each={group.skills}>
+                    <For each={plugin.skills}>
                       {(skill) => (
                         <li>
-                          <Skill plugin={group.plugin} {...skill} />
+                          <Skill plugin={plugin.name} {...skill} />
                         </li>
                       )}
                     </For>
                   </ul>
                 }
               >
-                <SkillSteps plugin={group.plugin} skills={group.skills} />
+                <SkillSteps plugin={plugin.name} skills={plugin.skills} />
               </Show>
-            </div>
+              <Show when={plugin.total > plugin.skills.length}>
+                <a
+                  href={pluginHref(plugin.name)}
+                  {...links_openInNewTab}
+                  {...stylex.attrs(styles.more)}
+                >
+                  {m.agents_plugin_more({ count: plugin.total - plugin.skills.length })}
+                </a>
+              </Show>
+            </section>
           )}
         </For>
       </section>
@@ -399,6 +439,10 @@ function Repo(props: { name: string; href: string; value: string }) {
       <span {...stylex.attrs(styles.repoValue)}>{props.value}</span>
     </div>
   );
+}
+
+function pluginHref(plugin: string) {
+  return `https://github.com/Frantss/frantss-skills/tree/main/plugins/${plugin}`;
 }
 
 function Skill(props: SkillEntry & { plugin: string }) {

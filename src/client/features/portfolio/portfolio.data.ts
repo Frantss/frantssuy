@@ -294,18 +294,30 @@ export function portfolio_agent_skills() {
   return {
     name: "frantss-skills",
     href: "https://github.com/Frantss/frantss-skills",
-    command: "npx skills add Frantss/frantss-skills",
+    installers: [
+      {
+        id: "claude",
+        label: "Claude Code",
+        marketplace: "claude plugin marketplace add Frantss/frantss-skills",
+        plugin: (name: string) => `claude plugin install ${name}@frantss`,
+      },
+      {
+        id: "codex",
+        label: "Codex",
+        marketplace: "codex plugin marketplace add Frantss/frantss-skills",
+        plugin: (name: string) => `codex plugin add ${name}@frantss`,
+      },
+    ],
   };
 }
 
-export function portfolio_agent_skill_groups() {
+export function portfolio_agent_skill_plugins() {
   return [
     {
-      id: "planning",
-      plugin: "frantss-bdd",
+      name: "frantss-bdd",
       kind: "steps",
-      label: m.skill_group_planning(),
-      description: m.skill_group_planning_description(),
+      description: m.agents_plugin_bdd_description(),
+      total: 6,
       skills: [
         {
           name: "bdd-frame-problem",
@@ -327,7 +339,11 @@ export function portfolio_agent_skill_groups() {
           label: "formulate-behavior",
           description: m.skill_formulate_description(),
         },
-        { name: "bdd-slice-work", label: "slice-work", description: m.skill_slice_description() },
+        {
+          name: "bdd-slice-work",
+          label: "slice-work",
+          description: m.skill_slice_description(),
+        },
         {
           name: "bdd-implement-ticket",
           label: "implement-ticket",
@@ -336,11 +352,10 @@ export function portfolio_agent_skill_groups() {
       ],
     },
     {
-      id: "core",
-      plugin: "frantss-development",
+      name: "frantss-development",
       kind: "list",
-      label: m.skill_group_core(),
-      description: m.skill_group_core_description(),
+      description: m.agents_plugin_development_description(),
+      total: 3,
       skills: [
         {
           name: "core-communicate",
@@ -352,15 +367,6 @@ export function portfolio_agent_skill_groups() {
           label: "refactoring",
           description: m.skill_refactoring_description(),
         },
-      ],
-    },
-    {
-      id: "git",
-      plugin: "frantss-development",
-      kind: "list",
-      label: m.skill_group_git(),
-      description: m.skill_group_git_description(),
-      skills: [
         {
           name: "atomic-commits",
           label: "atomic-commits",
@@ -369,11 +375,10 @@ export function portfolio_agent_skill_groups() {
       ],
     },
     {
-      id: "tracking",
-      plugin: "frantss-tracking",
+      name: "frantss-tracking",
       kind: "list",
-      label: m.skill_group_tracking(),
-      description: m.skill_group_tracking_description(),
+      description: m.agents_plugin_tracking_description(),
+      total: 8,
       skills: [
         {
           name: "tracking-tasks",
