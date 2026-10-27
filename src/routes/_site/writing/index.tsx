@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { WritingPage } from "@/client/features/portfolio/writing-page";
-import { article_likesQueryOptions } from "@/client/features/portfolio/article-likes.query";
+import { article_likesStore } from "@/client/features/portfolio/article-likes.query";
 import {
   article_parseSearch,
-  article_searchQueryOptions,
+  article_searchStore,
 } from "@/client/features/portfolio/articles.query";
 import { article_list } from "@/lib/articles/article-metadata";
 import { profile } from "@/client/features/portfolio/portfolio.data";
@@ -16,14 +16,11 @@ export const Route = createFileRoute("/_site/writing/")({
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
     if (!article_list().length) return;
-    const options = article_searchQueryOptions(deps);
-
-    await context.queryClient.prefetchQuery(options);
-    const result = context.queryClient.getQueryData(options.queryKey);
+    const result = await article_searchStore(context.queries, deps).fetch();
 
     await Promise.all(
-      (result?.items ?? []).map((article) =>
-        context.queryClient.prefetchQuery(article_likesQueryOptions(article.slug)),
+      ("data" in result ? result.data.items : []).map((article) =>
+        article_likesStore(context.queries, article.slug).fetch(),
       ),
     );
   },

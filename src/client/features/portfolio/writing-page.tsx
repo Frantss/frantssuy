@@ -8,8 +8,9 @@ import {
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { Link, useNavigate, useRouterState, useSearch } from "@tanstack/solid-router";
-import { useQuery } from "@tanstack/solid-query";
-import { createEffect, For, Show, Suspense } from "solid-js";
+import { useStore } from "@nanostores/solid";
+import { createEffect, createMemo, For, Show } from "solid-js";
+import { useQueries } from "@/client/orpc/orpc.query";
 import { IconCheck, IconHourglass } from "@tabler/icons-solidjs";
 import { createDelayedPending } from "@/client/lib/create-delayed-pending";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
@@ -21,8 +22,9 @@ import { ArticleDate } from "@/client/features/portfolio/article-date";
 import { ArticleLikeButton } from "@/client/features/portfolio/article-like-button";
 import { ArticleSearchFilter } from "@/client/features/portfolio/article-search-filter";
 import {
-  article_searchQueryOptions,
+  article_searchStore,
   type ArticleSearch,
+  type ArticleSearchResult,
 } from "@/client/features/portfolio/articles.query";
 import { article_list } from "@/lib/articles/article-metadata";
 import { m } from "@/paraglide/messages";
@@ -200,14 +202,20 @@ function WritingArticles() {
   const search = useSearch({ from: "/_site/writing/" });
   const navigate = useNavigate();
   const isNavigating = useRouterState({ select: (state) => state.isLoading });
-  const query = useQuery(() => article_searchQueryOptions(search()));
+  const queries = useQueries();
+  const store = createMemo(() => article_searchStore(queries, search()));
+  const subscription = createMemo(() => useStore(store()));
+  const query = () => subscription()();
+  const data = createMemo<ArticleSearchResult | undefined>(
+    (previous) => query().data ?? (query().loading ? previous : undefined),
+  );
   const cooldown = createRateLimitCooldown();
   const tags = [...new Set(article_list().flatMap((article) => article.tags))].sort();
   const offset = () => search().offset ?? 0;
-  const pending = () => isNavigating() || query.isFetching;
+  const pending = () => isNavigating() || query().loading;
   const showLoading = createDelayedPending(pending);
 
-  createEffect(() => cooldown.handle(query.error));
+  createEffect(() => cooldown.handle(query().error));
 
   function change(next: ArticleSearch, replace = false) {
     void navigate({
@@ -223,21 +231,22 @@ function WritingArticles() {
     <>
       <ArticleSearchFilter search={search()} tags={tags} onChange={change}>
         <div {...stylex.attrs(styles.statusGroup)}>
-          <Suspense
+          <Show
+            when={data() || query().error}
             fallback={
               <p {...stylex.attrs(styles.loading)} role="status">
                 {m.writing_loading()}
               </p>
             }
           >
-            <Show when={!query.isError}>
+            <Show when={!query().error}>
               <p {...stylex.attrs(styles.status)} role="status">
-                {query.data?.total === 1
+                {data()?.total === 1
                   ? m.writing_one_article()
-                  : m.writing_articles_count({ count: query.data?.total ?? 0 })}
+                  : m.writing_articles_count({ count: data()?.total ?? 0 })}
               </p>
             </Show>
-          </Suspense>
+          </Show>
           <span role="status" {...stylex.attrs(styles.pending)}>
             <Show when={showLoading()}>
               <IconHourglass size={14} aria-hidden="true" />
@@ -246,7 +255,8 @@ function WritingArticles() {
           </span>
         </div>
       </ArticleSearchFilter>
-      <Suspense
+      <Show
+        when={data() || query().error}
         fallback={
           <p {...stylex.attrs(styles.loading)} role="status">
             {m.writing_loading()}
@@ -254,7 +264,7 @@ function WritingArticles() {
         }
       >
         <div {...stylex.attrs(styles.results)} aria-busy={pending()}>
-          <Show when={query.isError}>
+          <Show when={query().error}>
             <div {...stylex.attrs(styles.error)}>
               <Show when={!cooldown.limited()}>
                 <p role="alert" {...stylex.attrs(styles.errorMessage)}>
@@ -265,15 +275,15 @@ function WritingArticles() {
                 type="button"
                 disabled={cooldown.remaining() > 0}
                 {...stylex.attrs(styles.retry)}
-                onClick={() => void query.refetch()}
+                onClick={() => store().revalidate()}
               >
                 {m.writing_retry()}
               </button>
             </div>
           </Show>
-          <Show when={!query.isError}>
+          <Show when={!query().error}>
             <Show
-              when={query.data?.items.length}
+              when={data()?.items.length}
               fallback={
                 <div {...stylex.attrs(styles.emptyResults)}>
                   <p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>
@@ -282,7 +292,7 @@ function WritingArticles() {
               }
             >
               <IndexList.Root>
-                <For each={query.data?.items ?? []}>
+                <For each={data()?.items ?? []}>
                   {(article) => (
                     <IndexList.Row>
                       <div {...stylex.attrs(styles.entry)}>
@@ -338,11 +348,11 @@ function WritingArticles() {
                 </For>
               </IndexList.Root>
             </Show>
-            <Show when={(query.data?.total ?? 0) > 20 || offset() > 0}>
+            <Show when={(data()?.total ?? 0) > 20 || offset() > 0}>
               <nav aria-label={m.writing_pagination()} {...stylex.attrs(styles.pagination)}>
                 <button
                   type="button"
-                  disabled={offset() === 0 || pending() || query.isPlaceholderData}
+                  disabled={offset() === 0 || pending()}
                   {...stylex.attrs(styles.paginationButton)}
                   onClick={() =>
                     change({ ...search(), offset: Math.max(0, offset() - 20) || undefined })
@@ -352,11 +362,7 @@ function WritingArticles() {
                 </button>
                 <button
                   type="button"
-                  disabled={
-                    offset() + 20 >= (query.data?.total ?? 0) ||
-                    pending() ||
-                    query.isPlaceholderData
-                  }
+                  disabled={offset() + 20 >= (data()?.total ?? 0) || pending()}
                   {...stylex.attrs(styles.paginationButton)}
                   onClick={() => change({ ...search(), offset: offset() + 20 })}
                 >
@@ -366,7 +372,7 @@ function WritingArticles() {
             </Show>
           </Show>
         </div>
-      </Suspense>
+      </Show>
     </>
   );
 }

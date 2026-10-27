@@ -1,9 +1,9 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { createSignal } from "solid-js";
 import { render } from "solid-js/web";
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { ArticleLikeButton } from "@/client/features/portfolio/article-like-button";
-import { orpc } from "@/client/orpc/orpc.query";
+import { createQueries, QueryContext } from "@/client/orpc/orpc.query";
+import { article_likesStore } from "@/client/features/portfolio/article-likes.query";
 import { ToastProvider } from "@/client/ui/toast";
 import { setLocale } from "@/paraglide/runtime";
 import "@/client/styles/global.css";
@@ -28,29 +28,29 @@ function deferred<T>() {
 }
 
 function mount(size: "sm" | "md" = "md") {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
+  const queries = createQueries();
   const [slug, setSlug] = createSignal("first");
   const container = document.createElement("div");
 
   document.body.append(container);
   const stop = render(
     () => (
-      <QueryClientProvider client={queryClient}>
+      <QueryContext.Provider value={queries}>
         <ToastProvider>
           <ArticleLikeButton slug={slug()} size={size} />
         </ToastProvider>
-      </QueryClientProvider>
+      </QueryContext.Provider>
     ),
     container,
   );
 
   dispose = () => {
     stop();
-    queryClient.clear();
+    queries.cache.clear();
     container.remove();
   };
 
-  return { container, queryClient, setSlug };
+  return { container, queries, setSlug };
 }
 
 describe("article like button", () => {
@@ -151,7 +151,7 @@ describe("article like button", () => {
     );
 
     vi.stubGlobal("fetch", fetch);
-    const { container, queryClient } = mount();
+    const { container, queries } = mount();
 
     expect(container.querySelector("button")?.disabled).toBe(true);
     expect(container.querySelector("button")?.getAttribute("aria-label")).toBe("Loading likes");
@@ -170,8 +170,13 @@ describe("article like button", () => {
 
     second.resolve(Response.json({ count: 2 }));
     await vi.waitFor(() => expect(button.textContent).toBe("2"));
+    const previousHeart = button.querySelector("span");
+
     first.resolve(Response.json({ count: 1 }));
-    await vi.waitFor(() => expect(queryClient.isMutating()).toBe(0));
+    await vi.waitFor(() =>
+      expect(queries.cache.get("article-likes:first")?.data).toEqual({ count: 2 }),
+    );
+    await vi.waitFor(() => expect(button.querySelector("span")).not.toBe(previousHeart));
     expect(button.textContent).toBe("2");
     expect(button.getAttribute("aria-label")).toBe("Like this article. Current likes: 2.");
     expect(container.querySelector("[role='status']")?.textContent).toBe("2 likes");
@@ -187,7 +192,7 @@ describe("article like button", () => {
       .mockResolvedValueOnce(Response.json({ count: 5 }));
 
     vi.stubGlobal("fetch", fetch);
-    const { container, queryClient } = mount();
+    const { container } = mount();
 
     await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("4"));
     const button = container.querySelector("button")!;
@@ -200,7 +205,6 @@ describe("article like button", () => {
     expect(button.getAttribute("aria-describedby")).toBe(
       container.querySelector("[role='alert']")?.id,
     );
-    expect(queryClient.isMutating()).toBe(0);
     expect(fetch).toHaveBeenCalledTimes(2);
 
     button.click();
@@ -243,22 +247,22 @@ describe("article like button", () => {
 
       return Promise.resolve(Response.json({ count: url.includes("/first/") ? 3 : 8 }));
     });
-    const { container, queryClient, setSlug } = mount();
+    const { container, queries, setSlug } = mount();
 
     await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("3"));
     container.querySelector("button")!.click();
-    await vi.waitFor(() => expect(queryClient.isMutating()).toBe(1));
+    await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("3"));
     setSlug("second");
     await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("8"));
     pending.resolve(Response.json({ count: 4 }));
-    await vi.waitFor(() => expect(queryClient.isMutating()).toBe(0));
+    await vi.waitFor(() => expect(localStorage.getItem("article:liked:first")).toBe("true"));
     expect(container.querySelector("button")?.textContent).toBe("8");
     expect(container.querySelector(".tabler-icon-heart-filled")).toBeNull();
     expect(localStorage.getItem("article:liked:first")).toBe("true");
     expect(localStorage.getItem("article:liked:second")).toBeNull();
-    expect(
-      queryClient.getQueryData(orpc.articles.likes.get.queryKey({ input: { slug: "first" } })),
-    ).toEqual({ count: 4 });
+    await expect(article_likesStore(queries, "first").fetch()).resolves.toEqual({
+      data: { count: 4 },
+    });
   });
 
   it("restores a saved like for its article without adding another like", async () => {

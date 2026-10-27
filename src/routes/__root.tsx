@@ -5,8 +5,7 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/solid-router";
-import type { QueryClient } from "@tanstack/solid-query";
-import type { orpc } from "@/client/orpc/orpc.query";
+import type { Queries } from "@/client/orpc/orpc.query";
 
 import { HydrationScript } from "solid-js/web";
 import { onMount, Suspense, type ParentProps } from "solid-js";
@@ -27,7 +26,7 @@ import * as stylex from "@stylexjs/stylex";
 import { documentTheme } from "@/client/styles/document-theme";
 import "virtual:highlight.css";
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient; orpc: typeof orpc }>()({
+export const Route = createRootRouteWithContext<{ queries: Queries }>()({
   head: ({ match }) => ({
     meta: [
       { charSet: "utf-8" },

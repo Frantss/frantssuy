@@ -1,18 +1,19 @@
-import { QueryClient } from "@tanstack/solid-query";
-import { setupRouterSsrQueryIntegration } from "@tanstack/solid-router-ssr-query";
 import { createRouter as createTanStackRouter } from "@tanstack/solid-router";
-import { orpc } from "@/client/orpc/orpc.query";
+import { createQueries, QueryContext } from "@/client/orpc/orpc.query";
 import { aria_prefersReduced } from "@/client/lib/motion";
 import { Frame } from "@/client/ui/frame";
 import { routeTree } from "@/routeTree.gen";
 
 export function getRouter() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { staleTime: 60_000 } },
-  });
+  const queries = createQueries();
   const router = createTanStackRouter({
     routeTree,
-    context: { queryClient, orpc },
+    context: { queries },
+    dehydrate: () => ({ queries: queries.dehydrate() }),
+    hydrate: (dehydrated) => queries.hydrate(dehydrated.queries),
+    Wrap: (props) => (
+      <QueryContext.Provider value={queries}>{props.children}</QueryContext.Provider>
+    ),
 
     scrollRestoration: true,
     scrollToTopSelectors: [Frame.fillSelector],
@@ -22,8 +23,6 @@ export function getRouter() {
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
   });
-
-  setupRouterSsrQueryIntegration({ router, queryClient });
 
   return router;
 }

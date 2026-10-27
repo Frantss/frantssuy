@@ -1,6 +1,6 @@
-import { QueryClient } from "@tanstack/solid-query";
 import { afterAll, afterEach, describe, expect, it, vi } from "vite-plus/test";
-import { orpc } from "@/client/orpc/orpc.query";
+import { createQueries } from "@/client/orpc/orpc.query";
+import { client } from "@/client/orpc/orpc.transport";
 import { db } from "@/server/db/db";
 import { createContext } from "@/server/orpc/orpc.context";
 
@@ -18,21 +18,23 @@ vi.mock("@/server/orpc/orpc.context", async (importOriginal) => {
 afterEach(() => vi.unstubAllGlobals());
 afterAll(() => db.$client.end());
 
-describe("oRPC query options during SSR", () => {
+describe("oRPC Nano Query during SSR", () => {
   it("calls handlers without fetch and creates context for each incoming request", async () => {
     const fetch = vi.fn(() => {
       throw new Error("SSR must not fetch its own API");
     });
 
     vi.stubGlobal("fetch", fetch);
-    const queryClient = new QueryClient();
+    const queries = createQueries();
 
     try {
       current.request = new Request("https://first.example/writing", {
         headers: { "x-request-id": "first" },
       });
-      await expect(queryClient.fetchQuery(orpc.health.queryOptions())).resolves.toEqual({
-        status: "ok",
+      await expect(
+        queries.createFetcherStore("health", { fetcher: () => client.health() }).fetch(),
+      ).resolves.toEqual({
+        data: { status: "ok" },
       });
       expect(createContext).toHaveBeenNthCalledWith(1, {
         headers: current.request.headers,
@@ -41,8 +43,12 @@ describe("oRPC query options during SSR", () => {
       current.request = new Request("https://second.example/projects", {
         headers: { "x-request-id": "second" },
       });
-      await expect(queryClient.fetchQuery(orpc.health.queryOptions())).resolves.toEqual({
-        status: "ok",
+      const other = createQueries();
+
+      await expect(
+        other.createFetcherStore("health", { fetcher: () => client.health() }).fetch(),
+      ).resolves.toEqual({
+        data: { status: "ok" },
       });
       expect(createContext).toHaveBeenNthCalledWith(2, {
         headers: current.request.headers,
@@ -50,7 +56,7 @@ describe("oRPC query options during SSR", () => {
       });
       expect(fetch).not.toHaveBeenCalled();
     } finally {
-      queryClient.clear();
+      queries.cache.clear();
     }
   });
 });

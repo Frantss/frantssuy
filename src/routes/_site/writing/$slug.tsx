@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/solid-router";
 import { ArticlePage } from "@/client/features/portfolio/article-page";
-import { article_likesQueryOptions } from "@/client/features/portfolio/article-likes.query";
+import { article_likesStore } from "@/client/features/portfolio/article-likes.query";
 import { profile } from "@/client/features/portfolio/portfolio.data";
 import { article_list } from "@/lib/articles/article-metadata";
 import { seo } from "@/shared/seo/seo";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_site/writing/$slug")({
 
     if (!article) throw notFound();
 
-    await context.queryClient.prefetchQuery(article_likesQueryOptions(article.slug));
+    await article_likesStore(context.queries, article.slug).fetch();
 
     return article;
   },

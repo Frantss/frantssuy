@@ -1,23 +1,24 @@
 import { colors, spacing, typography, dimensions, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { IconHeart, IconHeartFilled, IconRefresh } from "@tabler/icons-solidjs";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/solid-query";
+import { useStore } from "@nanostores/solid";
 import {
   createSignal,
   createUniqueId,
-  ErrorBoundary,
   onMount,
   Show,
   splitProps,
-  Suspense,
   type ComponentProps,
 } from "solid-js";
-import { orpc } from "@/client/orpc/orpc.query";
+import { useQueries } from "@/client/orpc/orpc.query";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
 import { IconButton } from "@/client/ui/icon-button";
 import { Tooltip } from "@/client/ui/tooltip";
 import { cn } from "@/client/lib/cn";
-import { article_likesQueryOptions } from "@/client/features/portfolio/article-likes.query";
+import {
+  article_addLikeStore,
+  article_likesStore,
+} from "@/client/features/portfolio/article-likes.query";
 import { m } from "@/paraglide/messages";
 
 const styles = stylex.create({
@@ -118,23 +119,7 @@ const styles = stylex.create({
 export function ArticleLikeButton(props: { slug: string; size?: "sm" | "md" }) {
   return (
     <Show when={props.slug} keyed>
-      {(slug) => (
-        <ErrorBoundary
-          fallback={(error, reset) => (
-            <ArticleLikesError error={error} reset={reset} size={props.size} />
-          )}
-        >
-          <Suspense
-            fallback={
-              <LikeButton size={props.size} disabled aria-label={m.article_likes_loading()}>
-                …
-              </LikeButton>
-            }
-          >
-            <ArticleLikeCounter slug={slug} size={props.size} />
-          </Suspense>
-        </ErrorBoundary>
-      )}
+      {(slug) => <ArticleLikeCounter slug={slug} size={props.size} />}
     </Show>
   );
 }
@@ -170,14 +155,15 @@ function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "s
 }
 
 function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
-  const queryClient = useQueryClient();
+  const queries = useQueries();
   const cooldown = createRateLimitCooldown();
   const [failed, setFailed] = createSignal(false);
   const [liked, setLiked] = createSignal(false);
   const [animationKey, setAnimationKey] = createSignal(1);
   const errorId = createUniqueId();
-  const query = useQuery(() => article_likesQueryOptions(props.slug));
-  const mutation = useMutation(() => orpc.articles.likes.add.mutationOptions({ retry: false }));
+  const store = article_likesStore(queries, props.slug);
+  const query = useStore(store);
+  const mutation = useStore(article_addLikeStore(queries));
 
   onMount(() => {
     try {
@@ -190,16 +176,12 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
   async function addLike() {
     if (cooldown.remaining()) return;
     const input = { slug: props.slug };
-    const queryKey = orpc.articles.likes.get.queryKey({ input });
 
     setFailed(false);
     try {
-      await queryClient.cancelQueries({ queryKey });
-      const output = await mutation.mutateAsync(input);
+      const output = await mutation().mutate(input.slug);
 
-      queryClient.setQueryData(queryKey, (previous) => ({
-        count: Math.max(previous?.count ?? 0, output.count),
-      }));
+      if (!output) throw mutation().error;
     } catch (error) {
       setFailed(!cooldown.handle(error));
 
@@ -215,27 +197,43 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
   }
 
   return (
-    <div {...stylex.attrs(styles.counter)}>
-      <LikeButton
-        size={props.size}
-        liked={liked()}
-        animationKey={animationKey()}
-        disabled={cooldown.remaining() > 0}
-        aria-label={m.article_like({ count: query.data?.count ?? 0 })}
-        aria-describedby={failed() ? errorId : undefined}
-        onClick={addLike}
+    <Show
+      when={!query().error}
+      fallback={
+        <ArticleLikesError error={query().error} reset={store.invalidate} size={props.size} />
+      }
+    >
+      <Show
+        when={query().data}
+        fallback={
+          <LikeButton size={props.size} disabled aria-label={m.article_likes_loading()}>
+            …
+          </LikeButton>
+        }
       >
-        {query.data?.count}
-      </LikeButton>
-      <span role="status" {...stylex.attrs(styles.status)}>
-        {m.article_likes_count({ count: query.data?.count ?? 0 })}
-      </span>
-      <Show when={failed()}>
-        <p id={errorId} role="alert" {...stylex.attrs(styles.saveError)}>
-          {m.article_likes_save_error()}
-        </p>
+        <div {...stylex.attrs(styles.counter)}>
+          <LikeButton
+            size={props.size}
+            liked={liked()}
+            animationKey={animationKey()}
+            disabled={cooldown.remaining() > 0}
+            aria-label={m.article_like({ count: query().data?.count ?? 0 })}
+            aria-describedby={failed() ? errorId : undefined}
+            onClick={addLike}
+          >
+            {query().data?.count}
+          </LikeButton>
+          <span role="status" {...stylex.attrs(styles.status)}>
+            {m.article_likes_count({ count: query().data?.count ?? 0 })}
+          </span>
+          <Show when={failed()}>
+            <p id={errorId} role="alert" {...stylex.attrs(styles.saveError)}>
+              {m.article_likes_save_error()}
+            </p>
+          </Show>
+        </div>
       </Show>
-    </div>
+    </Show>
   );
 }
 
