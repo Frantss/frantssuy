@@ -20,7 +20,7 @@
   "agents_group_bdd": "Planning and BDD",
   "agents_group_development": "Development",
   "agents_group_tracking": "Tracking",
-  "agents_group_bdd_description": "Plan and implement behavior-driven development workflows.",
+  "agents_group_bdd_description": "Plan and implement workflows with a behavior-driven development approach.",
   "agents_group_development_description": "Communication, refactoring guidance, and atomic Git commits.",
   "agents_group_tracking_description": "Tasks, activity reports, team digests, configuration, persistence, and skill updates.",
   "agents_group_skill_count": "{count} skills",

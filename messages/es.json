@@ -20,7 +20,7 @@
   "agents_group_bdd": "Planificación y BDD",
   "agents_group_development": "Desarrollo",
   "agents_group_tracking": "Seguimiento",
-  "agents_group_bdd_description": "Planificar e implementar flujos de trabajo de desarrollo guiado por comportamiento.",
+  "agents_group_bdd_description": "Planificar e implementar flujos de trabajo con un enfoque de desarrollo guiado por comportamiento.",
   "agents_group_development_description": "Comunicación, guía de refactorización y commits de Git atómicos.",
   "agents_group_tracking_description": "Tareas, informes de actividad, resúmenes de equipo, configuración, persistencia y actualización de skills.",
   "agents_group_skill_count": "{count} skills",
