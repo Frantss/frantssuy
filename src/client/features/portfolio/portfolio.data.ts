@@ -302,6 +302,7 @@ export function portfolio_agent_skill_groups() {
   return [
     {
       id: "planning",
+      plugin: "frantss-bdd",
       kind: "steps",
       label: m.skill_group_planning(),
       description: m.skill_group_planning_description(),
@@ -336,6 +337,7 @@ export function portfolio_agent_skill_groups() {
     },
     {
       id: "core",
+      plugin: "frantss-development",
       kind: "list",
       label: m.skill_group_core(),
       description: m.skill_group_core_description(),
@@ -354,6 +356,7 @@ export function portfolio_agent_skill_groups() {
     },
     {
       id: "git",
+      plugin: "frantss-development",
       kind: "list",
       label: m.skill_group_git(),
       description: m.skill_group_git_description(),
@@ -367,6 +370,7 @@ export function portfolio_agent_skill_groups() {
     },
     {
       id: "tracking",
+      plugin: "frantss-tracking",
       kind: "list",
       label: m.skill_group_tracking(),
       description: m.skill_group_tracking_description(),

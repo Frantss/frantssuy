@@ -287,14 +287,14 @@ export function AgentsPage() {
                     <For each={group.skills}>
                       {(skill) => (
                         <li>
-                          <Skill {...skill} />
+                          <Skill plugin={group.plugin} {...skill} />
                         </li>
                       )}
                     </For>
                   </ul>
                 }
               >
-                <SkillSteps skills={group.skills} />
+                <SkillSteps plugin={group.plugin} skills={group.skills} />
               </Show>
             </div>
           )}
@@ -309,7 +309,7 @@ type SkillEntry = { name: string; label: string; description: string };
 // The path lights steps 0..to. Segment k joins steps k and k + 1. Changes cascade one
 // segment at a time away from the previous end of the path, so only the segments that
 // change are delayed.
-function SkillSteps(props: { skills: readonly SkillEntry[] }) {
+function SkillSteps(props: { plugin: string; skills: readonly SkillEntry[] }) {
   const [hovered, setHovered] = createSignal(-1);
   const [focused, setFocused] = createSignal(-1);
   const path = createMemo<{ from: number; to: number }>(
@@ -364,7 +364,7 @@ function SkillSteps(props: { skills: readonly SkillEntry[] }) {
                 </span>
               </Show>
             </span>
-            <Skill {...skill} />
+            <Skill plugin={props.plugin} {...skill} />
           </li>
         )}
       </For>
@@ -401,11 +401,11 @@ function Repo(props: { name: string; href: string; value: string }) {
   );
 }
 
-function Skill(props: { name: string; label: string; description: string }) {
+function Skill(props: SkillEntry & { plugin: string }) {
   return (
     <a
       id={props.name}
-      href={`https://github.com/Frantss/frantss-skills/blob/main/skills/${props.name}/SKILL.md`}
+      href={`https://github.com/Frantss/frantss-skills/blob/main/plugins/${props.plugin}/skills/${props.name}/SKILL.md`}
       {...links_openInNewTab}
       {...stylex.attrs(styles.skill, stylex.defaultMarker())}
     >
