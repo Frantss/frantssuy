@@ -109,7 +109,7 @@ const styles = stylex.create({
       [stylex.when.ancestor(":focus-visible")]: colors.link,
     },
   },
-  plugin: {
+  group: {
     display: "grid",
     minWidth: 0,
     gap: spacing.space3,
@@ -268,12 +268,12 @@ export function AgentsPage() {
       <section id="skills" aria-label={m.agents_skills()} {...stylex.attrs(styles.section)}>
         <For each={portfolio_agent_skill_groups()}>
           {(group) => (
-            <section aria-labelledby={group.id} {...stylex.attrs(styles.plugin)}>
+            <section aria-labelledby={group.id} {...stylex.attrs(styles.group)}>
               <Heading
                 level="h3"
                 id={group.id}
                 name={group.label}
-                value={m.agents_plugin_skill_count({ count: group.members.length })}
+                value={m.agents_group_skill_count({ count: group.members.length })}
                 kind={m.agents_skills()}
                 icon={IconPuzzle}
               />
@@ -285,14 +285,14 @@ export function AgentsPage() {
                     <For each={group.skills}>
                       {(skill) => (
                         <li>
-                          <Skill plugin={group.plugin} {...skill} />
+                          <Skill {...skill} />
                         </li>
                       )}
                     </For>
                   </ul>
                 }
               >
-                <SkillSteps plugin={group.plugin} skills={group.skills} />
+                <SkillSteps skills={group.skills} />
               </Show>
             </section>
           )}
@@ -302,12 +302,12 @@ export function AgentsPage() {
   );
 }
 
-type SkillEntry = { name: string; label: string; description: string };
+type SkillEntry = { name: string; description: string };
 
 // The path lights steps 0..to. Segment k joins steps k and k + 1. Changes cascade one
 // segment at a time away from the previous end of the path, so only the segments that
 // change are delayed.
-function SkillSteps(props: { plugin: string; skills: readonly SkillEntry[] }) {
+function SkillSteps(props: { skills: readonly SkillEntry[] }) {
   const [hovered, setHovered] = createSignal(-1);
   const [focused, setFocused] = createSignal(-1);
   const path = createMemo<{ from: number; to: number }>(
@@ -362,7 +362,7 @@ function SkillSteps(props: { plugin: string; skills: readonly SkillEntry[] }) {
                 </span>
               </Show>
             </span>
-            <Skill plugin={props.plugin} {...skill} />
+            <Skill {...skill} />
           </li>
         )}
       </For>
@@ -423,15 +423,15 @@ function Heading(props: {
   );
 }
 
-function Skill(props: SkillEntry & { plugin: string }) {
+function Skill(props: SkillEntry) {
   return (
     <a
       id={props.name}
-      href={`https://github.com/Frantss/frantss-skills/blob/main/plugins/${props.plugin}/skills/${props.name}/SKILL.md`}
+      href={`https://github.com/Frantss/frantss-skills/blob/main/skills/${props.name}/SKILL.md`}
       {...links_openInNewTab}
       {...stylex.attrs(styles.skill, stylex.defaultMarker())}
     >
-      <span {...stylex.attrs(styles.name)}>{props.label}</span>
+      <span {...stylex.attrs(styles.name)}>{props.name}</span>
       <span {...stylex.attrs(styles.description)}>{props.description}</span>
     </a>
   );
