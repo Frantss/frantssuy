@@ -316,7 +316,7 @@ function Skill(props: { name: string; label: string; description: string }) {
       id={props.name}
       href={`https://github.com/Frantss/frantss-skills/blob/main/skills/${props.name}/SKILL.md`}
       {...links_openInNewTab}
-      {...stylex.attrs(styles.skill)}
+      {...stylex.attrs(styles.skill, stylex.defaultMarker())}
     >
       <span {...stylex.attrs(styles.name)}>{props.label}</span>
       <span {...stylex.attrs(styles.description)}>{props.description}</span>
