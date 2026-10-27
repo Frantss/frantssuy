@@ -8,7 +8,7 @@ import {
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { For, Show, type ParentProps } from "solid-js";
+import { createMemo, createSignal, For, Show, type JSX, type ParentProps } from "solid-js";
 import { IconFileText, IconPuzzle } from "@tabler/icons-solidjs";
 import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
@@ -140,10 +140,14 @@ const styles = stylex.create({
     gap: spacing.space4,
     padding: 0,
   },
+  steps: {
+    gap: 0,
+  },
   step: {
     display: "grid",
     gridTemplateColumns: `${dimensions.sizeSmall} minmax(0,1fr)`,
     columnGap: spacing.space3,
+    paddingBottom: { default: spacing.space4, ":last-child": 0 },
   },
   marker: {
     display: "flex",
@@ -162,6 +166,15 @@ const styles = stylex.create({
     fontSize: typography.fontLabel,
     color: colors.accent,
     fontVariantNumeric: "tabular-nums",
+    transitionProperty: { default: null, [conditions.motion]: "border-color, background-color" },
+    transitionDuration: motion.durationFast,
+    transitionTimingFunction: motion.easeColor,
+  },
+  numberLit: {
+    borderColor: colors.accent,
+  },
+  numberCurrent: {
+    backgroundColor: colors.accentTint,
   },
   rail: {
     flex: "1",
@@ -169,6 +182,22 @@ const styles = stylex.create({
     marginBottom: `calc(-1 * ${spacing.space4})`,
     backgroundColor: colors.line,
   },
+  railFill: {
+    display: "block",
+    height: "100%",
+    backgroundColor: colors.accentHover,
+    transform: "scaleY(0)",
+    transformOrigin: "top",
+    transitionProperty: { default: null, [conditions.motion]: "transform" },
+    transitionDuration: motion.durationStagger,
+    transitionTimingFunction: "linear",
+  },
+  railDrawn: {
+    transform: "scaleY(1)",
+  },
+  delay: (steps: number) => ({
+    transitionDelay: `calc(${Math.max(steps, 0)} * ${motion.durationStagger})`,
+  }),
   skill: {
     display: "grid",
     gap: spacing.space1,
@@ -265,21 +294,7 @@ export function AgentsPage() {
                   </ul>
                 }
               >
-                <ol {...stylex.attrs(styles.list)}>
-                  <For each={group.skills}>
-                    {(skill, index) => (
-                      <li {...stylex.attrs(styles.step)}>
-                        <span aria-hidden="true" {...stylex.attrs(styles.marker)}>
-                          <span {...stylex.attrs(styles.number)}>{index() + 1}</span>
-                          <Show when={index() < group.skills.length - 1}>
-                            <span {...stylex.attrs(styles.rail)} />
-                          </Show>
-                        </span>
-                        <Skill {...skill} />
-                      </li>
-                    )}
-                  </For>
-                </ol>
+                <SkillSteps skills={group.skills} />
               </Show>
             </div>
           )}
@@ -287,6 +302,82 @@ export function AgentsPage() {
       </section>
     </Page>
   );
+}
+
+type SkillEntry = { name: string; label: string; description: string };
+
+// The path lights steps 0..to. Segment k joins steps k and k + 1. Changes cascade one
+// segment at a time away from the previous end of the path, so only the segments that
+// change are delayed.
+function SkillSteps(props: { skills: readonly SkillEntry[] }) {
+  const [hovered, setHovered] = createSignal(-1);
+  const [focused, setFocused] = createSignal(-1);
+  const path = createMemo<{ from: number; to: number }>(
+    (previous) => ({ from: previous.to, to: hovered() >= 0 ? hovered() : focused() }),
+    { from: -1, to: -1 },
+  );
+
+  const growing = () => path().to > path().from;
+  const start = () => Math.max(path().from, 0);
+  const segmentDelay = (k: number) => (growing() ? k - start() : path().from - 1 - k);
+  const numberDelay = (k: number) => (growing() ? k - start() : path().from - k);
+
+  return (
+    <ol
+      {...stylex.attrs(styles.list, styles.steps)}
+      onPointerLeave={() => setHovered(-1)}
+      onFocusOut={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(-1);
+      }}
+    >
+      <For each={props.skills}>
+        {(skill, index) => (
+          <li
+            {...stylex.attrs(styles.step)}
+            onPointerEnter={(event) => {
+              if (event.pointerType !== "touch") setHovered(index());
+            }}
+            onFocusIn={(event) => {
+              if ((event.target as Element).matches(":focus-visible")) setFocused(index());
+            }}
+          >
+            <span aria-hidden="true" {...stylex.attrs(styles.marker)}>
+              <span
+                {...dynamicAttrs(
+                  styles.number,
+                  index() <= path().to && styles.numberLit,
+                  index() === path().to && styles.numberCurrent,
+                  styles.delay(numberDelay(index())),
+                )}
+              >
+                {index() + 1}
+              </span>
+              <Show when={index() < props.skills.length - 1}>
+                <span {...stylex.attrs(styles.rail)}>
+                  <span
+                    {...dynamicAttrs(
+                      styles.railFill,
+                      index() < path().to && styles.railDrawn,
+                      styles.delay(segmentDelay(index())),
+                    )}
+                  />
+                </span>
+              </Show>
+            </span>
+            <Skill {...skill} />
+          </li>
+        )}
+      </For>
+    </ol>
+  );
+}
+
+// stylex.attrs kebab-cases the custom properties behind dynamic styles, so the compiled
+// rule never reads them; props keeps their names.
+function dynamicAttrs(...styles: stylex.StyleXStyles[]) {
+  const { className, style } = stylex.props(...styles);
+
+  return { class: className, style: style as JSX.CSSProperties | undefined };
 }
 
 function SectionHeading(props: ParentProps<{ id: string; tag: string }>) {
