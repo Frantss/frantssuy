@@ -149,7 +149,6 @@ export type Project = {
 
 type FeaturedProject = Project & {
   description: string;
-  stack: string[];
 };
 
 export function portfolio_featured_projects(): FeaturedProject[] {
@@ -158,7 +157,6 @@ export function portfolio_featured_projects(): FeaturedProject[] {
       name: "frantssuy",
       year: "2026",
       description: m.project_frantssuy_description(),
-      stack: ["TypeScript", "Solid"],
       href: "https://github.com/Frantss/frantssuy",
       kind: "oss",
     },
@@ -166,7 +164,6 @@ export function portfolio_featured_projects(): FeaturedProject[] {
       name: "oxform",
       year: "2025",
       description: m.project_oxform_description(),
-      stack: ["TypeScript", "React"],
       href: "https://github.com/Frantss/oxform",
       kind: "oss",
     },
@@ -174,7 +171,6 @@ export function portfolio_featured_projects(): FeaturedProject[] {
       name: "frantss-skills",
       year: "2026",
       description: m.project_frantss_skills_description(),
-      stack: ["Python"],
       href: "https://github.com/Frantss/frantss-skills",
       kind: "oss",
     },
@@ -182,7 +178,6 @@ export function portfolio_featured_projects(): FeaturedProject[] {
       name: "calendar-tsx",
       year: "2026",
       description: m.project_calendar_tsx_description(),
-      stack: ["TypeScript", "React", "Solid"],
       href: "https://github.com/Frantss/calendar-tsx",
       kind: "experiments",
     },
@@ -190,7 +185,6 @@ export function portfolio_featured_projects(): FeaturedProject[] {
       name: "temporal-fns",
       year: "2026",
       description: m.project_temporal_fns_description(),
-      stack: ["TypeScript"],
       href: "https://github.com/Frantss/temporal-fns",
       kind: "experiments",
     },
@@ -198,7 +192,6 @@ export function portfolio_featured_projects(): FeaturedProject[] {
       name: "agents.md",
       year: "2026",
       description: m.project_agents_md_description(),
-      stack: ["Markdown"],
       href: "https://github.com/Frantss/agents.md",
       kind: "oss",
     },

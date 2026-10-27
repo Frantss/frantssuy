@@ -11,7 +11,6 @@ import { For, Show } from "solid-js";
 import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
-import { Tags } from "@/client/ui/tags";
 import {
   portfolio_featured_projects,
   portfolio_other_projects,
@@ -142,9 +141,6 @@ export function ProjectsPage() {
                     <span {...stylex.attrs(styles.year)}>{project.year}</span>
                   </span>
                   <span {...stylex.attrs(styles.description)}>{project.description}</span>
-                  <Tags.List>
-                    <For each={project.stack}>{(tech) => <Tags.Item>{tech}</Tags.Item>}</For>
-                  </Tags.List>
                 </a>
               </li>
             )}
