@@ -8,19 +8,16 @@ import {
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { createMemo, createSignal, For, Show, type JSX, type ParentProps } from "solid-js";
+import { createMemo, createSignal, For, Show, type Component, type JSX } from "solid-js";
 import { IconFileText, IconPuzzle } from "@tabler/icons-solidjs";
+import { Dynamic } from "solid-js/web";
+import { Tooltip } from "@/client/ui/tooltip";
 import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { m } from "@/paraglide/messages";
 import { CopyCommand } from "./copy-command";
-import { InstallerToggle } from "./installer-toggle";
-import {
-  portfolio_agent_instructions,
-  portfolio_agent_skill_plugins,
-  portfolio_agent_skills,
-} from "./portfolio.data";
+import { portfolio_agent_instructions, portfolio_agent_skill_groups } from "./portfolio.data";
 
 const styles = stylex.create({
   root: {
@@ -36,26 +33,19 @@ const styles = stylex.create({
     gridTemplateColumns: "minmax(0,1fr)",
     gap: spacing.space4,
   },
-  heading: {
-    margin: 0,
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    gap: spacing.space2,
-    fontSize: typography.fontLabel,
-    fontWeight: typography.weightNormal,
-    textTransform: "uppercase",
-  },
   icon: {
+    display: "inline-flex",
     flexShrink: 0,
-    color: colors.muted,
-  },
-  tag: {
-    borderWidth: borders.borderRule,
-    borderStyle: "solid",
-    borderColor: colors.line,
-    paddingInline: spacing.space1_5,
-    color: colors.faint,
+    alignSelf: "center",
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    padding: 0,
+    font: "inherit",
+    color: {
+      default: colors.faint,
+      [conditions.hover]: { default: null, ":hover": colors.muted },
+      ":focus-visible": colors.muted,
+    },
   },
   repo: {
     display: "flex",
@@ -94,9 +84,8 @@ const styles = stylex.create({
   },
   sectionLink: {
     display: "flex",
-    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
-    alignItems: "baseline",
-    paddingBlock: { default: spacing.space3, [conditions.wide]: 0 },
+    minHeight: { default: dimensions.sizeControl, [conditions.wide]: 0 },
+    alignItems: "center",
     color: colors.fg,
   },
   sectionTitle: {
@@ -125,23 +114,20 @@ const styles = stylex.create({
     minWidth: 0,
     gap: spacing.space3,
     marginTop: spacing.space2,
-    borderTopWidth: borders.borderRule,
-    borderTopStyle: "solid",
-    borderTopColor: colors.line,
     paddingTop: spacing.space4,
   },
-  pluginHeading: {
+  title: {
     margin: 0,
+    display: "inline-flex",
+    minWidth: 0,
+    alignItems: "center",
+    gap: spacing.space2,
     fontSize: "inherit",
   },
-  more: {
-    display: "inline-flex",
-    width: "fit-content",
-    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
-    alignItems: "center",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
+  titleText: {
+    fontWeight: typography.weightBold,
   },
+
   list: {
     margin: 0,
     display: "grid",
@@ -235,10 +221,6 @@ const styles = stylex.create({
 
 export function AgentsPage() {
   const instructions = portfolio_agent_instructions();
-  const skills = portfolio_agent_skills();
-  const [installerId, setInstallerId] = createSignal(skills.installers[0].id);
-  const installer = () =>
-    skills.installers.find((candidate) => candidate.id === installerId()) ?? skills.installers[0];
 
   return (
     <Page styles={styles.root}>
@@ -246,11 +228,15 @@ export function AgentsPage() {
       <p {...stylex.attrs(styles.paragraph)}>{m.agents_intro()}</p>
 
       <section aria-labelledby="instructions-heading" {...stylex.attrs(styles.section)}>
-        <SectionHeading id="instructions-heading" tag={m.agents_instructions_tag()}>
-          <IconFileText size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
-          {m.agents_instructions()}
-        </SectionHeading>
-        <Repo name={instructions.name} href={instructions.href} value={instructions.license} />
+        <Heading
+          level="h2"
+          id="instructions-heading"
+          name={instructions.name}
+          href={instructions.href}
+          value={instructions.license}
+          kind={m.agents_instructions()}
+          icon={IconFileText}
+        />
         <p {...stylex.attrs(styles.note)}>{instructions.description}</p>
         <nav aria-label={m.agents_instructions_contents()} {...stylex.attrs(styles.contents)}>
           <ol {...stylex.attrs(styles.contentsList)}>
@@ -279,62 +265,34 @@ export function AgentsPage() {
         <CopyCommand command={instructions.command} />
       </section>
 
-      <section aria-labelledby="skills-heading" {...stylex.attrs(styles.section)}>
-        <SectionHeading id="skills-heading" tag={m.agents_skills_tag()}>
-          <IconPuzzle size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
-          {m.agents_skills()}
-        </SectionHeading>
-        <Repo name={skills.name} href={skills.href} value={m.agents_skills_status()} />
-        <InstallerToggle
-          installers={skills.installers}
-          value={installer().id}
-          onChange={setInstallerId}
-        />
-        <CopyCommand command={installer().marketplace} />
-        <For each={portfolio_agent_skill_plugins()}>
-          {(plugin) => (
-            <section aria-labelledby={plugin.name} {...stylex.attrs(styles.plugin)}>
-              <div {...stylex.attrs(styles.repo)}>
-                <h3 id={plugin.name} {...stylex.attrs(styles.pluginHeading)}>
-                  <a
-                    href={pluginHref(plugin.name)}
-                    {...links_openInNewTab}
-                    {...stylex.attrs(styles.repoLink)}
-                  >
-                    {plugin.name}
-                  </a>
-                </h3>
-                <IndexList.Leader />
-                <span {...stylex.attrs(styles.repoValue)}>
-                  {m.agents_plugin_skill_count({ count: plugin.total })}
-                </span>
-              </div>
-              <p {...stylex.attrs(styles.note)}>{plugin.description}</p>
-              <CopyCommand command={installer().plugin(plugin.name)} />
+      <section id="skills" aria-label={m.agents_skills()} {...stylex.attrs(styles.section)}>
+        <For each={portfolio_agent_skill_groups()}>
+          {(group) => (
+            <section aria-labelledby={group.id} {...stylex.attrs(styles.plugin)}>
+              <Heading
+                level="h3"
+                id={group.id}
+                name={group.label}
+                value={m.agents_plugin_skill_count({ count: group.members.length })}
+                kind={m.agents_skills()}
+                icon={IconPuzzle}
+              />
+              <p {...stylex.attrs(styles.note)}>{group.description}</p>
               <Show
-                when={plugin.kind === "steps"}
+                when={group.kind === "steps"}
                 fallback={
                   <ul {...stylex.attrs(styles.list)}>
-                    <For each={plugin.skills}>
+                    <For each={group.skills}>
                       {(skill) => (
                         <li>
-                          <Skill plugin={plugin.name} {...skill} />
+                          <Skill plugin={group.plugin} {...skill} />
                         </li>
                       )}
                     </For>
                   </ul>
                 }
               >
-                <SkillSteps plugin={plugin.name} skills={plugin.skills} />
-              </Show>
-              <Show when={plugin.total > plugin.skills.length}>
-                <a
-                  href={pluginHref(plugin.name)}
-                  {...links_openInNewTab}
-                  {...stylex.attrs(styles.more)}
-                >
-                  {m.agents_plugin_more({ count: plugin.total - plugin.skills.length })}
-                </a>
+                <SkillSteps plugin={group.plugin} skills={group.skills} />
               </Show>
             </section>
           )}
@@ -420,29 +378,49 @@ function dynamicAttrs(...styles: stylex.StyleXStyles[]) {
   return { class: className, style: style as JSX.CSSProperties | undefined };
 }
 
-function SectionHeading(props: ParentProps<{ id: string; tag: string }>) {
-  return (
-    <h2 id={props.id} {...stylex.attrs(styles.heading)}>
-      {props.children}
-      <span {...stylex.attrs(styles.tag)}>{props.tag}</span>
-    </h2>
-  );
-}
-
-function Repo(props: { name: string; href: string; value: string }) {
+// A section title: optionally what kind of thing it is (icon with a tooltip), its name, and a
+// trailing note.
+function Heading(props: {
+  level: "h2" | "h3";
+  id: string;
+  name: string;
+  href?: string;
+  value: JSX.Element;
+  kind?: string;
+  icon?: Component<{ size?: number; "aria-hidden"?: boolean | "true" }>;
+}) {
   return (
     <div {...stylex.attrs(styles.repo)}>
-      <a href={props.href} {...links_openInNewTab} {...stylex.attrs(styles.repoLink)}>
-        {props.name}
-      </a>
+      <Dynamic component={props.level} id={props.id} {...stylex.attrs(styles.title)}>
+        <Show when={props.kind && props.icon}>
+          <Tooltip label={props.kind!}>
+            {(triggerProps) => (
+              <button
+                {...triggerProps()}
+                type="button"
+                aria-label={props.kind}
+                {...stylex.attrs(styles.icon)}
+              >
+                <Dynamic component={props.icon} size={14} aria-hidden="true" />
+              </button>
+            )}
+          </Tooltip>
+        </Show>
+        <Show
+          when={props.href}
+          fallback={<span {...stylex.attrs(styles.titleText)}>{props.name}</span>}
+        >
+          {(href) => (
+            <a href={href()} {...links_openInNewTab} {...stylex.attrs(styles.repoLink)}>
+              {props.name}
+            </a>
+          )}
+        </Show>
+      </Dynamic>
       <IndexList.Leader />
       <span {...stylex.attrs(styles.repoValue)}>{props.value}</span>
     </div>
   );
-}
-
-function pluginHref(plugin: string) {
-  return `https://github.com/Frantss/frantss-skills/tree/main/plugins/${plugin}`;
 }
 
 function Skill(props: SkillEntry & { plugin: string }) {

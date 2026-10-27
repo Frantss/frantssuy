@@ -290,34 +290,22 @@ export function portfolio_agent_instructions() {
   };
 }
 
-export function portfolio_agent_skills() {
-  return {
-    name: "frantss-skills",
-    href: "https://github.com/Frantss/frantss-skills",
-    installers: [
-      {
-        id: "claude",
-        label: "Claude Code",
-        marketplace: "claude plugin marketplace add Frantss/frantss-skills",
-        plugin: (name: string) => `claude plugin install ${name}@frantss`,
-      },
-      {
-        id: "codex",
-        label: "Codex",
-        marketplace: "codex plugin marketplace add Frantss/frantss-skills",
-        plugin: (name: string) => `codex plugin add ${name}@frantss`,
-      },
-    ],
-  };
-}
-
-export function portfolio_agent_skill_plugins() {
+export function portfolio_agent_skill_groups() {
   return [
     {
-      name: "frantss-bdd",
+      id: "bdd",
+      label: m.agents_group_bdd(),
+      plugin: "frantss-bdd",
       kind: "steps",
       description: m.agents_plugin_bdd_description(),
-      total: 6,
+      members: [
+        "bdd-frame-problem",
+        "bdd-design-solution",
+        "bdd-discover-behavior",
+        "bdd-formulate-behavior",
+        "bdd-slice-work",
+        "bdd-implement-ticket",
+      ],
       skills: [
         {
           name: "bdd-frame-problem",
@@ -352,10 +340,12 @@ export function portfolio_agent_skill_plugins() {
       ],
     },
     {
-      name: "frantss-development",
+      id: "development",
+      label: m.agents_group_development(),
+      plugin: "frantss-development",
       kind: "list",
       description: m.agents_plugin_development_description(),
-      total: 3,
+      members: ["core-communicate", "refactoring", "atomic-commits"],
       skills: [
         {
           name: "core-communicate",
@@ -375,10 +365,21 @@ export function portfolio_agent_skill_plugins() {
       ],
     },
     {
-      name: "frantss-tracking",
+      id: "tracking",
+      label: m.agents_group_tracking(),
+      plugin: "frantss-tracking",
       kind: "list",
       description: m.agents_plugin_tracking_description(),
-      total: 8,
+      members: [
+        "tracking-tasks",
+        "tracking-collect",
+        "tracking-report",
+        "tracking-team-digest",
+        "core-configure",
+        "core-update",
+        "persistence-records",
+        "persistence-obsidian",
+      ],
       skills: [
         {
           name: "tracking-tasks",
