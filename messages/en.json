@@ -1,6 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "nav_pages": "Pages",
+  "nav_outline": "On this page",
   "nav_about": "about",
   "nav_work": "work",
   "nav_education": "education",

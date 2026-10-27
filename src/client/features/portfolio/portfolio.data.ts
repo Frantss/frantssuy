@@ -401,6 +401,18 @@ export function portfolio_agent_skill_groups() {
   ] as const;
 }
 
+export function portfolio_agents_outline() {
+  return [
+    { id: "instructions-heading", label: m.agents_instructions().toLowerCase(), nested: false },
+    { id: "skills", label: m.agents_skills().toLowerCase(), nested: false },
+    ...portfolio_agent_skill_groups().map((group) => ({
+      id: group.id,
+      label: group.id,
+      nested: true,
+    })),
+  ];
+}
+
 export function portfolio_skills() {
   return [
     { label: m.cv_skills_languages(), items: ["TypeScript", "JavaScript", "C#", "Python"] },

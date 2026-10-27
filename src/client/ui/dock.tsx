@@ -1,4 +1,11 @@
-import { colors, spacing, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
+import {
+  colors,
+  spacing,
+  typography,
+  dimensions,
+  borders,
+  conditions,
+} from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createLink } from "@tanstack/solid-router";
 import {
@@ -105,6 +112,25 @@ const styles = stylex.create({
     },
     textDecoration: "none",
   },
+  outline: {
+    margin: 0,
+    marginBottom: spacing.space2,
+    display: "grid",
+    listStyleType: "none",
+    borderLeftWidth: borders.borderRule,
+    borderLeftStyle: "solid",
+    borderColor: colors.line,
+    padding: 0,
+    paddingLeft: spacing.space4,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+  },
+  outlineNested: {
+    paddingLeft: spacing.space4,
+  },
+  outlineCurrent: {
+    color: colors.link,
+  },
   footer: {
     display: "flex",
     alignItems: "center",
@@ -199,6 +225,31 @@ function DockAnchor(props: ComponentProps<"a">) {
   );
 }
 
+// Section links for the current page, nested under its link.
+function DockOutline(props: ParentProps<{ label: string }>) {
+  return (
+    <li>
+      <ul aria-label={props.label} {...stylex.attrs(styles.outline)}>
+        {props.children}
+      </ul>
+    </li>
+  );
+}
+
+function DockOutlineLink(props: ParentProps<{ href: string; nested?: boolean; current: boolean }>) {
+  return (
+    <li {...stylex.attrs(props.nested && styles.outlineNested)}>
+      <a
+        href={props.href}
+        aria-current={props.current ? "location" : undefined}
+        {...stylex.attrs(styles.anchor, props.current && styles.outlineCurrent)}
+      >
+        {props.children}
+      </a>
+    </li>
+  );
+}
+
 function DockFooter(props: ParentProps) {
   return <div {...stylex.attrs(styles.footer)}>{props.children}</div>;
 }
@@ -210,5 +261,7 @@ export const Dock = {
   Sheet: DockSheet,
   List: DockList,
   Link: createLink(DockAnchor),
+  Outline: DockOutline,
+  OutlineLink: DockOutlineLink,
   Footer: DockFooter,
 };
