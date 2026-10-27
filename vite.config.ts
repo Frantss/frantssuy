@@ -46,6 +46,7 @@ function posthogSourceMapsPlugin() {
 }
 
 export default defineConfig(({ mode }) => ({
+  server: { preTransformRequests: mode !== "test" },
   pack: {
     entry: ["scripts/articles-sync.ts"],
     outDir: ".output/server",
