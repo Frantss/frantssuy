@@ -7,7 +7,7 @@ export function createSitemap(articles: readonly Pick<Article, "slug">[]) {
     "/work",
     "/education",
     "/projects",
-    "/skills",
+    "/agents",
     "/writing",
     ...articles.map((article) => `/writing/${encodeURIComponent(article.slug)}`),
   ];

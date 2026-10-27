@@ -17,7 +17,7 @@ export function createLlmText(
     ],
     ["Education", "/education", "Education and qualifications."],
     ["Projects", "/projects", "Open-source libraries, client websites, and other projects."],
-    ["Skills", "/skills", "Personal agent skills from the frantss-skills repository."],
+    ["Agents", "/agents", "AGENTS.md instructions and personal agent skills for coding agents."],
     ["Writing", "/writing", "Articles by Francisco Bongiovanni."],
     ["CV", "/cv", "Professional experience, technical skills, education, and projects."],
   ];

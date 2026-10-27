@@ -13,10 +13,11 @@ import { Route as SiteRouteRouteImport } from './routes/_site/route'
 import { Route as CvRouteImport } from './routes/cv'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SiteIndexRouteImport } from './routes/_site/index'
+import { Route as SiteAgentsRouteImport } from './routes/_site/agents'
 import { Route as SiteEducationRouteImport } from './routes/_site/education'
 import { Route as SiteProjectsRouteImport } from './routes/_site/projects'
-import { Route as SiteSkillsRouteImport } from './routes/_site/skills'
 import { Route as SiteWorkRouteImport } from './routes/_site/work'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as SiteWritingIndexRouteImport } from './routes/_site/writing/index'
@@ -41,9 +42,19 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SkillsRoute = SkillsRouteImport.update({
+  id: '/skills',
+  path: '/skills',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SiteIndexRoute = SiteIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteAgentsRoute = SiteAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteEducationRoute = SiteEducationRouteImport.update({
@@ -54,11 +65,6 @@ const SiteEducationRoute = SiteEducationRouteImport.update({
 const SiteProjectsRoute = SiteProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
-  getParentRoute: () => SiteRouteRoute,
-} as any)
-const SiteSkillsRoute = SiteSkillsRouteImport.update({
-  id: '/skills',
-  path: '/skills',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteWorkRoute = SiteWorkRouteImport.update({
@@ -87,9 +93,10 @@ export interface FileRoutesByFullPath {
   '/cv': typeof CvRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/skills': typeof SkillsRoute
+  '/agents': typeof SiteAgentsRoute
   '/education': typeof SiteEducationRoute
   '/projects': typeof SiteProjectsRoute
-  '/skills': typeof SiteSkillsRoute
   '/work': typeof SiteWorkRoute
   '/api/$': typeof ApiSplatRoute
   '/writing/$slug': typeof SiteWritingSlugRoute
@@ -99,9 +106,10 @@ export interface FileRoutesByTo {
   '/cv': typeof CvRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/skills': typeof SkillsRoute
+  '/agents': typeof SiteAgentsRoute
   '/education': typeof SiteEducationRoute
   '/projects': typeof SiteProjectsRoute
-  '/skills': typeof SiteSkillsRoute
   '/work': typeof SiteWorkRoute
   '/api/$': typeof ApiSplatRoute
   '/': typeof SiteIndexRoute
@@ -114,9 +122,10 @@ export interface FileRoutesById {
   '/cv': typeof CvRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/skills': typeof SkillsRoute
+  '/_site/agents': typeof SiteAgentsRoute
   '/_site/education': typeof SiteEducationRoute
   '/_site/projects': typeof SiteProjectsRoute
-  '/_site/skills': typeof SiteSkillsRoute
   '/_site/work': typeof SiteWorkRoute
   '/api/$': typeof ApiSplatRoute
   '/_site/': typeof SiteIndexRoute
@@ -130,9 +139,10 @@ export interface FileRouteTypes {
     | '/cv'
     | '/llms.txt'
     | '/sitemap.xml'
+    | '/skills'
+    | '/agents'
     | '/education'
     | '/projects'
-    | '/skills'
     | '/work'
     | '/api/$'
     | '/writing/$slug'
@@ -142,9 +152,10 @@ export interface FileRouteTypes {
     | '/cv'
     | '/llms.txt'
     | '/sitemap.xml'
+    | '/skills'
+    | '/agents'
     | '/education'
     | '/projects'
-    | '/skills'
     | '/work'
     | '/api/$'
     | '/'
@@ -156,9 +167,10 @@ export interface FileRouteTypes {
     | '/cv'
     | '/llms.txt'
     | '/sitemap.xml'
+    | '/skills'
+    | '/_site/agents'
     | '/_site/education'
     | '/_site/projects'
-    | '/_site/skills'
     | '/_site/work'
     | '/api/$'
     | '/_site/'
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   CvRoute: typeof CvRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SkillsRoute: typeof SkillsRoute
   ApiSplatRoute: typeof ApiSplatRoute
 }
 
@@ -204,11 +217,25 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/skills': {
+      id: '/skills'
+      path: '/skills'
+      fullPath: '/skills'
+      preLoaderRoute: typeof SkillsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_site/': {
       id: '/_site/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof SiteIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/agents': {
+      id: '/_site/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof SiteAgentsRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/education': {
@@ -223,13 +250,6 @@ declare module '@tanstack/solid-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof SiteProjectsRouteImport
-      parentRoute: typeof SiteRouteRoute
-    }
-    '/_site/skills': {
-      id: '/_site/skills'
-      path: '/skills'
-      fullPath: '/skills'
-      preLoaderRoute: typeof SiteSkillsRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/work': {
@@ -264,9 +284,9 @@ declare module '@tanstack/solid-router' {
 }
 
 interface SiteRouteRouteChildren {
+  SiteAgentsRoute: typeof SiteAgentsRoute
   SiteEducationRoute: typeof SiteEducationRoute
   SiteProjectsRoute: typeof SiteProjectsRoute
-  SiteSkillsRoute: typeof SiteSkillsRoute
   SiteWorkRoute: typeof SiteWorkRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteWritingSlugRoute: typeof SiteWritingSlugRoute
@@ -274,9 +294,9 @@ interface SiteRouteRouteChildren {
 }
 
 const SiteRouteRouteChildren: SiteRouteRouteChildren = {
+  SiteAgentsRoute: SiteAgentsRoute,
   SiteEducationRoute: SiteEducationRoute,
   SiteProjectsRoute: SiteProjectsRoute,
-  SiteSkillsRoute: SiteSkillsRoute,
   SiteWorkRoute: SiteWorkRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteWritingSlugRoute: SiteWritingSlugRoute,
@@ -292,6 +312,7 @@ const rootRouteChildren: RootRouteChildren = {
   CvRoute: CvRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SkillsRoute: SkillsRoute,
   ApiSplatRoute: ApiSplatRoute,
 }
 export const routeTree = rootRouteImport

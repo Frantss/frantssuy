@@ -21,7 +21,7 @@ const pages = [
   { to: "/work", label: m.nav_work },
   { to: "/education", label: m.nav_education },
   { to: "/projects", label: m.nav_projects },
-  { to: "/skills", label: m.nav_skills },
+  { to: "/agents", label: m.nav_agents },
   { to: "/writing", label: m.nav_writing },
 ] as const;
 

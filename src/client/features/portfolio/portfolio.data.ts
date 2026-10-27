@@ -269,47 +269,126 @@ export function portfolio_education() {
   ];
 }
 
+export function portfolio_agent_instructions() {
+  return {
+    name: "agents.md",
+    href: "https://github.com/Frantss/agents.md",
+    fileHref: "https://github.com/Frantss/agents.md/blob/main/AGENTS.md",
+    license: "MIT",
+    description: m.agents_instructions_description(),
+    command: "curl -O https://raw.githubusercontent.com/Frantss/agents.md/main/AGENTS.md",
+    sections: [
+      { title: "Coding standards", anchor: "coding-standards" },
+      { title: "Communicating", anchor: "communicating" },
+      { title: "Autonomy", anchor: "autonomy" },
+      { title: "Proposing solutions", anchor: "proposing-solutions" },
+      { title: "Before changing code", anchor: "before-changing-code" },
+      { title: "Before reporting completion", anchor: "before-reporting-completion" },
+      { title: "Writing documentation", anchor: "writing-documentation" },
+      { title: "Git & GitHub", anchor: "git--github" },
+    ],
+  };
+}
+
+export function portfolio_agent_skills() {
+  return {
+    name: "frantss-skills",
+    href: "https://github.com/Frantss/frantss-skills",
+    command: "npx skills add Frantss/frantss-skills",
+  };
+}
+
 export function portfolio_agent_skill_groups() {
   return [
     {
-      id: "core",
-      label: m.skill_group_core(),
-      description: m.skill_group_core_description(),
-      skills: [
-        { name: "core-communicate", description: m.skill_communicate_description() },
-        { name: "refactoring", description: m.skill_refactoring_description() },
-      ],
-    },
-    {
       id: "planning",
+      kind: "steps",
       label: m.skill_group_planning(),
       description: m.skill_group_planning_description(),
       skills: [
-        { name: "bdd-frame-problem", description: m.skill_frame_description() },
-        { name: "bdd-design-solution", description: m.skill_design_description() },
-        { name: "bdd-discover-behavior", description: m.skill_discover_description() },
-        { name: "bdd-formulate-behavior", description: m.skill_formulate_description() },
-        { name: "bdd-slice-work", description: m.skill_slice_description() },
-        { name: "bdd-implement-ticket", description: m.skill_implement_description() },
+        {
+          name: "bdd-frame-problem",
+          label: "frame-problem",
+          description: m.skill_frame_description(),
+        },
+        {
+          name: "bdd-design-solution",
+          label: "design-solution",
+          description: m.skill_design_description(),
+        },
+        {
+          name: "bdd-discover-behavior",
+          label: "discover-behavior",
+          description: m.skill_discover_description(),
+        },
+        {
+          name: "bdd-formulate-behavior",
+          label: "formulate-behavior",
+          description: m.skill_formulate_description(),
+        },
+        { name: "bdd-slice-work", label: "slice-work", description: m.skill_slice_description() },
+        {
+          name: "bdd-implement-ticket",
+          label: "implement-ticket",
+          description: m.skill_implement_description(),
+        },
+      ],
+    },
+    {
+      id: "core",
+      kind: "list",
+      label: m.skill_group_core(),
+      description: m.skill_group_core_description(),
+      skills: [
+        {
+          name: "core-communicate",
+          label: "communicate",
+          description: m.skill_communicate_description(),
+        },
+        {
+          name: "refactoring",
+          label: "refactoring",
+          description: m.skill_refactoring_description(),
+        },
       ],
     },
     {
       id: "git",
+      kind: "list",
       label: m.skill_group_git(),
       description: m.skill_group_git_description(),
-      skills: [{ name: "atomic-commits", description: m.skill_atomic_commits_description() }],
+      skills: [
+        {
+          name: "atomic-commits",
+          label: "atomic-commits",
+          description: m.skill_atomic_commits_description(),
+        },
+      ],
     },
     {
       id: "tracking",
+      kind: "list",
       label: m.skill_group_tracking(),
       description: m.skill_group_tracking_description(),
       skills: [
-        { name: "tracking-tasks", description: m.skill_tasks_description() },
-        { name: "tracking-collect", description: m.skill_collect_description() },
-        { name: "tracking-report", description: m.skill_report_description() },
+        {
+          name: "tracking-tasks",
+          label: "tracking-tasks",
+          description: m.skill_tasks_description(),
+        },
+        {
+          name: "tracking-collect",
+          label: "tracking-collect",
+          description: m.skill_collect_description(),
+        },
+        {
+          name: "tracking-report",
+          label: "tracking-report",
+          description: m.skill_report_description(),
+        },
       ],
     },
-  ];
+  ] as const;
 }
 
 export function portfolio_skills() {

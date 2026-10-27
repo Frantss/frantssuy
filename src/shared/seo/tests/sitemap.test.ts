@@ -11,7 +11,7 @@ describe("sitemap", () => {
       "https://frantss.uy/work",
       "https://frantss.uy/education",
       "https://frantss.uy/projects",
-      "https://frantss.uy/skills",
+      "https://frantss.uy/agents",
       "https://frantss.uy/writing",
       "https://frantss.uy/writing/hello-world",
       "https://frantss.uy/writing/another-article",
