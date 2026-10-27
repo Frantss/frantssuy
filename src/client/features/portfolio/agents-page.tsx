@@ -16,7 +16,6 @@ import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { m } from "@/paraglide/messages";
-import { CopyCommand } from "./copy-command";
 import { portfolio_agent_instructions, portfolio_agent_skill_groups } from "./portfolio.data";
 
 const styles = stylex.create({
@@ -262,7 +261,6 @@ export function AgentsPage() {
             </For>
           </ol>
         </nav>
-        <CopyCommand command={instructions.command} />
       </section>
 
       <section id="skills" aria-label={m.agents_skills()} {...stylex.attrs(styles.section)}>

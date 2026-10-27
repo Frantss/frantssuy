@@ -276,7 +276,6 @@ export function portfolio_agent_instructions() {
     fileHref: "https://github.com/Frantss/agents.md/blob/main/AGENTS.md",
     license: "MIT",
     description: m.agents_instructions_description(),
-    command: "curl -O https://raw.githubusercontent.com/Frantss/agents.md/main/AGENTS.md",
     sections: [
       { title: "Coding standards", anchor: "coding-standards" },
       { title: "Communicating", anchor: "communicating" },
