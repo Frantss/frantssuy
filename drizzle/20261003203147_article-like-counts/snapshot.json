@@ -1,60 +1,95 @@
 {
-  "version": "8",
+  "type": "diff",
+  "version": "9",
   "dialect": "postgres",
   "id": "1b3335a4-0f4a-4082-b975-5ded8bcfd2ce",
-  "prevIds": ["57e546c0-f577-402a-b6ab-38d954e943da"],
-  "ddl": [
+  "prevIds": [
+    "57e546c0-f577-402a-b6ab-38d954e943da"
+  ],
+  "footprints": [
     {
-      "isRlsEnabled": false,
-      "name": "article_like_counts",
-      "entityType": "tables",
-      "schema": "public"
+      "statementType": "rename_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "post_like_counts"
+      ],
+      "writes": [
+        "s|tbl|public.post_like_counts",
+        "n|tbl|public.post_like_counts",
+        "n|rel|public.post_like_counts",
+        "n|type|public.post_like_counts",
+        "s|tbl|public.article_like_counts",
+        "n|tbl|public.article_like_counts",
+        "n|rel|public.article_like_counts",
+        "n|type|public.article_like_counts"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "article_slug",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_like_counts"
+      "statementType": "rename_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "article_like_counts",
+        "post_slug"
+      ],
+      "writes": [
+        "s|col|public.article_like_counts.post_slug",
+        "n|col|public.article_like_counts.post_slug",
+        "s|col|public.article_like_counts.article_slug",
+        "n|col|public.article_like_counts.article_slug"
+      ],
+      "reads": [
+        "n|tbl|public.article_like_counts",
+        "n|sch|public"
+      ]
     },
     {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_like_counts"
-    },
-    {
-      "columns": ["article_slug"],
-      "nameExplicit": false,
-      "name": "post_like_counts_pkey",
-      "schema": "public",
-      "table": "article_like_counts",
-      "entityType": "pks"
-    },
-    {
-      "value": "\"count\" >= 0",
-      "name": "article_like_counts_count_nonnegative",
-      "entityType": "checks",
-      "schema": "public",
-      "table": "article_like_counts"
+      "statementType": "rename_constraint",
+      "statementTarget": [
+        "table",
+        "public",
+        "article_like_counts"
+      ],
+      "writes": [
+        "s|ck|public.article_like_counts.post_like_counts_count_nonnegative",
+        "n|ck|public.article_like_counts.post_like_counts_count_nonnegative",
+        "n|con|public.article_like_counts.post_like_counts_count_nonnegative",
+        "s|ck|public.article_like_counts.article_like_counts_count_nonnegative",
+        "n|ck|public.article_like_counts.article_like_counts_count_nonnegative",
+        "n|con|public.article_like_counts.article_like_counts_count_nonnegative"
+      ],
+      "reads": [
+        "n|tbl|public.article_like_counts",
+        "n|sch|public",
+        "e|col|public.article_like_counts.count"
+      ]
     }
   ],
-  "renames": [
-    "public.post_like_counts->public.article_like_counts",
-    "public.article_like_counts.post_slug->public.article_like_counts.article_slug",
-    "public.article_like_counts.post_like_counts_count_nonnegative->public.article_like_counts.article_like_counts_count_nonnegative"
+  "deltas": [
+    {
+      "op": "rename",
+      "key": "tables\u0000[\"public\",\"post_like_counts\"]",
+      "set": {
+        "name": "article_like_counts"
+      }
+    },
+    {
+      "op": "rename",
+      "key": "columns\u0000[\"public\",\"article_like_counts\",\"post_slug\"]",
+      "set": {
+        "name": "article_slug"
+      }
+    },
+    {
+      "op": "rename",
+      "key": "checks\u0000[\"public\",\"article_like_counts\",\"post_like_counts_count_nonnegative\"]",
+      "set": {
+        "name": "article_like_counts_count_nonnegative"
+      }
+    }
   ]
 }

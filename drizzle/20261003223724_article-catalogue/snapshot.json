@@ -1,357 +1,515 @@
 {
-  "version": "8",
+  "type": "diff",
+  "version": "9",
   "dialect": "postgres",
   "id": "2129c0e1-d9eb-4b85-8d21-5ef14831e7e9",
-  "prevIds": ["1b3335a4-0f4a-4082-b975-5ded8bcfd2ce"],
-  "ddl": [
+  "prevIds": [
+    "1b3335a4-0f4a-4082-b975-5ded8bcfd2ce"
+  ],
+  "footprints": [
     {
-      "isRlsEnabled": false,
-      "name": "article_catalogues",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "article_index",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "article_like_counts",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "revision",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_catalogues"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "indexed_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_catalogues"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "article_count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_catalogues"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "revision",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "slug",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "title",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "description",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "date",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "published_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 1,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "tags",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 1,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "keywords",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "language",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "body_text",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "tsvector",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "search_vector",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "article_slug",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_like_counts"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "article_like_counts"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "revision",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        },
-        {
-          "value": "published_at",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        },
-        {
-          "value": "slug",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "article_catalogues"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "article_index_date",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "tags",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "writes": [
+        "s|tbl|public.article_catalogues",
+        "n|tbl|public.article_catalogues",
+        "e|tbl|public.article_catalogues",
+        "n|rel|public.article_catalogues",
+        "n|type|public.article_catalogues",
+        "n|rel|public.article_catalogues_pkey"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "gin",
-      "concurrently": false,
-      "name": "article_index_tags",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "article_index"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "search_vector",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "article_index"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "gin",
-      "concurrently": false,
-      "name": "article_index_search",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "article_index"
+      "writes": [
+        "s|tbl|public.article_index",
+        "n|tbl|public.article_index",
+        "e|tbl|public.article_index",
+        "n|rel|public.article_index",
+        "n|type|public.article_index",
+        "n|rel|public.article_index_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": ["revision"],
-      "schemaTo": "public",
-      "tableTo": "article_catalogues",
-      "columnsTo": ["revision"],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "article_index_revision_article_catalogues_revision_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "article_index"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "article_index",
+        "article_index_date"
+      ],
+      "writes": [
+        "s|idx|public.article_index_date",
+        "n|idx|public.article_index_date",
+        "e|idx|public.article_index_date",
+        "n|rel|public.article_index_date"
+      ],
+      "reads": [
+        "n|tbl|public.article_index",
+        "n|sch|public",
+        "n|col|public.article_index.revision",
+        "n|col|public.article_index.published_at",
+        "n|col|public.article_index.slug"
+      ]
     },
     {
-      "columns": ["revision", "slug"],
-      "nameExplicit": false,
-      "name": "article_index_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "article_index"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "article_index",
+        "article_index_tags"
+      ],
+      "writes": [
+        "s|idx|public.article_index_tags",
+        "n|idx|public.article_index_tags",
+        "e|idx|public.article_index_tags",
+        "n|rel|public.article_index_tags"
+      ],
+      "reads": [
+        "n|tbl|public.article_index",
+        "n|sch|public",
+        "n|col|public.article_index.tags"
+      ]
     },
     {
-      "columns": ["revision"],
-      "nameExplicit": false,
-      "name": "article_catalogues_pkey",
-      "schema": "public",
-      "table": "article_catalogues",
-      "entityType": "pks"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "article_index",
+        "article_index_search"
+      ],
+      "writes": [
+        "s|idx|public.article_index_search",
+        "n|idx|public.article_index_search",
+        "e|idx|public.article_index_search",
+        "n|rel|public.article_index_search"
+      ],
+      "reads": [
+        "n|tbl|public.article_index",
+        "n|sch|public",
+        "n|col|public.article_index.search_vector"
+      ]
     },
     {
-      "columns": ["article_slug"],
-      "nameExplicit": false,
-      "name": "post_like_counts_pkey",
-      "schema": "public",
-      "table": "article_like_counts",
-      "entityType": "pks"
-    },
-    {
-      "value": "\"article_count\" >= 0",
-      "name": "article_catalogues_count_nonnegative",
-      "entityType": "checks",
-      "schema": "public",
-      "table": "article_catalogues"
-    },
-    {
-      "value": "\"language\" in ('en', 'es')",
-      "name": "article_index_language",
-      "entityType": "checks",
-      "schema": "public",
-      "table": "article_index"
-    },
-    {
-      "value": "\"count\" >= 0",
-      "name": "article_like_counts_count_nonnegative",
-      "entityType": "checks",
-      "schema": "public",
-      "table": "article_like_counts"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "article_index"
+      ],
+      "writes": [
+        "s|fk|public.article_index.article_index_revision_article_catalogues_revision_fkey",
+        "n|fk|public.article_index.article_index_revision_article_catalogues_revision_fkey",
+        "e|fk|public.article_index.article_index_revision_article_catalogues_revision_fkey",
+        "n|con|public.article_index.article_index_revision_article_catalogues_revision_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.article_index",
+        "n|sch|public",
+        "n|tbl|public.article_catalogues",
+        "n|sch|public",
+        "n|col|public.article_index.revision",
+        "n|col|public.article_catalogues.revision",
+        "e|uniqueness|public.article_catalogues.revision"
+      ]
     }
   ],
-  "renames": []
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "article_catalogues",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "article_index",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_catalogues",
+        "name": "revision",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_catalogues",
+        "name": "indexed_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_catalogues",
+        "name": "article_count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "revision",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "slug",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "description",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "published_at",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "tags",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 1,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "keywords",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 1,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "language",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "body_text",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "search_vector",
+        "type": "tsvector",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "article_index_date",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "revision",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "published_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "slug",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "article_index_tags",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "tags",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "gin",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "article_index_search",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "search_vector",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "gin",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "article_index_revision_article_catalogues_revision_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "revision"
+        ],
+        "schemaTo": "public",
+        "tableTo": "article_catalogues",
+        "columnsTo": [
+          "revision"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "article_index_pkey",
+        "columns": [
+          "revision",
+          "slug"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_catalogues",
+        "name": "article_catalogues_pkey",
+        "columns": [
+          "revision"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_catalogues",
+        "name": "article_catalogues_count_nonnegative",
+        "value": "\"article_count\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "article_index",
+        "name": "article_index_language",
+        "value": "\"language\" in ('en', 'es')",
+        "entityType": "checks"
+      }
+    }
+  ]
 }
