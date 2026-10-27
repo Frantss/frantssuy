@@ -143,100 +143,110 @@ type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "misc";
 export type Project = {
   name: string;
   year?: string;
-  description: string;
   href: string;
   kind: ProjectKind;
 };
 
-function portfolio_projects(): Project[] {
+type FeaturedProject = Project & {
+  description: string;
+  stack: string[];
+};
+
+export function portfolio_featured_projects(): FeaturedProject[] {
   return [
     {
-      name: "calendar-tsx",
-      description: m.project_calendar_tsx_description(),
-      href: "https://github.com/Frantss/calendar-tsx",
-      kind: "experiments",
-    },
-    {
-      name: "safeish",
-      description: m.project_safeish_description(),
-      href: "https://github.com/Frantss/safeish",
-      kind: "oss",
-    },
-    {
-      name: "altereco.com.uy",
-      description: m.project_altereco_description(),
-      href: "https://altereco.com.uy",
-      kind: "client",
-    },
-    {
-      name: "oxform",
-      description: m.project_oxform_description(),
-      href: "https://github.com/Frantss/oxform",
-      kind: "oss",
-    },
-    {
       name: "frantssuy",
-      description: m.project_frantssb_description(),
+      year: "2026",
+      description: m.project_frantssuy_description(),
+      stack: ["TypeScript", "Solid"],
       href: "https://github.com/Frantss/frantssuy",
       kind: "oss",
     },
     {
+      name: "oxform",
+      year: "2025",
+      description: m.project_oxform_description(),
+      stack: ["TypeScript", "React"],
+      href: "https://github.com/Frantss/oxform",
+      kind: "oss",
+    },
+    {
       name: "frantss-skills",
+      year: "2026",
       description: m.project_frantss_skills_description(),
+      stack: ["Python"],
       href: "https://github.com/Frantss/frantss-skills",
       kind: "oss",
     },
     {
-      name: "ruby-memcached",
-      description: m.project_ruby_memcached_description(),
-      href: "https://github.com/Frantss/ruby-memcached",
-      kind: "misc",
-    },
-    {
-      name: "react-hookful",
-      description: m.project_react_hookful_description(),
-      href: "https://github.com/Frantss/react-hookful",
-      kind: "misc",
-    },
-    {
-      name: "npms-lib",
-      description: m.project_npms_lib_description(),
-      href: "https://github.com/Frantss/npms-lib",
-      kind: "misc",
-    },
-    {
-      name: "atenea-coffee.com",
-      description: m.project_atenea_description(),
-      href: "https://atenea-coffee.com",
-      kind: "client",
-    },
-    {
-      name: "archy",
-      description: m.project_archy_description(),
-      href: "https://github.com/Frantss/archy",
+      name: "calendar-tsx",
+      year: "2026",
+      description: m.project_calendar_tsx_description(),
+      stack: ["TypeScript", "React", "Solid"],
+      href: "https://github.com/Frantss/calendar-tsx",
       kind: "experiments",
     },
     {
-      name: "StoreAttachment",
-      description: m.project_store_attachment_description(),
-      href: "https://gist.github.com/Frantss/7c71fa69fd8cf754a55acf4557e2111f",
-      kind: "snippets",
+      name: "temporal-fns",
+      year: "2026",
+      description: m.project_temporal_fns_description(),
+      stack: ["TypeScript"],
+      href: "https://github.com/Frantss/temporal-fns",
+      kind: "experiments",
+    },
+    {
+      name: "agents.md",
+      year: "2026",
+      description: m.project_agents_md_description(),
+      stack: ["Markdown"],
+      href: "https://github.com/Frantss/agents.md",
+      kind: "oss",
     },
   ];
 }
 
-export function portfolio_project_groups() {
-  const projects = portfolio_projects();
-
+export function portfolio_other_projects(): Project[] {
   return [
-    { kind: "oss", label: m.project_group_oss() },
-    { kind: "client", label: m.project_group_client() },
-    { kind: "experiments", label: m.project_group_experiments() },
-    { kind: "snippets", label: m.project_group_snippets() },
-    { kind: "misc", label: m.project_group_misc() },
-  ]
-    .map((group) => ({ ...group, projects: projects.filter((p) => p.kind === group.kind) }))
-    .filter((group) => group.projects.length > 0);
+    {
+      name: "fumadocs-theme",
+      year: "2026",
+      href: "https://github.com/Frantss/fumadocs-theme",
+      kind: "oss",
+    },
+    { name: "archy", year: "2026", href: "https://github.com/Frantss/archy", kind: "experiments" },
+    {
+      name: "StoreAttachment",
+      year: "2026",
+      href: "https://gist.github.com/Frantss/7c71fa69fd8cf754a55acf4557e2111f",
+      kind: "snippets",
+    },
+    { name: "safeish", year: "2025", href: "https://github.com/Frantss/safeish", kind: "oss" },
+    { name: "altereco.com.uy", href: "https://altereco.com.uy", kind: "client" },
+    { name: "atenea-coffee.com", href: "https://atenea-coffee.com", kind: "client" },
+    { name: "npms-lib", year: "2021", href: "https://github.com/Frantss/npms-lib", kind: "misc" },
+    {
+      name: "react-hookful",
+      year: "2020",
+      href: "https://github.com/Frantss/react-hookful",
+      kind: "misc",
+    },
+    {
+      name: "ruby-memcached",
+      year: "2019",
+      href: "https://github.com/Frantss/ruby-memcached",
+      kind: "misc",
+    },
+  ];
+}
+
+export function portfolio_project_kind_label(kind: ProjectKind) {
+  return {
+    oss: m.project_group_oss,
+    client: m.project_group_client,
+    experiments: m.project_group_experiments,
+    snippets: m.project_group_snippets,
+    misc: m.project_group_misc,
+  }[kind]();
 }
 
 export function portfolio_education() {

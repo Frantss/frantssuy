@@ -1,23 +1,23 @@
 import {
+  borders,
   colors,
   spacing,
   typography,
-  dimensions,
   motion,
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { For, Match, Switch } from "solid-js";
-import {
-  IconBrandOpenSource,
-  IconBriefcase,
-  IconCode,
-  IconDots,
-  IconFlask,
-} from "@tabler/icons-solidjs";
+import { For, Show } from "solid-js";
 import { links_openInNewTab } from "@/client/lib/links";
+import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
-import { portfolio_project_groups } from "./portfolio.data";
+import { Tags } from "@/client/ui/tags";
+import {
+  portfolio_featured_projects,
+  portfolio_other_projects,
+  portfolio_project_kind_label,
+  type Project,
+} from "./portfolio.data";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import { analytics_capture } from "@/client/analytics/analytics";
@@ -38,50 +38,40 @@ const styles = stylex.create({
     fontSize: typography.fontLabel,
     fontWeight: typography.weightNormal,
     textTransform: "uppercase",
+    color: colors.faint,
   },
-  anchor: {
-    display: "flex",
-    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
-    width: "fit-content",
-    alignItems: "center",
-    gap: spacing.space2,
-    color: {
-      default: colors.faint,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-      ":focus-visible": colors.fg,
-    },
-  },
-  icon: {
-    flexShrink: 0,
-    color: {
-      default: colors.muted,
-      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.fg },
-      [stylex.when.ancestor(":focus-visible")]: colors.fg,
-    },
-    transitionProperty:
-      "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke",
-    transitionDuration: motion.durationColor,
-    transitionTimingFunction: motion.easeColor,
-  },
-  staticIcon: {
-    flexShrink: 0,
-    color: colors.muted,
-  },
-  list: {
+  featured: {
     margin: 0,
     display: "grid",
     listStyleType: "none",
-    gridTemplateColumns: "minmax(0,1fr)",
-    gap: spacing.space4,
+    gridTemplateColumns: {
+      default: "minmax(0,1fr)",
+      [conditions.wide]: "repeat(3, minmax(0,1fr))",
+    },
+    gap: spacing.space3,
     padding: 0,
   },
-  project: {
+  card: {
     display: "grid",
-    gap: spacing.space1,
+    height: "100%",
+    boxSizing: "border-box",
+    alignContent: "start",
+    gap: spacing.space2,
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: {
+      default: colors.line,
+      [conditions.hover]: { default: null, ":hover": colors.lineStrong },
+      ":focus-visible": colors.lineStrong,
+    },
+    padding: spacing.space4,
     color: colors.fg,
     textDecoration: "none",
+    transitionProperty: "border-color",
+    transitionDuration: motion.durationColor,
+    transitionTimingFunction: motion.easeColor,
   },
-  details: {
+  cardHeader: {
     display: "flex",
     alignItems: "baseline",
     justifyContent: "space-between",
@@ -91,8 +81,7 @@ const styles = stylex.create({
     minWidth: 0,
     fontWeight: typography.weightBold,
     overflowWrap: "break-word",
-    transitionProperty:
-      "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke",
+    transitionProperty: "color",
     transitionDuration: motion.durationColor,
     transitionTimingFunction: motion.easeColor,
     color: {
@@ -113,73 +102,81 @@ const styles = stylex.create({
     lineHeight: typography.leadingXs,
     color: colors.muted,
   },
+  link: {
+    color: {
+      default: colors.fg,
+      [conditions.hover]: { default: null, ":hover": colors.link },
+      ":focus-visible": colors.link,
+    },
+  },
 });
+
+function captureProjectClick(project: Project) {
+  analytics_capture("project_clicked", {
+    locale: getLocale(),
+    project_id: project.name,
+    project_kind: project.kind,
+  });
+}
 
 export function ProjectsPage() {
   return (
     <Page styles={styles.root}>
       <PageTitle>{m.page_projects()}</PageTitle>
-      <For each={portfolio_project_groups()}>
-        {(group) => (
-          <section id={group.kind} {...stylex.attrs(styles.section)}>
-            <h2
-              id={group.kind === "misc" ? "miscellaneous" : undefined}
-              {...stylex.attrs(styles.heading)}
-            >
-              <a href={`#${group.kind}`} {...stylex.attrs(styles.anchor, stylex.defaultMarker())}>
-                <Switch>
-                  <Match when={group.kind === "oss"}>
-                    <IconBrandOpenSource
-                      size={14}
-                      aria-hidden="true"
-                      {...stylex.attrs(styles.icon)}
-                    />
-                  </Match>
-                  <Match when={group.kind === "client"}>
-                    <IconBriefcase size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
-                  </Match>
-                  <Match when={group.kind === "experiments"}>
-                    <IconFlask size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
-                  </Match>
-                  <Match when={group.kind === "snippets"}>
-                    <IconCode size={14} aria-hidden="true" {...stylex.attrs(styles.staticIcon)} />
-                  </Match>
-                  <Match when={group.kind === "misc"}>
-                    <IconDots size={14} aria-hidden="true" {...stylex.attrs(styles.icon)} />
-                  </Match>
-                </Switch>
-                {group.label}
-              </a>
-            </h2>
-            <ul {...stylex.attrs(styles.list)}>
-              <For each={group.projects}>
-                {(project) => (
-                  <li>
-                    <a
-                      href={project.href}
-                      {...links_openInNewTab}
-                      onClick={() =>
-                        analytics_capture("project_clicked", {
-                          locale: getLocale(),
-                          project_id: project.name,
-                          project_kind: project.kind,
-                        })
-                      }
-                      {...stylex.attrs(styles.project, stylex.defaultMarker())}
-                    >
-                      <span {...stylex.attrs(styles.details)}>
-                        <span {...stylex.attrs(styles.name)}>{project.name}</span>
-                        <span {...stylex.attrs(styles.year)}>{project.year}</span>
-                      </span>
-                      <span {...stylex.attrs(styles.description)}>{project.description}</span>
-                    </a>
-                  </li>
-                )}
-              </For>
-            </ul>
-          </section>
-        )}
-      </For>
+      <section aria-labelledby="featured-heading" {...stylex.attrs(styles.section)}>
+        <h2 id="featured-heading" {...stylex.attrs(styles.heading)}>
+          {m.project_featured_heading()}
+        </h2>
+        <ul {...stylex.attrs(styles.featured)}>
+          <For each={portfolio_featured_projects()}>
+            {(project) => (
+              <li>
+                <a
+                  href={project.href}
+                  {...links_openInNewTab}
+                  onClick={() => captureProjectClick(project)}
+                  {...stylex.attrs(styles.card, stylex.defaultMarker())}
+                >
+                  <span {...stylex.attrs(styles.cardHeader)}>
+                    <span {...stylex.attrs(styles.name)}>{project.name}</span>
+                    <span {...stylex.attrs(styles.year)}>{project.year}</span>
+                  </span>
+                  <span {...stylex.attrs(styles.description)}>{project.description}</span>
+                  <Tags.List>
+                    <For each={project.stack}>{(tech) => <Tags.Item>{tech}</Tags.Item>}</For>
+                  </Tags.List>
+                </a>
+              </li>
+            )}
+          </For>
+        </ul>
+      </section>
+      <section id="more" aria-labelledby="more-heading" {...stylex.attrs(styles.section)}>
+        <h2 id="more-heading" {...stylex.attrs(styles.heading)}>
+          {m.project_more_heading()}
+        </h2>
+        <IndexList.Root>
+          <For each={portfolio_other_projects()}>
+            {(project) => (
+              <IndexList.Row>
+                <a
+                  href={project.href}
+                  {...links_openInNewTab}
+                  onClick={() => captureProjectClick(project)}
+                  {...stylex.attrs(styles.link)}
+                >
+                  {project.name}
+                </a>
+                <IndexList.Leader />
+                <IndexList.Value>
+                  {portfolio_project_kind_label(project.kind)}
+                  <Show when={project.year}>{(year) => ` · ${year()}`}</Show>
+                </IndexList.Value>
+              </IndexList.Row>
+            )}
+          </For>
+        </IndexList.Root>
+      </section>
     </Page>
   );
 }

@@ -46,11 +46,12 @@ describe("localized portfolio", () => {
       expect(container.textContent).toContain("Product Engineer");
       expect(container.textContent).toContain("1y 8m");
       expect(container.textContent).toContain(
-        "TypeScript error handling with typed success and error results.",
+        "Form library with a framework-agnostic core and React bindings.",
       );
 
       expect(container.querySelectorAll("h1")[0]?.textContent).toBe("Work");
       expect(container.querySelectorAll("h1")[1]?.textContent).toBe("Projects");
+      expect(container.querySelector("#more-heading")?.textContent).toBe("More projects");
 
       return;
     }
@@ -58,10 +59,11 @@ describe("localized portfolio", () => {
     expect(container.textContent).toContain("Líder técnico");
     expect(container.textContent).toContain("1a 8m");
     expect(container.textContent).not.toContain("1y 8m");
-    expect(container.textContent).toContain("Manejo de errores en TypeScript");
+    expect(container.textContent).toContain("Biblioteca de formularios con un núcleo");
     expect(container.textContent).not.toContain("Product Engineer");
     expect(container.querySelectorAll("h1")[0]?.textContent).toBe("Experiencia");
     expect(container.querySelectorAll("h1")[1]?.textContent).toBe("Proyectos");
+    expect(container.querySelector("#more-heading")?.textContent).toBe("Más proyectos");
   });
 
   it("preserves profile facts and work identities across locales", async () => {
