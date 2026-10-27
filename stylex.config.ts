@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { transformAsync } from "@babel/core";
-import stylexBabel, { type Options } from "@stylexjs/babel-plugin";
+import type { Options } from "@stylexjs/babel-plugin";
 import type { Plugin } from "vite-plus";
 
 export const stylexOptions = {
@@ -36,13 +36,13 @@ export function stylexPlugin(): Plugin {
         babelrc: false,
         configFile: false,
         parserOpts: { plugins: ["typescript", "jsx"] },
-        plugins: [[stylexBabel, stylexOptions]],
+        plugins: [["@stylexjs/babel-plugin", stylexOptions]],
         sourceMaps: true,
       });
 
       if (!result?.code) return;
 
-      return { code: result.code, map: result.map };
+      return { code: result.code, map: result.map ? JSON.stringify(result.map) : null };
     },
   };
 }

@@ -4,10 +4,27 @@ allowBuilds:
   esbuild: true
   lightningcss: true
 catalog:
-  "@vitest/browser-playwright": 5.0.1
-  vite: npm:@voidzero-dev/vite-plus-core@1.0.0
-  vite-plus: 1.0.0
-  vitest: 5.0.1
+  "@vitest/browser-playwright": 5.0.5
+  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  vite-plus: 1.4.0
+  vitest: 5.0.5
+minimumReleaseAgeExclude:
+  - "@inlang/paraglide-js@2.29.2"
+  - "@posthog/browser-common@0.9.12"
+  - "@posthog/types@1.416.1"
+  - "@takumi-rs/core-darwin-arm64@2.18.2"
+  - "@takumi-rs/core-darwin-x64@2.18.2"
+  - "@takumi-rs/core-linux-arm64-gnu@2.18.2"
+  - "@takumi-rs/core-linux-arm64-musl@2.18.2"
+  - "@takumi-rs/core-linux-x64-gnu@2.18.2"
+  - "@takumi-rs/core-linux-x64-musl@2.18.2"
+  - "@takumi-rs/core-win32-arm64-msvc@2.18.2"
+  - "@takumi-rs/core-win32-x64-msvc@2.18.2"
+  - "@takumi-rs/core@2.18.2"
+  - "@takumi-rs/helpers@2.18.2"
+  - "@tanstack/highlight@1.2.0"
+  - postcss@8.5.32
+  - posthog-js@1.438.24
 overrides:
   vite@*: "catalog:"
   vitest@*: "catalog:"
