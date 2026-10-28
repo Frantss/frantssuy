@@ -275,15 +275,19 @@ function WritingArticles() {
                 </div>
               }
             >
-              <div
-                {...stylex.attrs(styles.years)}
-                class={cn("article-years", stylex.attrs(styles.years).class)}
-              >
+              <div {...stylex.attrs(styles.years)}>
                 <For each={groups()}>
                   {(group) => (
                     <section {...stylex.attrs(styles.year)}>
                       <Show when={group.year}>
-                        {(year) => <SectionLabel level="h2">{year()}</SectionLabel>}
+                        {(year) => (
+                          <div
+                            class="article-year"
+                            style={{ "--article-transition": `article-year-${year()}` }}
+                          >
+                            <SectionLabel level="h2">{year()}</SectionLabel>
+                          </div>
+                        )}
                       </Show>
                       <IndexList.Root>
                         <For each={group.articles}>

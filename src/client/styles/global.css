@@ -175,10 +175,10 @@
       view-transition-class: article-row;
     }
 
-    /* The list wrapper (with its year headings) and the empty message fade in and out with the
-       rows, instead of switching instantly with the rest of the page. */
-    .article-results[data-swapping] .article-years {
-      view-transition-name: article-years;
+    /* Year headings and the empty message fade and move with the rows instead of switching
+       instantly with the rest of the page. They keep their size, so their snapshots never stretch. */
+    .article-results[data-swapping] .article-year {
+      view-transition-name: var(--article-transition);
       view-transition-class: article-row;
     }
 
