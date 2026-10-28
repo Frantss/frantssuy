@@ -1,4 +1,4 @@
-import { colors, spacing, typography, borders } from "@/client/styles/theme.stylex";
+import { colors, spacing, typography, borders, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { For, type ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
@@ -9,15 +9,18 @@ const styles = stylex.create({
     gap: spacing.space5,
   },
 
+  // Print keeps the compact accent-bar title the CV PDF is laid out around.
   title: {
     margin: 0,
-    borderLeftWidth: borders.borderEmphasis,
+    borderLeftWidth: { default: 0, [conditions.print]: borders.borderEmphasis },
     borderLeftStyle: "solid",
     borderColor: colors.accent,
-    paddingLeft: spacing.space3,
-    fontSize: typography.fontSm,
-    lineHeight: typography.leadingSm,
-    fontWeight: typography.weightBold,
+    paddingLeft: { default: 0, [conditions.print]: spacing.space3 },
+    fontSize: { default: typography.fontTitle, [conditions.print]: typography.fontSm },
+    lineHeight: { default: typography.leadingTitle, [conditions.print]: typography.leadingSm },
+    fontWeight: { default: typography.weightMedium, [conditions.print]: typography.weightBold },
+    letterSpacing: { default: typography.trackingTitle, [conditions.print]: "normal" },
+    textWrap: { default: "balance", [conditions.print]: "wrap" },
   },
   paragraph: {
     margin: 0,

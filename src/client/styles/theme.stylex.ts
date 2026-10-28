@@ -41,6 +41,7 @@ export const typography = stylex.defineVars({
   fontXs: "0.75rem",
   fontSm: "0.875rem",
   fontBase: "1rem",
+  fontTitle: "1.75rem",
   fontLabel: "10px",
   fontCvLabel: "9px",
   fontCvPrint: "11px",
@@ -50,8 +51,12 @@ export const typography = stylex.defineVars({
   leadingSm: "calc(1.25 / 0.875)",
   leadingBase: "1.5",
   leadingHeading: "1.4",
+  leadingTitle: "1.15",
+  trackingTitle: "-0.02em",
+  trackingLabel: "0.08em",
   leadingPrint: "1.5",
   weightNormal: "400",
+  weightMedium: "500",
   weightBold: "700",
 });
 
