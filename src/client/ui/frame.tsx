@@ -1,6 +1,6 @@
 import { colors, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import type { JSX, ParentProps } from "solid-js";
+import { onCleanup, onMount, type JSX, type ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
 
 const styles = stylex.create({
@@ -77,8 +77,9 @@ const styles = stylex.create({
     borderRightStyle: "solid",
     borderColor: { default: "transparent", [conditions.print]: colors.line },
   },
-  // Dot grid behind the whole window, strongest at the edges and corners and clear in the middle,
-  // so the navbar, rail, and margins carry it while the text stays on a plain ground.
+  // Dot grid behind the whole window that fades in from the edges of the page: the screen's left
+  // and right sides, the top of the page, and the end of the page. The top and bottom fades move
+  // with the scroll, so they follow the full scrollable height instead of the window.
   texture: {
     pointerEvents: "none",
     position: "fixed",
@@ -87,16 +88,49 @@ const styles = stylex.create({
     display: { default: null, [conditions.print]: "none" },
     backgroundImage: `radial-gradient(circle, ${colors.texture} 0.75px, transparent 1px)`,
     backgroundSize: `${dimensions.sizeTextureTile} ${dimensions.sizeTextureTile}`,
-    maskImage: "radial-gradient(70% 75% at 50% 45%, transparent 38%, #000 100%)",
+    maskImage: `linear-gradient(to right, #000, transparent ${dimensions.sizeTextureEdgeX}, transparent calc(100% - ${dimensions.sizeTextureEdgeX}), #000), linear-gradient(to bottom, #000 calc(-1 * var(--page-above, 0px)), transparent calc(${dimensions.sizeTextureEdgeY} - var(--page-above, 0px))), linear-gradient(to top, #000 calc(-1 * var(--page-below, 0px)), transparent calc(${dimensions.sizeTextureEdgeY} - var(--page-below, 0px)))`,
   },
 });
 
 // Full-bleed horizontal rules with a centered column framed by vertical rules.
 // Viewport-tall: the bands stay put and only the fill scrolls. Print falls back to document flow.
 function FrameRoot(props: ParentProps) {
+  let texture: HTMLDivElement | undefined;
+
+  // Tells the texture how much page sits above and below the window, so its top and bottom fades
+  // sit at the page's real edges. Content that grows or shrinks moves the bottom edge too.
+  onMount(() => {
+    const scroller = document.getElementById(fillId);
+
+    if (!scroller || !texture) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const below = scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop;
+
+      texture!.style.setProperty("--page-above", `${scroller.scrollTop}px`);
+      texture!.style.setProperty("--page-below", `${Math.max(0, below)}px`);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const resize = new ResizeObserver(schedule);
+
+    scroller.addEventListener("scroll", schedule, { passive: true });
+    resize.observe(scroller);
+    if (scroller.firstElementChild) resize.observe(scroller.firstElementChild);
+    update();
+
+    onCleanup(() => {
+      scroller.removeEventListener("scroll", schedule);
+      resize.disconnect();
+      cancelAnimationFrame(frame);
+    });
+  });
+
   return (
     <div {...stylex.attrs(styles.root)}>
-      <div aria-hidden="true" {...stylex.attrs(styles.texture)} />
+      <div ref={texture} aria-hidden="true" {...stylex.attrs(styles.texture)} />
       {props.children}
     </div>
   );
