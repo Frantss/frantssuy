@@ -22,7 +22,7 @@
     view-transition-name: root;
   }
 
-  :root[data-theme-transition] :is(.page-content, .rail-link, .rail-outline, .rail-marker) {
+  :root[data-theme-transition] :is(.page-content, .rail-link, .rail-marker) {
     view-transition-name: none;
   }
 
@@ -153,29 +153,34 @@
       view-transition-class: rail-item;
     }
 
-    .rail-outline {
-      view-transition-name: match-element;
-      view-transition-class: rail-outline;
-    }
-
     .rail-marker {
       view-transition-name: rail-marker;
     }
 
     ::view-transition-group(*.rail-item),
-    ::view-transition-group(*.rail-outline),
     ::view-transition-group(rail-marker) {
       animation-duration: var(--duration-dock-enter);
       animation-timing-function: var(--ease-dock);
     }
 
-    /* The outline unfolds from the top while the links below it slide down, and folds back up. */
-    ::view-transition-new(*.rail-outline) {
-      animation: rail-outline-unfold var(--duration-dock-enter) var(--ease-dock) both;
+    /* Outline items drop in one by one after the links below them have slid out of the way. */
+    .rail-outline > li {
+      animation: rail-subitem-in var(--duration-fast) var(--ease-dock) both;
     }
-
-    ::view-transition-old(*.rail-outline) {
-      animation: rail-outline-unfold var(--duration-dock-enter) var(--ease-dock) reverse both;
+    .rail-outline > li:nth-child(1) {
+      animation-delay: calc(var(--duration-stagger) * 2);
+    }
+    .rail-outline > li:nth-child(2) {
+      animation-delay: calc(var(--duration-stagger) * 3);
+    }
+    .rail-outline > li:nth-child(3) {
+      animation-delay: calc(var(--duration-stagger) * 4);
+    }
+    .rail-outline > li:nth-child(4) {
+      animation-delay: calc(var(--duration-stagger) * 5);
+    }
+    .rail-outline > li:nth-child(n + 5) {
+      animation-delay: calc(var(--duration-stagger) * 6);
     }
 
     ::view-transition-group(page-content),
@@ -204,10 +209,10 @@
     }
   }
 
-  @keyframes rail-outline-unfold {
+  @keyframes rail-subitem-in {
     from {
-      clip-path: inset(0 0 100% 0);
       opacity: 0;
+      transform: translateY(-4px);
     }
   }
 
