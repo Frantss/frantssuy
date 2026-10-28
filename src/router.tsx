@@ -16,6 +16,7 @@ export function getRouter() {
     ),
 
     scrollRestoration: true,
+    scrollRestorationBehavior: "instant",
     scrollToTopSelectors: [Frame.fillSelector],
     defaultViewTransition: {
       types: () => (aria_prefersReduced() ? false : []),

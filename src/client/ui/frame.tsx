@@ -56,7 +56,9 @@ const styles = stylex.create({
     borderRightStyle: "solid",
     borderColor: colors.line,
   },
+  // Anchor links glide to their section; the router's own scroll to top stays instant.
   scroller: {
+    scrollBehavior: { default: null, [conditions.motion]: "smooth" },
     minHeight: 0,
     flex: "1",
     overflowY: { default: "auto", [conditions.print]: "visible" },
