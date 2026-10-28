@@ -170,24 +170,6 @@
       view-transition-name: rail-marker;
     }
 
-    .article-results[data-swapping] .article-row {
-      view-transition-name: var(--article-transition);
-      view-transition-class: article-row;
-    }
-
-    /* Year headings and the empty message fade and move with the rows instead of switching
-       instantly with the rest of the page. They keep their size, so their snapshots never stretch. */
-    .article-results[data-swapping] .article-year {
-      view-transition-name: var(--article-transition);
-      view-transition-class: article-row;
-    }
-
-    .article-results[data-swapping] .article-empty {
-      view-transition-name: article-empty;
-      view-transition-class: article-row;
-    }
-
-    ::view-transition-group(*.article-row),
     ::view-transition-group(*.rail-item),
     ::view-transition-group(rail-marker) {
       animation-duration: var(--duration-dock-enter);

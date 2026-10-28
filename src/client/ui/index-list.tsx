@@ -1,7 +1,6 @@
 import { colors, spacing, typography, borders, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import type { JSX, ParentProps } from "solid-js";
-import { cn } from "@/client/lib/cn";
+import type { ParentProps } from "solid-js";
 
 const styles = stylex.create({
   root: {
@@ -41,12 +40,8 @@ function IndexListRoot(props: ParentProps) {
   return <ul {...stylex.attrs(styles.root)}>{props.children}</ul>;
 }
 
-function IndexListRow(props: ParentProps<{ class?: string; style?: JSX.CSSProperties }>) {
-  return (
-    <li class={cn(stylex.attrs(styles.row).class, props.class)} style={props.style}>
-      {props.children}
-    </li>
-  );
+function IndexListRow(props: ParentProps) {
+  return <li {...stylex.attrs(styles.row)}>{props.children}</li>;
 }
 
 function IndexListLeader() {
