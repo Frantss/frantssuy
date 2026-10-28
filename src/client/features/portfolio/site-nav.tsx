@@ -1,6 +1,6 @@
 import { dimensions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { useLocation, useRouterState } from "@tanstack/solid-router";
+import { useLocation, useRouter, useRouterState } from "@tanstack/solid-router";
 import { For, Show } from "solid-js";
 import { createActiveSection } from "@/client/lib/create-active-section";
 import { Frame } from "@/client/ui/frame";
@@ -73,6 +73,7 @@ export function SiteNav() {
   const pathname = useRouterState({
     select: (state) => (state.resolvedLocation ?? state.location).pathname,
   });
+  const router = useRouter();
 
   return (
     <Rail.Nav label={m.nav_pages()}>
@@ -83,10 +84,12 @@ export function SiteNav() {
               to={page.to}
               current={page_isCurrent(page, pathname())}
               onClick={(event: MouseEvent) => {
-                // The router ignores a link to the URL already open, so scroll back to the top.
-                if (pathname() !== page.to || window.location.hash) return;
+                // On the open page, glide back to the top ourselves: the router would ignore the click,
+                // or, with a section hash in the URL, jump to the top instantly while dropping it.
+                if (pathname() !== page.to) return;
                 event.preventDefault();
                 document.querySelector(Frame.fillSelector)?.scrollTo({ top: 0 });
+                if (window.location.hash) void router.navigate({ to: page.to, resetScroll: false });
               }}
               {...analytics_autocapture({
                 id: "nav-link",
