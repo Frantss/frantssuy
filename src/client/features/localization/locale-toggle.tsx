@@ -1,6 +1,6 @@
 import { typography } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { IconButton } from "@/client/ui/icon-button";
+import { Button } from "@/client/ui/button";
 import { Tooltip } from "@/client/ui/tooltip";
 import { m } from "@/paraglide/messages";
 import { getLocale, setLocale } from "@/paraglide/runtime";
@@ -29,7 +29,8 @@ export function LocaleToggle(props: {
   return (
     <Tooltip label={label()}>
       {(triggerProps) => (
-        <IconButton
+        <Button
+          variant="icon"
           {...triggerProps({ onClick: toggle })}
           {...analytics_autocapture({ id: "locale-toggle", placement: props.placement })}
           class={props.class}
@@ -37,7 +38,7 @@ export function LocaleToggle(props: {
           aria-label={label()}
         >
           <span aria-hidden="true">{getLocale().toUpperCase()}</span>
-        </IconButton>
+        </Button>
       )}
     </Tooltip>
   );

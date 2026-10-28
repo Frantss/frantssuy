@@ -1,18 +1,11 @@
-import {
-  colors,
-  spacing,
-  typography,
-  dimensions,
-  borders,
-  conditions,
-} from "@/client/styles/theme.stylex";
+import { colors, spacing, typography, dimensions, borders } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { cn } from "@/client/lib/cn";
 import { createToaster, Toast, Toaster, type CreateToasterReturn } from "@ark-ui/solid/toast";
 import { IconX } from "@tabler/icons-solidjs";
 import { createContext, onCleanup, useContext, type ParentProps } from "solid-js";
 import { Portal } from "solid-js/web";
-import { IconButton } from "@/client/ui/icon-button";
+import { Button } from "@/client/ui/button";
 import { m } from "@/paraglide/messages";
 
 const styles = stylex.create({
@@ -33,11 +26,6 @@ const styles = stylex.create({
   title: {
     minWidth: 0,
     flex: "1",
-  },
-  close: {
-    flexShrink: 0,
-    width: { default: dimensions.sizeControl, [conditions.coarsePointer]: dimensions.sizeTouch },
-    height: { default: dimensions.sizeControl, [conditions.coarsePointer]: dimensions.sizeTouch },
   },
 });
 
@@ -69,13 +57,9 @@ export function ToastProvider(props: ParentProps) {
               <Toast.Title {...stylex.attrs(styles.title)}>{toast().title}</Toast.Title>
               <Toast.CloseTrigger
                 asChild={(triggerProps) => (
-                  <IconButton
-                    {...triggerProps()}
-                    aria-label={m.toast_dismiss()}
-                    styles={styles.close}
-                  >
+                  <Button {...triggerProps()} variant="icon" aria-label={m.toast_dismiss()}>
                     <IconX size={16} aria-hidden="true" />
-                  </IconButton>
+                  </Button>
                 )}
               />
             </Toast.Root>

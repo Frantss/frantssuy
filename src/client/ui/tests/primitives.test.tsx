@@ -3,10 +3,9 @@ import { page } from "vite-plus/test/browser";
 import { render } from "solid-js/web";
 import { createSignal, type JSX } from "solid-js";
 import * as stylex from "@stylexjs/stylex";
-import { ButtonLink } from "@/client/ui/button-link";
+import { Button, ButtonLink } from "@/client/ui/button";
 import { Entry } from "@/client/ui/entry";
 import { Facts } from "@/client/ui/facts";
-import { IconButton } from "@/client/ui/icon-button";
 import { IndexList } from "@/client/ui/index-list";
 import { Rail } from "@/client/ui/rail";
 import { colors, dimensions } from "@/client/styles/theme.stylex";
@@ -42,14 +41,15 @@ afterEach(() => dispose?.());
 describe("ButtonLink", () => {
   it("forwards anchor attributes and merges classes", () => {
     const container = mount(() => (
-      <ButtonLink.Solid
+      <ButtonLink
+        variant="primary"
         href="mailto:a@b.c"
         target="_blank"
         class="caller-hook"
         styles={styles.full}
       >
         Mail
-      </ButtonLink.Solid>
+      </ButtonLink>
     ));
     const anchor = container.querySelector("a")!;
 
@@ -59,22 +59,33 @@ describe("ButtonLink", () => {
     expect(anchor.classList).toContain("caller-hook");
   });
 
-  it("keeps the variants visually distinct", () => {
-    const container = mount(() => <ButtonLink.Outline href="#">CV</ButtonLink.Outline>);
-    const anchor = container.querySelector("a")!;
+  it("gives raised variants a thicker bottom edge than the quiet variant", () => {
+    const container = mount(() => (
+      <>
+        <ButtonLink variant="secondary" href="#">
+          CV
+        </ButtonLink>
+        <ButtonLink variant="quiet" href="#">
+          Clear
+        </ButtonLink>
+      </>
+    ));
+    const [secondary, quiet] = container.querySelectorAll("a");
 
-    expect(getComputedStyle(anchor).borderColor).toBe("rgb(109, 40, 217)");
-    expect(getComputedStyle(anchor).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    expect(getComputedStyle(secondary!).borderBottomWidth).toBe("2px");
+    expect(getComputedStyle(secondary!).borderTopColor).toBe("rgb(204, 204, 204)");
+    expect(getComputedStyle(quiet!).borderBottomWidth).toBe("1px");
+    expect(getComputedStyle(quiet!).borderTopColor).toBe("rgba(0, 0, 0, 0)");
   });
 });
 
-describe("IconButton", () => {
+describe("Button", () => {
   it("defaults to a non-submitting button and forwards handlers", () => {
     const onClick = vi.fn();
     const container = mount(() => (
-      <IconButton aria-label="Toggle" onClick={onClick}>
+      <Button variant="icon" aria-label="Toggle" onClick={onClick}>
         ☾
-      </IconButton>
+      </Button>
     ));
     const button = container.querySelector("button")!;
 
@@ -84,10 +95,28 @@ describe("IconButton", () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
+  it("styles a toggle from aria-pressed", async () => {
+    const [pressed, setPressed] = createSignal(false);
+    const container = mount(() => (
+      <Button variant="toggle" aria-pressed={pressed()}>
+        log
+      </Button>
+    ));
+    const button = container.querySelector("button")!;
+
+    expect(getComputedStyle(button).borderTopColor).toBe("rgb(232, 232, 232)");
+    setPressed(true);
+    await expect.poll(() => getComputedStyle(button).borderTopColor).toBe("rgb(109, 40, 217)");
+  });
+
   it("composes reactive caller styles after its defaults", async () => {
     const [active, setActive] = createSignal(false);
     const container = mount(() => (
-      <IconButton aria-label="Toggle" styles={[styles.touch, active() && styles.active]} />
+      <Button
+        variant="icon"
+        aria-label="Toggle"
+        styles={[styles.touch, active() && styles.active]}
+      />
     ));
     const button = container.querySelector("button")!;
 
@@ -101,7 +130,8 @@ describe("IconButton", () => {
   it("preserves vendor inline styles alongside dynamic StyleX variables", () => {
     const [width, setWidth] = createSignal("48px");
     const container = mount(() => (
-      <IconButton
+      <Button
+        variant="icon"
         aria-label="Positioned"
         styles={styles.dynamic(width())}
         style={{ "--arrow-size": "6px", transform: "translateX(2px)" }}

@@ -11,7 +11,7 @@ import * as stylex from "@stylexjs/stylex";
 import { IconCheck, IconSearch, IconAdjustmentsHorizontal, IconX } from "@tabler/icons-solidjs";
 import { createDebouncer } from "@tanstack/solid-pacer/debouncer";
 import { createEffect, createSignal, createUniqueId, For, Show, type JSX } from "solid-js";
-import { IconButton } from "@/client/ui/icon-button";
+import { Button } from "@/client/ui/button";
 import { m } from "@/paraglide/messages";
 import type { ArticleSearch } from "@/client/features/portfolio/articles.query";
 
@@ -26,45 +26,6 @@ const styles = stylex.create({
     transitionDuration: motion.durationFast,
     transitionTimingFunction: motion.easeOut,
   },
-  toggle: {
-    display: "inline-flex",
-    minHeight: {
-      default: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
-      [conditions.wide]: dimensions.sizeControl,
-      [conditions.coarsePointer]: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
-    },
-    flexShrink: 0,
-    alignItems: "center",
-    gap: spacing.space2,
-    cursor: "pointer",
-    borderWidth: borders.borderRule,
-    borderStyle: "solid",
-    borderColor: {
-      default: colors.faint,
-      [conditions.hover]: { default: null, ":hover": colors.muted },
-    },
-    backgroundColor: "transparent",
-    paddingInline: spacing.space2_5,
-    fontFamily: "inherit",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: {
-      default: colors.muted,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-      ":focus-visible": colors.fg,
-    },
-  },
-  selected: {
-    borderColor: {
-      default: colors.accent,
-      [conditions.hover]: { default: null, ":hover": colors.faint },
-    },
-    color: {
-      default: colors.accent,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-      ":focus-visible": colors.fg,
-    },
-  },
   expanded: {
     visibility: "visible",
     gridTemplateRows: "1fr",
@@ -72,29 +33,6 @@ const styles = stylex.create({
   collapsed: {
     visibility: "hidden",
     gridTemplateRows: "0fr",
-  },
-  tag: {
-    display: "inline-flex",
-    minWidth: { default: null, [conditions.coarsePointer]: dimensions.sizeTouch },
-    minHeight: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
-    cursor: "pointer",
-    alignItems: "center",
-    gap: spacing.space1,
-    borderWidth: borders.borderRule,
-    borderStyle: "solid",
-    borderColor: {
-      default: colors.faint,
-      [conditions.hover]: { default: null, ":hover": colors.faint },
-    },
-    backgroundColor: "transparent",
-    paddingInline: spacing.space2,
-    fontFamily: "inherit",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: {
-      default: colors.muted,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-    },
   },
 
   root: {
@@ -107,14 +45,7 @@ const styles = stylex.create({
   },
   label: {
     display: "flex",
-    height: {
-      default: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
-      [conditions.wide]: dimensions.sizeControl,
-    },
-    minHeight: {
-      default: null,
-      [conditions.coarsePointer]: `calc(${dimensions.sizeTouch} + 2 * ${borders.borderRule})`,
-    },
+    height: { default: dimensions.sizeControl, [conditions.coarsePointer]: dimensions.sizeTouch },
     minWidth: 0,
     flex: "1",
     alignItems: "center",
@@ -162,8 +93,7 @@ const styles = stylex.create({
     width: { default: dimensions.sizeTouch, [conditions.wide]: dimensions.sizeSmall },
     minWidth: { default: null, [conditions.coarsePointer]: dimensions.sizeTouch },
     height: "100%",
-    flexShrink: 0,
-    borderWidth: 0,
+    paddingInline: 0,
   },
   clip: {
     minHeight: 0,
@@ -186,22 +116,12 @@ const styles = stylex.create({
     justifyContent: "space-between",
     gap: spacing.space3,
   },
+  clear: {
+    marginLeft: "auto",
+  },
   activeTag: {
     maxWidth: "100%",
     overflowWrap: "anywhere",
-  },
-  clear: {
-    marginLeft: "auto",
-    flexShrink: 0,
-    cursor: "pointer",
-    borderWidth: 0,
-    backgroundColor: "transparent",
-    padding: 0,
-    fontFamily: "inherit",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: colors.link,
-    minHeight: { default: null, [conditions.coarsePointer]: dimensions.sizeTouch },
   },
 });
 
@@ -278,26 +198,27 @@ export function ArticleSearchFilter(props: {
             }}
           />
           <Show when={draft()}>
-            <IconButton
+            <Button
+              variant="quiet"
               aria-label={m.writing_clear_search()}
               styles={styles.clearQuery}
               onClick={clearQuery}
             >
               <IconX size={16} aria-hidden="true" />
-            </IconButton>
+            </Button>
           </Show>
         </div>
-        <button
+        <Button
           ref={(element) => (toggle = element)}
-          type="button"
+          variant="secondary"
+          selected={expanded() || !!props.search.tag}
           onClick={() => setExpanded((value) => !value)}
           aria-expanded={expanded()}
           aria-controls={filtersId}
-          {...stylex.attrs(styles.toggle, (expanded() || !!props.search.tag) && styles.selected)}
         >
           <IconAdjustmentsHorizontal size={16} aria-hidden="true" />
           {m.writing_filters()}
-        </button>
+        </Button>
       </form>
       <div
         id={filtersId}
@@ -314,17 +235,16 @@ export function ArticleSearchFilter(props: {
                 const selected = () => (props.search.tag ?? "") === tag;
 
                 return (
-                  <button
-                    type="button"
+                  <Button
+                    variant="toggle"
                     aria-pressed={selected()}
-                    {...stylex.attrs(styles.tag, selected() && styles.selected)}
                     onClick={() => change(selected() ? undefined : tag || undefined, false)}
                   >
                     <Show when={selected()}>
                       <IconCheck size={12} aria-hidden="true" />
                     </Show>
                     {tag || m.writing_all_tags()}
-                  </button>
+                  </Button>
                 );
               }}
             </For>
@@ -335,10 +255,11 @@ export function ArticleSearchFilter(props: {
         {props.children}
         <Show when={props.search.tag}>
           {(tag) => (
-            <button
-              type="button"
+            <Button
+              variant="toggle"
+              selected
               aria-label={m.writing_remove_tag({ tag: tag() })}
-              {...stylex.attrs(styles.tag, styles.selected, styles.activeTag)}
+              styles={styles.activeTag}
               onClick={() => {
                 change(undefined, false);
                 toggle?.focus();
@@ -346,13 +267,13 @@ export function ArticleSearchFilter(props: {
             >
               {tag()}
               <IconX size={12} {...stylex.attrs(styles.icon)} aria-hidden="true" />
-            </button>
+            </Button>
           )}
         </Show>
         <Show when={draft() || props.search.tag}>
-          <button
-            type="button"
-            {...stylex.attrs(styles.clear)}
+          <Button
+            variant="quiet"
+            styles={styles.clear}
             onClick={() => {
               setDraft("");
               change(undefined, false);
@@ -360,7 +281,7 @@ export function ArticleSearchFilter(props: {
             }}
           >
             {m.writing_clear_filters()}
-          </button>
+          </Button>
         </Show>
       </div>
     </div>

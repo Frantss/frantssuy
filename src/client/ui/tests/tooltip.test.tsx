@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { createSignal, type JSX } from "solid-js";
 import { render } from "solid-js/web";
-import { IconButton } from "@/client/ui/icon-button";
-import { IconLink } from "@/client/ui/icon-link";
+import { Button, ButtonLink } from "@/client/ui/button";
 import { Tooltip } from "@/client/ui/tooltip";
 
 let dispose: (() => void) | undefined;
@@ -63,9 +62,9 @@ describe("Tooltip", () => {
     const container = mount(() => (
       <Tooltip label={label()}>
         {(triggerProps) => (
-          <IconButton {...triggerProps({ onClick })} aria-label={label()}>
+          <Button {...triggerProps({ onClick })} variant="icon" aria-label={label()}>
             ☾
-          </IconButton>
+          </Button>
         )}
       </Tooltip>
     ));
@@ -98,16 +97,21 @@ describe("Tooltip", () => {
       <>
         <Tooltip label="Profile">
           {(triggerProps) => (
-            <IconLink {...triggerProps({ onClick })} href="/profile" aria-label="Profile">
+            <ButtonLink
+              {...triggerProps({ onClick })}
+              variant="icon"
+              href="/profile"
+              aria-label="Profile"
+            >
               P
-            </IconLink>
+            </ButtonLink>
           )}
         </Tooltip>
         <Tooltip label="Settings">
           {(triggerProps) => (
-            <IconButton {...triggerProps()} aria-label="Settings">
+            <Button {...triggerProps()} variant="icon" aria-label="Settings">
               S
-            </IconButton>
+            </Button>
           )}
         </Tooltip>
       </>

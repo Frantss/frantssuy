@@ -10,7 +10,7 @@ import {
 } from "@tabler/icons-solidjs";
 import { Facts } from "@/client/ui/facts";
 import { links_openInNewTab } from "@/client/lib/links";
-import { IconLink } from "@/client/ui/icon-link";
+import { ButtonLink } from "@/client/ui/button";
 import { Tooltip } from "@/client/ui/tooltip";
 import { LocalTime } from "@/client/ui/local-time";
 import { LocalizedMessage } from "@/client/ui/localized-message";
@@ -141,7 +141,8 @@ function ProfileLink(props: ParentProps<{ link: (typeof profile.links)[number] }
     <li>
       <Tooltip label={props.link.label}>
         {(triggerProps) => (
-          <IconLink
+          <ButtonLink
+            variant="icon"
             {...triggerProps({
               onClick: () =>
                 analytics_capture("profile_link_clicked", {
@@ -155,7 +156,7 @@ function ProfileLink(props: ParentProps<{ link: (typeof profile.links)[number] }
             aria-label={props.link.label}
           >
             {props.children}
-          </IconLink>
+          </ButtonLink>
         )}
       </Tooltip>
     </li>

@@ -12,7 +12,7 @@ import {
 } from "solid-js";
 import { useQueries } from "@/client/orpc/orpc.query";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
-import { IconButton } from "@/client/ui/icon-button";
+import { Button } from "@/client/ui/button";
 import { Tooltip } from "@/client/ui/tooltip";
 import { cn } from "@/client/lib/cn";
 import {
@@ -139,15 +139,16 @@ function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "s
       </Show>
       <Tooltip label={m.article_likes_retry()}>
         {(triggerProps) => (
-          <IconButton
+          <Button
             {...triggerProps({ onClick: props.reset })}
+            variant="icon"
             disabled={cooldown.remaining() > 0}
             aria-label={m.article_likes_retry()}
             aria-describedby={!cooldown.limited() ? errorId : undefined}
             styles={[styles.retry, props.size === "sm" ? styles.retrySmall : styles.retryMedium]}
           >
             <IconRefresh size={props.size === "sm" ? 14 : 18} aria-hidden="true" />
-          </IconButton>
+          </Button>
         )}
       </Tooltip>
     </div>
@@ -248,8 +249,9 @@ function LikeButton(
   const [local, rest] = splitProps(props, ["children", "liked", "animationKey", "size"]);
 
   return (
-    <IconButton
+    <Button
       {...rest}
+      variant="icon"
       styles={[styles.button, local.size === "sm" ? styles.small : styles.medium]}
     >
       <Show when={local.animationKey ?? 1} keyed>
@@ -278,6 +280,6 @@ function LikeButton(
       <span {...stylex.attrs(styles.count)} aria-hidden="true">
         {local.children}
       </span>
-    </IconButton>
+    </Button>
   );
 }

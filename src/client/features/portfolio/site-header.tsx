@@ -11,7 +11,7 @@ import * as stylex from "@stylexjs/stylex";
 import { Link } from "@tanstack/solid-router";
 import { ThemeToggle } from "@/client/features/theme/theme-toggle";
 import { LocaleToggle } from "@/client/features/localization/locale-toggle";
-import { ButtonLink } from "@/client/ui/button-link";
+import { ButtonLink } from "@/client/ui/button";
 import { portfolio_cv, profile } from "./portfolio.data";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
@@ -77,6 +77,10 @@ const styles = stylex.create({
   desktopControl: {
     display: { default: "grid", [conditions.narrow]: "none" },
   },
+  // The ".pdf" suffix is part of the label, so it must not get the icon gap.
+  cv: {
+    gap: 0,
+  },
   desktop: {
     display: { default: "inline", [conditions.narrow]: "none" },
   },
@@ -95,7 +99,9 @@ export function SiteHeader() {
       <div {...stylex.attrs(styles.actions)}>
         <ThemeToggle styles={styles.desktopControl} />
         <LocaleToggle styles={styles.desktopControl} placement="header" />
-        <ButtonLink.Outline
+        <ButtonLink
+          variant="secondary"
+          styles={styles.cv}
           href={portfolio_cv(getLocale()).href}
           download={portfolio_cv(getLocale()).filename}
           onClick={() =>
@@ -108,15 +114,16 @@ export function SiteHeader() {
         >
           {cv()}
           <span {...stylex.attrs(styles.desktop)}>.pdf</span>
-        </ButtonLink.Outline>
-        <ButtonLink.Solid
+        </ButtonLink>
+        <ButtonLink
+          variant="primary"
           href={`mailto:${profile.email}`}
           onClick={() =>
             analytics_capture("contact_clicked", { locale: getLocale(), placement: "header" })
           }
         >
           {m.header_contact()}
-        </ButtonLink.Solid>
+        </ButtonLink>
       </div>
     </header>
   );

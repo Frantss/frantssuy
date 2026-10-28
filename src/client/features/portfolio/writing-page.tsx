@@ -1,11 +1,4 @@
-import {
-  colors,
-  spacing,
-  typography,
-  dimensions,
-  borders,
-  conditions,
-} from "@/client/styles/theme.stylex";
+import { colors, spacing, typography, dimensions, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { Link, useNavigate, useRouterState, useSearch } from "@tanstack/solid-router";
 import { useStore } from "@nanostores/solid";
@@ -18,6 +11,7 @@ import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { ToastProvider } from "@/client/ui/toast";
 import { Tags } from "@/client/ui/tags";
+import { Button } from "@/client/ui/button";
 import { ArticleDate } from "@/client/features/portfolio/article-date";
 import { ArticleLikeButton } from "@/client/features/portfolio/article-like-button";
 import { ArticleSearchFilter } from "@/client/features/portfolio/article-search-filter";
@@ -31,39 +25,6 @@ import { m } from "@/paraglide/messages";
 import { analytics_autocapture } from "@/client/analytics/analytics";
 
 const styles = stylex.create({
-  tag: {
-    display: "inline-flex",
-    minHeight: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
-    cursor: "pointer",
-    alignItems: "center",
-    gap: spacing.space1,
-    borderWidth: borders.borderRule,
-    borderStyle: "solid",
-    borderColor: {
-      default: colors.line,
-      [conditions.hover]: { default: null, ":hover": colors.faint },
-    },
-    backgroundColor: "transparent",
-    paddingInline: spacing.space1_5,
-    fontFamily: "inherit",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: {
-      default: colors.muted,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-    },
-  },
-  selected: {
-    borderColor: {
-      default: colors.accent,
-      [conditions.hover]: { default: null, ":hover": colors.faint },
-    },
-    color: {
-      default: colors.accent,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-    },
-  },
-
   empty: {
     margin: 0,
     color: colors.muted,
@@ -124,22 +85,6 @@ const styles = stylex.create({
     lineHeight: typography.leadingSm,
     color: colors.muted,
   },
-  retry: {
-    cursor: { default: "pointer", ":disabled": "wait" },
-    borderWidth: borders.borderRule,
-    borderStyle: "solid",
-    borderColor: colors.lineStrong,
-    backgroundColor: "transparent",
-    paddingInline: spacing.space2,
-    paddingBlock: spacing.space1,
-    fontFamily: "inherit",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: {
-      default: colors.muted,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-    },
-  },
   entry: {
     display: "grid",
     minWidth: 0,
@@ -162,23 +107,6 @@ const styles = stylex.create({
     display: "flex",
     justifyContent: "space-between",
     gap: spacing.space2,
-  },
-  paginationButton: {
-    cursor: { default: "pointer", ":disabled": "default" },
-    borderWidth: borders.borderRule,
-    borderStyle: "solid",
-    borderColor: colors.lineStrong,
-    backgroundColor: "transparent",
-    paddingInline: spacing.space2,
-    paddingBlock: spacing.space1,
-    fontFamily: "inherit",
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: {
-      default: colors.muted,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-    },
-    opacity: { default: null, ":disabled": 0.5 },
   },
 });
 
@@ -271,14 +199,13 @@ function WritingArticles() {
                   {m.writing_search_error()}
                 </p>
               </Show>
-              <button
-                type="button"
+              <Button
+                variant="secondary"
                 disabled={cooldown.remaining() > 0}
-                {...stylex.attrs(styles.retry)}
                 onClick={() => store().revalidate()}
               >
                 {m.writing_retry()}
-              </button>
+              </Button>
             </div>
           </Show>
           <Show when={!query().error}>
@@ -315,10 +242,9 @@ function WritingArticles() {
 
                                 return (
                                   <li>
-                                    <button
-                                      type="button"
+                                    <Button
+                                      variant="toggle"
                                       aria-pressed={selected()}
-                                      {...stylex.attrs(styles.tag, selected() && styles.selected)}
                                       onClick={() =>
                                         change({
                                           q: search().q,
@@ -330,7 +256,7 @@ function WritingArticles() {
                                         <IconCheck size={12} aria-hidden="true" />
                                       </Show>
                                       {tag}
-                                    </button>
+                                    </Button>
                                   </li>
                                 );
                               }}
@@ -350,24 +276,22 @@ function WritingArticles() {
             </Show>
             <Show when={(data()?.total ?? 0) > 20 || offset() > 0}>
               <nav aria-label={m.writing_pagination()} {...stylex.attrs(styles.pagination)}>
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   disabled={offset() === 0 || pending()}
-                  {...stylex.attrs(styles.paginationButton)}
                   onClick={() =>
                     change({ ...search(), offset: Math.max(0, offset() - 20) || undefined })
                   }
                 >
                   {m.writing_previous()}
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  variant="secondary"
                   disabled={offset() + 20 >= (data()?.total ?? 0) || pending()}
-                  {...stylex.attrs(styles.paginationButton)}
                   onClick={() => change({ ...search(), offset: offset() + 20 })}
                 >
                   {m.writing_next()}
-                </button>
+                </Button>
               </nav>
             </Show>
           </Show>

@@ -6,6 +6,9 @@ export const colors = stylex.defineVars({
   line: "light-dark(#e8e8e8, #232323)",
   lineStrong: "light-dark(#cccccc, #383838)",
   texture: "light-dark(#e0e0e0, #232323)",
+  // Bottom edge of raised buttons.
+  edge: "light-dark(#bdbdbd, #4a4a4a)",
+  accentEdge: "light-dark(#4c1d95, #7c5fd6)",
   fg: "light-dark(#171717, #ededed)",
   muted: "light-dark(#4d4d4d, #a1a1a1)",
   faint: "light-dark(#737373, #7d7d7d)",
@@ -14,6 +17,7 @@ export const colors = stylex.defineVars({
   link: "light-dark(#6d28d9, #c4b5fd)",
   accentHover: (): string => `color-mix(in oklab, ${colors.accent} 85%, transparent)`,
   accentTint: (): string => `color-mix(in oklab, ${colors.accent} 10%, transparent)`,
+  surfaceHover: (): string => `color-mix(in oklab, ${colors.surface} 94%, ${colors.fg})`,
   liked: "oklch(63.7% 0.237 25.331)",
   live: "light-dark(#15803d, #4ade80)",
 });
@@ -56,6 +60,7 @@ export const typography = stylex.defineVars({
   leadingTitle: "1.15",
   trackingTitle: "-0.02em",
   trackingLabel: "0.08em",
+  trackingButton: "-0.01em",
   leadingPrint: "1.5",
   weightNormal: "400",
   weightMedium: "500",
@@ -91,6 +96,7 @@ export const borders = stylex.defineVars({
   borderRule: "1px",
   borderEmphasis: "2px",
   focusOffset: "2px",
+  radiusControl: "3px",
 });
 
 export const motion = stylex.defineVars({

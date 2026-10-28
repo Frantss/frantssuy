@@ -42,14 +42,14 @@ function mount(initial: ArticleSearch = {}) {
 }
 
 describe("article search filters", () => {
-  it("keeps the selected filter toggle's keyboard focus color", async () => {
+  it("marks the filter toggle while a tag is selected and keeps its focus ring", async () => {
     const { button } = mount({ tag: "web" });
     const toggle = button("Filters");
 
-    expect(getComputedStyle(toggle).color).toBe("rgb(109, 40, 217)");
+    expect(getComputedStyle(toggle).borderTopColor).toBe("rgb(109, 40, 217)");
     toggle.focus();
     expect(toggle.matches(":focus-visible")).toBe(true);
-    await expect.poll(() => getComputedStyle(toggle).color).toBe("rgb(23, 23, 23)");
+    await expect.poll(() => getComputedStyle(toggle).boxShadow).toContain("rgb(109, 40, 217)");
   });
 
   it("keeps tags collapsed and retains the selected filter after closing them", () => {
@@ -67,7 +67,7 @@ describe("article search filters", () => {
     button("Filters").click();
     expect(group.inert).toBe(true);
     expect(group.getAttribute("aria-hidden")).toBe("true");
-    expect(getComputedStyle(button("Filters")).borderColor).toBe("rgb(109, 40, 217)");
+    expect(getComputedStyle(button("Filters")).borderTopColor).toBe("rgb(109, 40, 217)");
   });
 
   it("debounces typing and flushes the latest query when a tag is selected", () => {
