@@ -143,15 +143,12 @@ export type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "archi
 export type Project = {
   name: string;
   year?: string;
+  description: string;
   href: string;
   kind: ProjectKind;
 };
 
-type FeaturedProject = Project & {
-  description: string;
-};
-
-export function portfolio_featured_projects(): FeaturedProject[] {
+export function portfolio_featured_projects(): Project[] {
   return [
     {
       name: "frantssuy",
@@ -198,43 +195,84 @@ export function portfolio_featured_projects(): FeaturedProject[] {
   ];
 }
 
-export function portfolio_other_projects(): Project[] {
+function portfolio_other_projects(): Project[] {
   return [
     {
       name: "fumadocs-theme",
       year: "2026",
+      description: m.project_fumadocs_theme_description(),
       href: "https://github.com/Frantss/fumadocs-theme",
       kind: "oss",
     },
-    { name: "archy", year: "2026", href: "https://github.com/Frantss/archy", kind: "experiments" },
+    {
+      name: "archy",
+      year: "2026",
+      description: m.project_archy_description(),
+      href: "https://github.com/Frantss/archy",
+      kind: "experiments",
+    },
     {
       name: "StoreAttachment",
       year: "2026",
+      description: m.project_store_attachment_description(),
       href: "https://gist.github.com/Frantss/7c71fa69fd8cf754a55acf4557e2111f",
       kind: "snippets",
     },
-    { name: "safeish", year: "2025", href: "https://github.com/Frantss/safeish", kind: "oss" },
-    { name: "altereco.com.uy", href: "https://altereco.com.uy", kind: "client" },
-    { name: "atenea-coffee.com", href: "https://atenea-coffee.com", kind: "client" },
+    {
+      name: "safeish",
+      year: "2025",
+      description: m.project_safeish_description(),
+      href: "https://github.com/Frantss/safeish",
+      kind: "oss",
+    },
+    {
+      name: "altereco.com.uy",
+      description: m.project_altereco_description(),
+      href: "https://altereco.com.uy",
+      kind: "client",
+    },
+    {
+      name: "atenea-coffee.com",
+      description: m.project_atenea_description(),
+      href: "https://atenea-coffee.com",
+      kind: "client",
+    },
     {
       name: "npms-lib",
       year: "2021",
+      description: m.project_npms_lib_description(),
       href: "https://github.com/Frantss/npms-lib",
       kind: "archived",
     },
     {
       name: "react-hookful",
       year: "2020",
+      description: m.project_react_hookful_description(),
       href: "https://github.com/Frantss/react-hookful",
       kind: "archived",
     },
     {
       name: "ruby-memcached",
       year: "2019",
+      description: m.project_ruby_memcached_description(),
       href: "https://github.com/Frantss/ruby-memcached",
       kind: "archived",
     },
   ];
+}
+
+const projectKinds: ProjectKind[] = ["oss", "client", "experiments", "snippets", "archived"];
+
+export function portfolio_other_project_groups() {
+  const projects = portfolio_other_projects();
+
+  return projectKinds
+    .map((kind) => ({
+      kind,
+      label: portfolio_project_kind_label(kind),
+      projects: projects.filter((project) => project.kind === kind),
+    }))
+    .filter((group) => group.projects.length > 0);
 }
 
 export function portfolio_project_kind_label(kind: ProjectKind) {

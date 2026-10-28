@@ -1,13 +1,14 @@
 import {
   borders,
   colors,
+  dimensions,
   spacing,
   typography,
   motion,
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { For } from "solid-js";
+import { For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import {
   IconArchive,
@@ -22,7 +23,7 @@ import { Page, PageTitle } from "@/client/ui/page";
 import { Tooltip } from "@/client/ui/tooltip";
 import {
   portfolio_featured_projects,
-  portfolio_other_projects,
+  portfolio_other_project_groups,
   portfolio_project_kind_label,
   type Project,
   type ProjectKind,
@@ -83,14 +84,50 @@ const styles = stylex.create({
     justifyContent: "space-between",
     gap: spacing.space3,
   },
+  groups: {
+    display: "grid",
+    gap: spacing.space5,
+  },
+  group: {
+    display: "grid",
+    gap: spacing.space1,
+  },
+  groupHeading: {
+    margin: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+    fontWeight: typography.weightNormal,
+    color: colors.muted,
+  },
+  index: {
+    margin: 0,
+    display: "grid",
+    listStyleType: "none",
+    gap: spacing.space1,
+    padding: 0,
+  },
+  entry: {
+    display: "grid",
+    minHeight: dimensions.sizeTouch,
+    boxSizing: "border-box",
+    alignContent: "center",
+    paddingBlock: spacing.space1,
+    color: colors.fg,
+    textDecoration: "none",
+  },
+  entryHeader: {
+    display: "flex",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+  },
   kindIcon: {
     display: "inline-flex",
     marginInlineEnd: spacing.space1_5,
     verticalAlign: "-0.125em",
+    color: colors.faint,
   },
   name: {
     minWidth: 0,
-    fontWeight: typography.weightBold,
     overflowWrap: "break-word",
     transitionProperty: "color",
     transitionDuration: motion.durationColor,
@@ -100,6 +137,9 @@ const styles = stylex.create({
       [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.link },
       [stylex.when.ancestor(":focus-visible")]: colors.link,
     },
+  },
+  cardName: {
+    fontWeight: typography.weightBold,
   },
   year: {
     flexShrink: 0,
@@ -112,13 +152,6 @@ const styles = stylex.create({
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
     color: colors.muted,
-  },
-  link: {
-    color: {
-      default: colors.fg,
-      [conditions.hover]: { default: null, ":hover": colors.link },
-      ":focus-visible": colors.link,
-    },
   },
 });
 
@@ -176,7 +209,7 @@ export function ProjectsPage() {
                   {...stylex.attrs(styles.card, stylex.defaultMarker())}
                 >
                   <span {...stylex.attrs(styles.cardHeader)}>
-                    <span {...stylex.attrs(styles.name)}>{project.name}</span>
+                    <span {...stylex.attrs(styles.name, styles.cardName)}>{project.name}</span>
                     <span {...stylex.attrs(styles.year)}>
                       <ProjectKindIcon kind={project.kind} />
                       {project.year}
@@ -193,27 +226,46 @@ export function ProjectsPage() {
         <h2 id="more-heading" {...stylex.attrs(styles.heading)}>
           {m.project_more_heading()}
         </h2>
-        <IndexList.Root>
-          <For each={portfolio_other_projects()}>
-            {(project) => (
-              <IndexList.Row>
-                <span>
-                  <ProjectKindIcon kind={project.kind} />
-                  <a
-                    href={project.href}
-                    {...links_openInNewTab}
-                    onClick={() => captureProjectClick(project)}
-                    {...stylex.attrs(styles.link)}
-                  >
-                    {project.name}
-                  </a>
-                </span>
-                <IndexList.Leader />
-                <IndexList.Value>{project.year}</IndexList.Value>
-              </IndexList.Row>
+        <div {...stylex.attrs(styles.groups)}>
+          <For each={portfolio_other_project_groups()}>
+            {(group) => (
+              <div {...stylex.attrs(styles.group)}>
+                <h3 {...stylex.attrs(styles.groupHeading)}>
+                  <Dynamic
+                    component={kindIcons[group.kind]}
+                    size={14}
+                    aria-hidden="true"
+                    {...stylex.attrs(styles.kindIcon)}
+                  />
+                  {group.label}
+                </h3>
+                <ul {...stylex.attrs(styles.index)}>
+                  <For each={group.projects}>
+                    {(project) => (
+                      <li>
+                        <a
+                          href={project.href}
+                          {...links_openInNewTab}
+                          onClick={() => captureProjectClick(project)}
+                          {...stylex.attrs(styles.entry, stylex.defaultMarker())}
+                        >
+                          <span {...stylex.attrs(styles.entryHeader)}>
+                            <span {...stylex.attrs(styles.name)}>{project.name}</span>
+                            <Show when={project.year}>
+                              <IndexList.Leader />
+                              <IndexList.Value>{project.year}</IndexList.Value>
+                            </Show>
+                          </span>
+                          <span {...stylex.attrs(styles.description)}>{project.description}</span>
+                        </a>
+                      </li>
+                    )}
+                  </For>
+                </ul>
+              </div>
             )}
           </For>
-        </IndexList.Root>
+        </div>
       </section>
     </Page>
   );
