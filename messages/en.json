@@ -120,6 +120,8 @@
   "project_store_attachment_description": "C# helper for Friflo ECS that rebuilds cached query snapshots on demand.",
   "project_archy_description": "Experimental ECS framework",
   "project_fumadocs_theme_description": "Geist Mono theme and reusable layout components for Fumadocs.",
+  "project_source_link": "Source code",
+  "project_source_link_label": "{name} source code",
   "project_kind_oss": "Open source",
   "project_kind_client": "Client work",
   "project_kind_experiments": "Experiment",

@@ -145,6 +145,7 @@ export type Project = {
   year?: string;
   description: string;
   href: string;
+  website?: string;
   kind: ProjectKind;
 };
 
@@ -162,6 +163,7 @@ export function portfolio_featured_projects(): Project[] {
       year: "2025",
       description: m.project_oxform_description(),
       href: "https://github.com/Frantss/oxform",
+      website: "https://oxform.frantss.uy",
       kind: "oss",
     },
     {
@@ -176,6 +178,7 @@ export function portfolio_featured_projects(): Project[] {
       year: "2026",
       description: m.project_calendar_tsx_description(),
       href: "https://github.com/Frantss/calendar-tsx",
+      website: "https://calendar-tsx.frantss.uy",
       kind: "experiments",
     },
   ];
@@ -195,6 +198,7 @@ function portfolio_other_projects(): Project[] {
       year: "2026",
       description: m.project_temporal_fns_description(),
       href: "https://github.com/Frantss/temporal-fns",
+      website: "https://temporal-fns.frantss.uy",
       kind: "experiments",
     },
     {

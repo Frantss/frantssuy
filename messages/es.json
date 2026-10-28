@@ -120,6 +120,8 @@
   "project_store_attachment_description": "Utilidad en C# para Friflo ECS que reconstruye snapshots de consultas en caché bajo demanda.",
   "project_archy_description": "Framework experimental de ECS",
   "project_fumadocs_theme_description": "Tema Geist Mono y componentes de diseño reutilizables para Fumadocs.",
+  "project_source_link": "Código fuente",
+  "project_source_link_label": "Código fuente de {name}",
   "project_kind_oss": "Código abierto",
   "project_kind_client": "Trabajo para cliente",
   "project_kind_experiments": "Experimento",

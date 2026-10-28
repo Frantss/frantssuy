@@ -59,6 +59,7 @@ const styles = stylex.create({
     padding: 0,
   },
   card: {
+    position: "relative",
     display: "grid",
     height: "100%",
     boxSizing: "border-box",
@@ -69,11 +70,9 @@ const styles = stylex.create({
     borderColor: {
       default: colors.line,
       [conditions.hover]: { default: null, ":hover": colors.lineStrong },
-      ":focus-visible": colors.lineStrong,
+      [stylex.when.descendant(":focus-visible")]: colors.lineStrong,
     },
     padding: spacing.space4,
-    color: colors.fg,
-    textDecoration: "none",
     transitionProperty: "border-color",
     transitionDuration: motion.durationColor,
     transitionTimingFunction: motion.easeColor,
@@ -107,18 +106,51 @@ const styles = stylex.create({
     padding: 0,
   },
   entry: {
+    position: "relative",
     display: "grid",
     minHeight: dimensions.sizeTouch,
     boxSizing: "border-box",
     alignContent: "center",
     paddingBlock: spacing.space1,
-    color: colors.fg,
-    textDecoration: "none",
   },
   entryHeader: {
     display: "flex",
     alignItems: "baseline",
     justifyContent: "space-between",
+  },
+  // Stretches the primary link over its card or row, so the whole block stays clickable.
+  stretchedLink: {
+    textDecoration: "none",
+    "::after": {
+      content: "''",
+      position: "absolute",
+      inset: 0,
+    },
+  },
+  raised: {
+    position: "relative",
+    zIndex: 1,
+  },
+  links: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    columnGap: spacing.space4,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+  },
+  website: {
+    color: colors.muted,
+  },
+  sourceLink: {
+    display: "inline-flex",
+    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
+    alignItems: "center",
+    color: {
+      default: colors.faint,
+      [conditions.hover]: { default: null, ":hover": colors.link },
+      ":focus-visible": colors.link,
+    },
   },
   kindIcon: {
     display: "inline-flex",
@@ -133,9 +165,9 @@ const styles = stylex.create({
     transitionDuration: motion.durationColor,
     transitionTimingFunction: motion.easeColor,
     color: {
-      default: null,
+      default: colors.fg,
       [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.link },
-      [stylex.when.ancestor(":focus-visible")]: colors.link,
+      ":focus-visible": colors.link,
     },
   },
   cardName: {
@@ -173,7 +205,7 @@ function ProjectKindIcon(props: { kind: ProjectKind }) {
           {...triggerProps()}
           role="img"
           aria-label={label()}
-          {...stylex.attrs(styles.kindIcon)}
+          {...stylex.attrs(styles.kindIcon, styles.raised)}
         >
           <Dynamic component={kindIcons[props.kind]} size={14} aria-hidden="true" />
         </span>
@@ -182,12 +214,49 @@ function ProjectKindIcon(props: { kind: ProjectKind }) {
   );
 }
 
-function captureProjectClick(project: Project) {
+function captureProjectClick(project: Project, link: "website" | "source") {
   analytics_capture("project_clicked", {
     locale: getLocale(),
     project_id: project.name,
     project_kind: project.kind,
+    project_link: link,
   });
+}
+
+function ProjectLink(props: { project: Project; styles?: stylex.StyleXStyles }) {
+  return (
+    <a
+      href={props.project.website ?? props.project.href}
+      {...links_openInNewTab}
+      onClick={() =>
+        captureProjectClick(props.project, props.project.website ? "website" : "source")
+      }
+      {...stylex.attrs(styles.name, styles.stretchedLink, props.styles, stylex.defaultMarker())}
+    >
+      {props.project.name}
+    </a>
+  );
+}
+
+function ProjectWebsite(props: { project: Project }) {
+  return (
+    <Show when={props.project.website}>
+      {(website) => (
+        <span {...stylex.attrs(styles.links)}>
+          <span {...stylex.attrs(styles.website)}>{new URL(website()).host} ↗</span>
+          <a
+            href={props.project.href}
+            {...links_openInNewTab}
+            aria-label={m.project_source_link_label({ name: props.project.name })}
+            onClick={() => captureProjectClick(props.project, "source")}
+            {...stylex.attrs(styles.sourceLink, styles.raised)}
+          >
+            {m.project_source_link()}
+          </a>
+        </span>
+      )}
+    </Show>
+  );
 }
 
 export function ProjectsPage() {
@@ -201,22 +270,16 @@ export function ProjectsPage() {
         <ul {...stylex.attrs(styles.featured)}>
           <For each={portfolio_featured_projects()}>
             {(project) => (
-              <li>
-                <a
-                  href={project.href}
-                  {...links_openInNewTab}
-                  onClick={() => captureProjectClick(project)}
-                  {...stylex.attrs(styles.card, stylex.defaultMarker())}
-                >
-                  <span {...stylex.attrs(styles.cardHeader)}>
-                    <span {...stylex.attrs(styles.name, styles.cardName)}>{project.name}</span>
-                    <span {...stylex.attrs(styles.year)}>
-                      <ProjectKindIcon kind={project.kind} />
-                      {project.year}
-                    </span>
+              <li {...stylex.attrs(styles.card, stylex.defaultMarker())}>
+                <span {...stylex.attrs(styles.cardHeader)}>
+                  <ProjectLink project={project} styles={styles.cardName} />
+                  <span {...stylex.attrs(styles.year)}>
+                    <ProjectKindIcon kind={project.kind} />
+                    {project.year}
                   </span>
-                  <span {...stylex.attrs(styles.description)}>{project.description}</span>
-                </a>
+                </span>
+                <span {...stylex.attrs(styles.description)}>{project.description}</span>
+                <ProjectWebsite project={project} />
               </li>
             )}
           </For>
@@ -242,22 +305,16 @@ export function ProjectsPage() {
                 <ul {...stylex.attrs(styles.index)}>
                   <For each={group.projects}>
                     {(project) => (
-                      <li>
-                        <a
-                          href={project.href}
-                          {...links_openInNewTab}
-                          onClick={() => captureProjectClick(project)}
-                          {...stylex.attrs(styles.entry, stylex.defaultMarker())}
-                        >
-                          <span {...stylex.attrs(styles.entryHeader)}>
-                            <span {...stylex.attrs(styles.name)}>{project.name}</span>
-                            <Show when={project.year}>
-                              <IndexList.Leader />
-                              <IndexList.Value>{project.year}</IndexList.Value>
-                            </Show>
-                          </span>
-                          <span {...stylex.attrs(styles.description)}>{project.description}</span>
-                        </a>
+                      <li {...stylex.attrs(styles.entry, stylex.defaultMarker())}>
+                        <span {...stylex.attrs(styles.entryHeader)}>
+                          <ProjectLink project={project} />
+                          <Show when={project.year}>
+                            <IndexList.Leader />
+                            <IndexList.Value>{project.year}</IndexList.Value>
+                          </Show>
+                        </span>
+                        <span {...stylex.attrs(styles.description)}>{project.description}</span>
+                        <ProjectWebsite project={project} />
                       </li>
                     )}
                   </For>
