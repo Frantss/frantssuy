@@ -18,8 +18,10 @@ export function getRouter() {
     scrollRestoration: true,
     scrollRestorationBehavior: "instant",
     scrollToTopSelectors: [Frame.fillSelector],
+    // Same-path navigations (a hash, or the current page's own link) keep the page scrolled, and a
+    // snapshot of a scrolled page would be drawn over the header, so they skip the transition.
     defaultViewTransition: {
-      types: () => (aria_prefersReduced() ? false : []),
+      types: ({ pathChanged }) => (aria_prefersReduced() || !pathChanged ? false : []),
     },
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,

@@ -82,6 +82,12 @@ export function SiteNav() {
             <Rail.Link
               to={page.to}
               current={page_isCurrent(page, pathname())}
+              onClick={(event: MouseEvent) => {
+                // The router ignores a link to the URL already open, so scroll back to the top.
+                if (pathname() !== page.to || window.location.hash) return;
+                event.preventDefault();
+                document.querySelector(Frame.fillSelector)?.scrollTo({ top: 0 });
+              }}
               {...analytics_autocapture({
                 id: "nav-link",
                 destination: page.to,
