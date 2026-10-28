@@ -133,10 +133,14 @@ const styles = stylex.create({
       inset: `calc((${dimensions.sizeTouch} - ${dimensions.sizeSmall}) / -2) calc(-1 * ${spacing.space1})`,
     },
   },
+  // A selected key stays pressed in: accent on every side and the raised edge compressed.
   selected: {
     borderColor: colors.accent,
+    borderBottomColor: colors.accent,
+    borderBottomWidth: borders.borderRule,
     backgroundColor: colors.accentTint,
     color: colors.fg,
+    translate: { default: "0 1px", [conditions.reducedMotion]: null },
   },
 });
 
