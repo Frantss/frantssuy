@@ -3,6 +3,7 @@ import { Frame } from "@/client/ui/frame";
 import { Rail } from "@/client/ui/rail";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
+import { SitePath } from "./site-path";
 import { SiteDock, SiteNav } from "./site-nav";
 
 export function PortfolioLayout(props: ParentProps) {
@@ -14,7 +15,10 @@ export function PortfolioLayout(props: ParentProps) {
       <Frame.Fill overlay={<Rail.Rule />}>
         <Rail.Root>
           <SiteNav />
-          <Rail.Content>{props.children}</Rail.Content>
+          <Rail.Content>
+            <SitePath />
+            {props.children}
+          </Rail.Content>
         </Rail.Root>
       </Frame.Fill>
       <Frame.Band>
