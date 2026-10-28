@@ -1,6 +1,6 @@
 import { dimensions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { useLocation } from "@tanstack/solid-router";
+import { useLocation, useRouterState } from "@tanstack/solid-router";
 import { For, Show } from "solid-js";
 import { createActiveSection } from "@/client/lib/create-active-section";
 import { Frame } from "@/client/ui/frame";
@@ -30,6 +30,12 @@ const pages = [
 
 type OutlineItem = { id: string; label: string; nested: boolean };
 
+function page_isCurrent(page: (typeof pages)[number], pathname: string) {
+  return page.to === "/"
+    ? pathname === "/"
+    : pathname === page.to || pathname.startsWith(`${page.to}/`);
+}
+
 function pageOutline(page: (typeof pages)[number]) {
   return "outline" in page ? page.outline : undefined;
 }
@@ -57,7 +63,11 @@ function PageOutline(props: {
 }
 
 export function SiteNav() {
-  const location = useLocation();
+  // The resolved location changes inside the router's view transition, so the rail's before and
+  // after snapshots differ and the marker can travel. The pending location changes too early.
+  const pathname = useRouterState({
+    select: (state) => (state.resolvedLocation ?? state.location).pathname,
+  });
 
   return (
     <Rail.Nav label={m.nav_pages()}>
@@ -66,7 +76,7 @@ export function SiteNav() {
           <>
             <Rail.Link
               to={page.to}
-              activeOptions={{ exact: page.to === "/" }}
+              current={page_isCurrent(page, pathname())}
               {...analytics_autocapture({
                 id: "nav-link",
                 destination: page.to,
@@ -75,7 +85,7 @@ export function SiteNav() {
             >
               {page.label()}
             </Rail.Link>
-            <Show when={location().pathname === page.to && pageOutline(page)}>
+            <Show when={pathname() === page.to && pageOutline(page)}>
               {(outline) => (
                 <PageOutline outline={outline()} container={Rail.Outline} link={Rail.OutlineLink} />
               )}
@@ -89,12 +99,7 @@ export function SiteNav() {
 
 export function SiteDock() {
   const location = useLocation();
-  const current = () =>
-    pages.find((page) =>
-      page.to === "/"
-        ? location().pathname === "/"
-        : location().pathname === page.to || location().pathname.startsWith(`${page.to}/`),
-    );
+  const current = () => pages.find((page) => page_isCurrent(page, location().pathname));
 
   return (
     <Dock.Root>

@@ -22,7 +22,7 @@
     view-transition-name: root;
   }
 
-  :root[data-theme-transition] .page-content {
+  :root[data-theme-transition] :is(.page-content, .rail-link, .rail-outline, .rail-marker) {
     view-transition-name: none;
   }
 
@@ -147,6 +147,23 @@
       view-transition-name: page-content;
     }
 
+    /* Rail links and the Agents outline glide to their new places; the marker travels between links. */
+    .rail-link,
+    .rail-outline {
+      view-transition-name: match-element;
+      view-transition-class: rail-item;
+    }
+
+    .rail-marker {
+      view-transition-name: rail-marker;
+    }
+
+    ::view-transition-group(*.rail-item),
+    ::view-transition-group(rail-marker) {
+      animation-duration: var(--duration-dock-enter);
+      animation-timing-function: var(--ease-dock);
+    }
+
     ::view-transition-group(page-content),
     ::view-transition-new(page-content) {
       animation: none;
@@ -219,8 +236,13 @@
   .nav-link[aria-current="page"] {
     color: var(--fg);
   }
-  .nav-link[aria-current="page"]::before {
+  .nav-link[aria-current="page"]:not(.rail-link)::before {
     content: "❯ ";
+    color: var(--accent);
+  }
+  .rail-marker {
+    display: inline-block;
+    margin-inline-end: 1ch;
     color: var(--accent);
   }
 

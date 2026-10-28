@@ -9,7 +9,7 @@ import {
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createLink } from "@tanstack/solid-router";
-import { splitProps, type ComponentProps, type ParentProps } from "solid-js";
+import { Show, splitProps, type ComponentProps, type ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
 
 const styles = stylex.create({
@@ -125,13 +125,25 @@ function RailNav(props: ParentProps<{ label: string }>) {
   );
 }
 
-// The router sets aria-current on the active link; styling keys off it.
-function RailAnchor(props: ComponentProps<"a">) {
-  const [local, rest] = splitProps(props, ["class"]);
+// The caller decides which link is current, replacing the router's own aria-current. The marker
+// is a real element, so a view transition can move it from the old link to the new one.
+function RailAnchor(props: ComponentProps<"a"> & { current: boolean }) {
+  const [local, rest] = splitProps(props, ["class", "children", "current", "aria-current"]);
 
   return (
     <li {...stylex.attrs(styles.item)}>
-      <a {...rest} class={cn("nav-link", stylex.attrs(styles.anchor).class, local.class)} />
+      <a
+        {...rest}
+        aria-current={local.current ? "page" : undefined}
+        class={cn("nav-link rail-link", stylex.attrs(styles.anchor).class, local.class)}
+      >
+        <Show when={local.current}>
+          <span class="rail-marker" aria-hidden="true">
+            ❯
+          </span>
+        </Show>
+        {local.children}
+      </a>
     </li>
   );
 }
@@ -140,7 +152,11 @@ function RailAnchor(props: ComponentProps<"a">) {
 function RailOutline(props: ParentProps<{ label: string }>) {
   return (
     <li {...stylex.attrs(styles.item)}>
-      <ul aria-label={props.label} {...stylex.attrs(styles.outline)}>
+      <ul
+        aria-label={props.label}
+        {...stylex.attrs(styles.outline)}
+        class={cn("rail-outline", stylex.attrs(styles.outline).class)}
+      >
         {props.children}
       </ul>
     </li>
