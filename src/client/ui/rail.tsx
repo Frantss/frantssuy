@@ -92,7 +92,7 @@ const styles = stylex.create({
     color: colors.fg,
   },
   // One bar for the whole outline, on the rail's right rule: past the nav's inline padding and its
-  // transparent border. It follows the scroll position between items.
+  // transparent border.
   outlineBar: {
     position: "absolute",
     top: 0,
@@ -100,8 +100,8 @@ const styles = stylex.create({
     width: borders.borderEmphasis,
     backgroundColor: colors.accent,
     transitionProperty: { default: null, [conditions.motion]: "transform, height, opacity" },
-    transitionDuration: motion.durationColor,
-    transitionTimingFunction: motion.easeColor,
+    transitionDuration: motion.durationDockEnter,
+    transitionTimingFunction: motion.easeDock,
   },
   outlineBarHidden: {
     opacity: 0,
@@ -152,23 +152,17 @@ function RailAnchor(props: ComponentProps<"a"> & { current: boolean }) {
   );
 }
 
-// Section links for the current page, nested under its link. `position` is the fractional item
-// index the bar sits at, so it can travel between items as the page scrolls.
-function RailOutline(props: ParentProps<{ label: string; position?: number }>) {
+// Section links for the current page, nested under its link. One bar marks the active item and
+// slides to the next one when the active section changes.
+function RailOutline(props: ParentProps<{ label: string; activeIndex?: number }>) {
   let list: HTMLUListElement | undefined;
   const placement = () => {
-    const items = list ? [...list.querySelectorAll<HTMLElement>(":scope > li")] : [];
-    const index = Math.floor(props.position ?? 0);
-    const from = items[index];
+    const item =
+      props.activeIndex === undefined
+        ? undefined
+        : list?.querySelectorAll<HTMLElement>(":scope > li")[props.activeIndex];
 
-    if (props.position === undefined || !from) return undefined;
-    const to = items[index + 1] ?? from;
-    const progress = props.position - index;
-
-    return {
-      top: list!.offsetTop + from.offsetTop + (to.offsetTop - from.offsetTop) * progress,
-      height: from.offsetHeight + (to.offsetHeight - from.offsetHeight) * progress,
-    };
+    return item && { top: list!.offsetTop + item.offsetTop, height: item.offsetHeight };
   };
 
   return (
@@ -181,7 +175,7 @@ function RailOutline(props: ParentProps<{ label: string; position?: number }>) {
       >
         {props.children}
       </ul>
-      {/* Measured positions change every scroll frame, so they go inline rather than through StyleX. */}
+      {/* Measured from the layout, so the position goes inline rather than through StyleX. */}
       <span
         aria-hidden="true"
         {...stylex.attrs(styles.outlineBar, !placement() && styles.outlineBarHidden)}
