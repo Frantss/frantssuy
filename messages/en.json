@@ -135,7 +135,6 @@
   "writing_all_tags": "all",
   "writing_clear_filters": "Clear filters",
   "writing_clear_search": "Clear search",
-  "writing_remove_tag": "Remove tag: {tag}",
   "writing_no_results_hint": "Try another search or remove a filter.",
   "writing_loading": "Loading articles…",
   "writing_updating": "Updating articles…",

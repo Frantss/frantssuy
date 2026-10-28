@@ -116,30 +116,18 @@ describe("article search filters", () => {
     expect(change).toHaveBeenLastCalledWith({ q: undefined, tag: "web" }, true);
   });
 
-  it("removes the visible active tag while the filter panel is collapsed", () => {
-    const { container, button, change } = mount({ q: "solid", tag: "web", offset: 20 });
-
-    expect(container.querySelector<HTMLElement>("[role='group']")!.inert).toBe(true);
-    expect(button("Remove tag: web").closest("[inert]")).toBeNull();
-    button("Remove tag: web").click();
-    expect(change).toHaveBeenLastCalledWith({ q: "solid", tag: undefined }, false);
-    expect(document.activeElement).toBe(button("Filters"));
-    expect(container.querySelector('[aria-label="Remove tag: web"]')).toBeNull();
-  });
-
-  it("shows the active tag once while the filter panel is open", () => {
+  it("keeps the active tag only in the tag list", () => {
     const { container, button } = mount({ tag: "web" });
 
     button("Filters").click();
-    expect(container.querySelector('[aria-label="Remove tag: web"]')).toBeNull();
+    expect(container.querySelectorAll('[aria-pressed="true"]')).toHaveLength(1);
     expect(button("web").getAttribute("aria-pressed")).toBe("true");
-    button("Filters").click();
-    expect(button("Remove tag: web")).not.toBeNull();
   });
 
   it("clears every filter and returns focus to search", () => {
     const { input, button, change } = mount({ q: "solid", tag: "web", offset: 20 });
 
+    button("Filters").click();
     button("Clear filters").click();
     expect(input.value).toBe("");
     expect(change).toHaveBeenLastCalledWith({ q: undefined, tag: undefined }, false);

@@ -123,17 +123,13 @@ const styles = stylex.create({
     justifyContent: "space-between",
     gap: spacing.space3,
   },
-  // Sized like the article count it sits beside, flush with the right edge of the row.
+  // Sized like the tag chips it sits beside, pushed to the end of their row.
   clear: {
     marginLeft: "auto",
     height: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
     paddingInline: 0,
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
-  },
-  activeTag: {
-    maxWidth: "100%",
-    overflowWrap: "anywhere",
   },
 });
 
@@ -148,7 +144,6 @@ export function ArticleSearchFilter(props: {
   const filtersId = createUniqueId();
   const inputId = createUniqueId();
   let input: HTMLInputElement | undefined;
-  let toggle: HTMLButtonElement | undefined;
   let submittedQuery = props.search.q ?? "";
   const debouncedSearch = createDebouncer(() => change(props.search.tag, true), { wait: 250 });
 
@@ -221,7 +216,6 @@ export function ArticleSearchFilter(props: {
           </Show>
         </div>
         <Button
-          ref={(element) => (toggle = element)}
           variant="secondary"
           selected={expanded() || !!props.search.tag}
           onClick={() => setExpanded((value) => !value)}
@@ -260,43 +254,23 @@ export function ArticleSearchFilter(props: {
                 );
               }}
             </For>
+            <Show when={draft() || props.search.tag}>
+              <Button
+                variant="quiet"
+                styles={styles.clear}
+                onClick={() => {
+                  setDraft("");
+                  change(undefined, false);
+                  input?.focus();
+                }}
+              >
+                {m.writing_clear_filters()}
+              </Button>
+            </Show>
           </div>
         </div>
       </div>
-      <div {...stylex.attrs(styles.summary)}>
-        {props.children}
-        {/* The open tag list already marks the active tag, so only show it here while closed. */}
-        <Show when={!expanded() && props.search.tag}>
-          {(tag) => (
-            <Button
-              variant="toggle"
-              selected
-              aria-label={m.writing_remove_tag({ tag: tag() })}
-              styles={styles.activeTag}
-              onClick={() => {
-                change(undefined, false);
-                toggle?.focus();
-              }}
-            >
-              {tag()}
-              <IconX size={12} {...stylex.attrs(styles.icon)} aria-hidden="true" />
-            </Button>
-          )}
-        </Show>
-        <Show when={draft() || props.search.tag}>
-          <Button
-            variant="quiet"
-            styles={styles.clear}
-            onClick={() => {
-              setDraft("");
-              change(undefined, false);
-              input?.focus();
-            }}
-          >
-            {m.writing_clear_filters()}
-          </Button>
-        </Show>
-      </div>
+      <div {...stylex.attrs(styles.summary)}>{props.children}</div>
     </div>
   );
 }
