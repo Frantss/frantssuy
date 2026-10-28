@@ -116,7 +116,7 @@
   "project_kind_client": "Client work",
   "project_kind_experiments": "Experiment",
   "project_kind_snippets": "Snippet",
-  "project_kind_misc": "Miscellaneous",
+  "project_kind_archived": "Archived",
   "article_all_writing": "← All writing",
   "writing_search": "Search articles",
   "writing_search_placeholder": "Search articles…",

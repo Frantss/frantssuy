@@ -138,7 +138,7 @@ export function portfolio_jobs(): Job[] {
   ];
 }
 
-export type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "misc";
+export type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "archived";
 
 export type Project = {
   name: string;
@@ -216,18 +216,23 @@ export function portfolio_other_projects(): Project[] {
     { name: "safeish", year: "2025", href: "https://github.com/Frantss/safeish", kind: "oss" },
     { name: "altereco.com.uy", href: "https://altereco.com.uy", kind: "client" },
     { name: "atenea-coffee.com", href: "https://atenea-coffee.com", kind: "client" },
-    { name: "npms-lib", year: "2021", href: "https://github.com/Frantss/npms-lib", kind: "misc" },
+    {
+      name: "npms-lib",
+      year: "2021",
+      href: "https://github.com/Frantss/npms-lib",
+      kind: "archived",
+    },
     {
       name: "react-hookful",
       year: "2020",
       href: "https://github.com/Frantss/react-hookful",
-      kind: "misc",
+      kind: "archived",
     },
     {
       name: "ruby-memcached",
       year: "2019",
       href: "https://github.com/Frantss/ruby-memcached",
-      kind: "misc",
+      kind: "archived",
     },
   ];
 }
@@ -238,7 +243,7 @@ export function portfolio_project_kind_label(kind: ProjectKind) {
     client: m.project_kind_client,
     experiments: m.project_kind_experiments,
     snippets: m.project_kind_snippets,
-    misc: m.project_kind_misc,
+    archived: m.project_kind_archived,
   }[kind]();
 }
 

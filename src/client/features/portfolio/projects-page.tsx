@@ -10,10 +10,10 @@ import * as stylex from "@stylexjs/stylex";
 import { For } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import {
+  IconArchive,
   IconBrandOpenSource,
   IconBriefcase,
   IconCode,
-  IconDots,
   IconFlask,
 } from "@tabler/icons-solidjs";
 import { links_openInNewTab } from "@/client/lib/links";
@@ -130,7 +130,7 @@ const kindIcons = {
   client: IconBriefcase,
   experiments: IconFlask,
   snippets: IconCode,
-  misc: IconDots,
+  archived: IconArchive,
 } satisfies Record<ProjectKind, unknown>;
 
 function ProjectKindIcon(props: { kind: ProjectKind }) {

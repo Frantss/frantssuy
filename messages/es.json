@@ -116,7 +116,7 @@
   "project_kind_client": "Trabajo para cliente",
   "project_kind_experiments": "Experimento",
   "project_kind_snippets": "Fragmento de código",
-  "project_kind_misc": "Misceláneo",
+  "project_kind_archived": "Archivado",
   "article_all_writing": "← Todos los artículos",
   "writing_search": "Buscar artículos",
   "writing_search_placeholder": "Buscar artículos…",
