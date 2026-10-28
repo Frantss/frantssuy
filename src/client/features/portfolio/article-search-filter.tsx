@@ -123,8 +123,13 @@ const styles = stylex.create({
     justifyContent: "space-between",
     gap: spacing.space3,
   },
+  // Sized like the article count it sits beside, flush with the right edge of the row.
   clear: {
     marginLeft: "auto",
+    height: { default: dimensions.sizeSmall, [conditions.coarsePointer]: dimensions.sizeTouch },
+    paddingInline: 0,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
   },
   activeTag: {
     maxWidth: "100%",
