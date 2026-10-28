@@ -266,13 +266,19 @@ function WritingArticles() {
             <Show
               when={shown()?.articles.length}
               fallback={
-                <div {...stylex.attrs(styles.emptyResults)}>
+                <div
+                  {...stylex.attrs(styles.emptyResults)}
+                  class={cn("article-empty", stylex.attrs(styles.emptyResults).class)}
+                >
                   <p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>
                   <p {...stylex.attrs(styles.loading)}>{m.writing_no_results_hint()}</p>
                 </div>
               }
             >
-              <div {...stylex.attrs(styles.years)}>
+              <div
+                {...stylex.attrs(styles.years)}
+                class={cn("article-years", stylex.attrs(styles.years).class)}
+              >
                 <For each={groups()}>
                   {(group) => (
                     <section {...stylex.attrs(styles.year)}>

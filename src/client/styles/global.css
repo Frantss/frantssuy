@@ -175,6 +175,18 @@
       view-transition-class: article-row;
     }
 
+    /* The list wrapper (with its year headings) and the empty message fade in and out with the
+       rows, instead of switching instantly with the rest of the page. */
+    .article-results[data-swapping] .article-years {
+      view-transition-name: article-years;
+      view-transition-class: article-row;
+    }
+
+    .article-results[data-swapping] .article-empty {
+      view-transition-name: article-empty;
+      view-transition-class: article-row;
+    }
+
     ::view-transition-group(*.article-row),
     ::view-transition-group(*.rail-item),
     ::view-transition-group(rail-marker) {
