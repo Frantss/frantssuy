@@ -18,13 +18,16 @@ const styles = stylex.create({
     borderWidth: borders.borderRule,
     borderStyle: "solid",
     borderColor: colors.line,
-    paddingInline: spacing.space1_5,
+    borderRadius: borders.radiusControl,
+    paddingInline: spacing.space2,
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
     color: colors.muted,
+    textTransform: "lowercase",
   },
 });
 
+// Static tags share the face of the toggle Button, so a tag looks the same whether or not it filters.
 function TagsList(props: ParentProps) {
   return <ul {...stylex.attrs(styles.list)}>{props.children}</ul>;
 }
