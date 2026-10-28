@@ -1,9 +1,22 @@
 import { createSignal, onCleanup, onMount, type Accessor } from "solid-js";
 
-// The id of the last section whose heading has scrolled past a line a quarter of the way down
-// the scroller. At the end of the scroller the last section wins, since a short final section
-// never reaches the line. A section reached through an in-page link stays active until the reader
-// scrolls by hand: jumping to a section near the end would otherwise mark the last one.
+// How far down the scroller the reading line sits, from 0 (top) to 1 (bottom). It rests a quarter
+// of the way down, then slides to the bottom over the last screen of scrolling, so short sections
+// near the end each cross it before the scroller runs out.
+export function activeSection_lineRatio(
+  scrollTop: number,
+  scrollHeight: number,
+  clientHeight: number,
+) {
+  const remaining = scrollHeight - clientHeight - scrollTop;
+  const progress = Math.min(1, Math.max(0, 1 - remaining / clientHeight));
+
+  return 0.25 + 0.75 * progress;
+}
+
+// The id of the last section whose heading has scrolled past the reading line. A section reached
+// through an in-page link stays active until the reader scrolls by hand: jumping to a section near
+// the end would otherwise mark a later one.
 export function createActiveSection(
   ids: Accessor<readonly string[]>,
   scrollerSelector: string,
@@ -26,12 +39,10 @@ export function createActiveSection(
 
         return;
       }
-      if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1) {
-        setActive(sections.at(-1));
-
-        return;
-      }
-      const line = scroller.getBoundingClientRect().top + scroller.clientHeight / 4;
+      const line =
+        scroller.getBoundingClientRect().top +
+        scroller.clientHeight *
+          activeSection_lineRatio(scroller.scrollTop, scroller.scrollHeight, scroller.clientHeight);
 
       setActive(
         sections
