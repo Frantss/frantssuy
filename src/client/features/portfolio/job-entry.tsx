@@ -41,11 +41,14 @@ export function JobEntry(props: { job: Job }) {
       <Entry.Header>
         <Entry.Title>
           <span {...stylex.attrs(styles.heading)}>
-            <Show when={props.job.href} fallback={props.job.company}>
-              <a href={props.job.href} {...links_openInNewTab}>
-                {props.job.company}
-              </a>
-            </Show>
+            <span>
+              {props.job.role} ·{" "}
+              <Show when={props.job.href} fallback={props.job.company}>
+                <a href={props.job.href} {...links_openInNewTab}>
+                  {props.job.company}
+                </a>
+              </Show>
+            </span>
             <a
               href={`#${id()}`}
               aria-label={`${props.job.company} · ${props.job.role} · ${props.job.start}`}
@@ -55,14 +58,13 @@ export function JobEntry(props: { job: Job }) {
             </a>
           </span>
         </Entry.Title>
-        <Entry.Aside>{props.job.location}</Entry.Aside>
+        <Entry.Aside>
+          {props.job.start}–{props.job.end === "∞" ? m.job_present() : props.job.end}
+        </Entry.Aside>
       </Entry.Header>
-      <Entry.Subtitle>{props.job.role}</Entry.Subtitle>
       <Entry.Meta>
         <span>{props.job.type}</span>
-        <span>
-          {props.job.start}–{props.job.end === "∞" ? m.job_present() : props.job.end}
-        </span>
+        <span>{props.job.location}</span>
         <JobDuration start={props.job.start} end={props.job.end} />
       </Entry.Meta>
       <Show when={props.job.bullets.length > 0}>

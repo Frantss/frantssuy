@@ -208,7 +208,12 @@
   .entry-meta > * + *::before {
     margin-inline: var(--space-1-5);
     color: var(--faint);
-    content: "|";
+    content: "·";
+  }
+  @media print {
+    .entry-meta > * + *::before {
+      content: "|";
+    }
   }
 
   .nav-link[aria-current="page"] {
