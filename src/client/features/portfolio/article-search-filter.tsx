@@ -50,15 +50,22 @@ const styles = stylex.create({
     flex: "1",
     alignItems: "center",
     gap: spacing.space2,
+    // Same frame as the raised buttons beside it, so the row reads as one height.
     borderWidth: borders.borderRule,
+    borderBottomWidth: borders.borderEmphasis,
     borderStyle: "solid",
-    borderColor: colors.faint,
+    borderColor: {
+      default: colors.lineStrong,
+      [conditions.hover]: { default: null, ":hover": colors.faint },
+    },
+    borderBottomColor: colors.edge,
+    borderRadius: borders.radiusControl,
     paddingLeft: spacing.space2_5,
     paddingRight: spacing.space1,
-    outlineStyle: { default: null, ":has(:focus-visible)": "solid" },
-    outlineWidth: { default: null, ":has(:focus-visible)": borders.borderEmphasis },
-    outlineColor: { default: null, ":has(:focus-visible)": colors.accent },
-    outlineOffset: { default: null, ":has(:focus-visible)": borders.focusOffset },
+    boxShadow: {
+      default: null,
+      ":has(:focus-visible)": `0 0 0 ${borders.focusOffset} ${colors.bg}, 0 0 0 calc(${borders.focusOffset} + ${borders.borderEmphasis}) ${colors.accent}`,
+    },
   },
   icon: {
     flexShrink: 0,
