@@ -27,6 +27,7 @@ export const documentTheme = stylex.create({
     "--font-body": typography.fontBody,
     "--font-print": typography.fontPrint,
     "--leading-body": typography.leadingBody,
+    "--leading-prose": typography.leadingProse,
     "--leading-heading": typography.leadingHeading,
     "--leading-print": typography.leadingPrint,
     "--weight-bold": typography.weightBold,

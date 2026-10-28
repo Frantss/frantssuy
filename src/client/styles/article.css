@@ -1,6 +1,7 @@
 @layer components {
   .article-body {
     overflow-wrap: anywhere;
+    line-height: var(--leading-prose);
   }
 
   .article-body > :first-child {

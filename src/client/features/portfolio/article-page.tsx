@@ -20,8 +20,10 @@ const styles = stylex.create({
     maxWidth: dimensions.sizeArticle,
   },
   meta: {
-    display: "grid",
-    gap: spacing.space2,
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: spacing.space3,
   },
   date: {
     fontSize: typography.fontXs,

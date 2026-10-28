@@ -53,6 +53,7 @@ export const typography = stylex.defineVars({
   fontCvPrint: "11px",
   fontPrint: "12px",
   leadingBody: "1.6",
+  leadingProse: "1.7",
   leadingXs: "calc(1 / 0.75)",
   leadingSm: "calc(1.25 / 0.875)",
   leadingBase: "1.5",
