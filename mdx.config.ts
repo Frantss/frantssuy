@@ -5,6 +5,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkGfm from "remark-gfm";
 import { createHighlighter } from "@tanstack/highlight/core";
+import { csharp } from "@tanstack/highlight/languages/csharp";
 import { css } from "@tanstack/highlight/languages/css";
 import { html } from "@tanstack/highlight/languages/html";
 import { js } from "@tanstack/highlight/languages/js";
@@ -28,7 +29,9 @@ const metadataId = "virtual:article-metadata";
 const resolvedMetadataId = `\0${metadataId}`;
 const articleDirectory = fileURLToPath(new URL("./src/content/articles/", import.meta.url));
 
-const highlighter = createHighlighter({ languages: [css, html, js, json, shell, ts, tsx] });
+const highlighter = createHighlighter({
+  languages: [csharp, css, html, js, json, shell, ts, tsx],
+});
 const theme: HighlightTheme = { ...githubLightTheme, tokens: { ...githubLightTheme.tokens } };
 
 theme.background = `light-dark(${githubLightTheme.background}, ${githubDarkTheme.background})`;
