@@ -6,6 +6,8 @@ import type { Locale } from "@/paraglide/runtime";
 export const profile = {
   name: "Francisco Bongiovanni",
   handle: "frantssb",
+  // Short name shown in the navbar and breadcrumbs, after the frantss.uy domain.
+  brand: "frantss",
   utcOffset: -3,
   email: "frantss.bongiovanni@gmail.com",
   links: [

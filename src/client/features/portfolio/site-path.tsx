@@ -56,9 +56,9 @@ export function SitePath() {
     <nav aria-label={m.nav_breadcrumb()} {...stylex.attrs(styles.root)}>
       <ol {...stylex.attrs(styles.list)}>
         <li>
-          <Show when={!atHome()} fallback={`~/${profile.handle}`}>
+          <Show when={!atHome()} fallback={`~/${profile.brand}`}>
             <Link to="/" activeOptions={{ exact: true }} {...stylex.attrs(styles.link)}>
-              ~/{profile.handle}
+              ~/{profile.brand}
             </Link>
           </Show>
           /

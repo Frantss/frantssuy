@@ -94,7 +94,7 @@ export function SiteHeader() {
     <header {...stylex.attrs(styles.root)}>
       <Link to="/" {...stylex.attrs(styles.brand, stylex.defaultMarker())}>
         <span {...stylex.attrs(styles.monogram)}>FB</span>
-        <span {...stylex.attrs(styles.handle)}>{profile.handle}</span>
+        <span {...stylex.attrs(styles.handle)}>{profile.brand}</span>
       </Link>
       <div {...stylex.attrs(styles.actions)}>
         <ThemeToggle styles={styles.desktopControl} />
