@@ -53,10 +53,7 @@ const styles = stylex.create({
     margin: 0,
     display: "grid",
     listStyleType: "none",
-    gridTemplateColumns: {
-      default: "minmax(0,1fr)",
-      [conditions.wide]: "repeat(3, minmax(0,1fr))",
-    },
+    gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 14rem), 1fr))",
     gap: spacing.space3,
     padding: 0,
   },
