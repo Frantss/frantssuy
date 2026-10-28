@@ -9,125 +9,187 @@ import {
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createMemo, createSignal, For, Show, type JSX } from "solid-js";
-import { Dynamic } from "solid-js/web";
-import { SectionLabel } from "@/client/ui/section-label";
+import { IconBrandGithub, IconCheck, IconCopy, IconLink } from "@tabler/icons-solidjs";
+import { Button, ButtonLink } from "@/client/ui/button";
+import { createClipboardCopy } from "@/client/lib/create-clipboard-copy";
 import { links_openInNewTab } from "@/client/lib/links";
-import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { m } from "@/paraglide/messages";
-import { portfolio_agent_instructions, portfolio_agent_skill_groups } from "./portfolio.data";
+import {
+  portfolio_agent_install,
+  portfolio_agent_sections,
+  type AgentExample,
+  type AgentSection,
+} from "./portfolio.data";
 
 const styles = stylex.create({
   root: {
     maxWidth: dimensions.sizeArticle,
-    gap: spacing.space8,
+    gap: spacing.space12,
+  },
+  top: {
+    display: "grid",
+    gap: spacing.space4,
   },
   paragraph: {
     margin: 0,
   },
+  install: {
+    display: "grid",
+    gap: spacing.space1_5,
+  },
+  installers: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: spacing.space1_5,
+  },
+  command: {
+    display: "flex",
+    minHeight: {
+      default: dimensions.sizeControl,
+      [conditions.coarsePointer]: dimensions.sizeTouch,
+    },
+    minWidth: 0,
+    alignItems: "center",
+    gap: spacing.space2,
+    borderWidth: borders.borderRule,
+    borderBottomWidth: borders.borderEmphasis,
+    borderStyle: "solid",
+    borderColor: colors.lineStrong,
+    borderBottomColor: colors.edge,
+    borderRadius: borders.radiusControl,
+    paddingBlock: spacing.space1,
+    paddingLeft: spacing.space2_5,
+    paddingRight: spacing.space1,
+    fontSize: typography.fontXs,
+    lineHeight: typography.leadingXs,
+  },
+  commandText: {
+    display: "grid",
+    minWidth: 0,
+    flex: "1",
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+    scrollbarWidth: "none",
+  },
+  commandLine: {
+    whiteSpace: "nowrap",
+  },
+  commandName: {
+    color: colors.accent,
+  },
+  copy: {
+    width: dimensions.sizeSmall,
+    height: dimensions.sizeSmall,
+    flexShrink: 0,
+    paddingInline: 0,
+  },
+  links: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0,1fr))",
+    gap: spacing.space1_5,
+  },
   section: {
     display: "grid",
     minWidth: 0,
-    gridTemplateColumns: "minmax(0,1fr)",
-    gap: spacing.space4,
+    gap: spacing.space3,
   },
-  repo: {
+  heading: {
+    position: "relative",
+    margin: 0,
     display: "flex",
-    alignItems: "baseline",
-  },
-  repoLink: {
-    display: "inline-flex",
-    minHeight: { default: dimensions.sizeTouch, [conditions.wide]: 0 },
     alignItems: "center",
-    fontWeight: typography.weightBold,
+    gap: spacing.space3,
+    fontSize: "inherit",
+    fontWeight: typography.weightNormal,
   },
-  repoValue: {
+  name: {
+    fontWeight: typography.weightBold,
+    whiteSpace: "nowrap",
+    transitionProperty: "color",
+    transitionDuration: motion.durationColor,
+    transitionTimingFunction: motion.easeColor,
+    color: {
+      default: colors.fg,
+      [conditions.hover]: { default: null, ":hover": colors.link },
+      ":focus-visible": colors.link,
+    },
+  },
+  // Sits in the gutter left of the heading, so revealing it never moves the text.
+  anchorIcon: {
+    position: "absolute",
+    right: "100%",
+    top: "50%",
+    display: { default: "inline-flex", [conditions.narrow]: "none" },
+    marginRight: spacing.space2,
+    translate: "0 -50%",
+    color: colors.faint,
+    opacity: {
+      default: 0,
+      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: 1 },
+      [stylex.when.ancestor(":focus-visible")]: 1,
+    },
+    transitionProperty: { default: null, [conditions.motion]: "opacity" },
+    transitionDuration: motion.durationFast,
+    transitionTimingFunction: motion.easeOut,
+  },
+  slash: {
+    color: colors.faint,
+  },
+  hairline: {
+    minWidth: spacing.space4,
+    flex: "1",
+    height: borders.borderRule,
+    backgroundColor: colors.line,
+  },
+  note: {
     flexShrink: 0,
-    fontVariantNumeric: "tabular-nums",
-    marginLeft: { default: "auto", [conditions.wide]: 0 },
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
     color: colors.faint,
   },
-  note: {
+  noteEmphasis: {
+    color: colors.accent,
+  },
+  prose: {
     margin: 0,
+    color: colors.muted,
+  },
+  term: {
+    fontWeight: typography.weightMedium,
+    color: colors.fg,
+  },
+  example: {
+    margin: 0,
+    borderWidth: borders.borderRule,
+    borderStyle: "solid",
+    borderColor: colors.line,
+    borderRadius: borders.radiusControl,
+    paddingBlock: spacing.space3,
+    paddingInline: spacing.space4,
+    overflowX: "auto",
+    fontFamily: "inherit",
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
     color: colors.muted,
   },
-  contents: {
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-  },
-  contentsList: {
-    margin: 0,
-    display: "grid",
-    listStyleType: "none",
-    gap: { default: 0, [conditions.wide]: spacing.space1 },
-    padding: 0,
-  },
-  sectionLink: {
-    display: "flex",
-    minHeight: { default: dimensions.sizeControl, [conditions.wide]: 0 },
-    alignItems: "center",
+  prompt: {
     color: colors.fg,
   },
-  sectionTitle: {
-    minWidth: 0,
-    transitionProperty: "color",
-    transitionDuration: motion.durationColor,
-    transitionTimingFunction: motion.easeColor,
-    color: {
-      default: null,
-      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.link },
-      [stylex.when.ancestor(":focus-visible")]: colors.link,
-    },
+  promptMark: {
+    color: colors.accent,
   },
-  sectionNumber: {
-    transitionProperty: "color",
-    transitionDuration: motion.durationColor,
-    transitionTimingFunction: motion.easeColor,
-    color: {
-      default: colors.faint,
-      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.link },
-      [stylex.when.ancestor(":focus-visible")]: colors.link,
-    },
-  },
-  group: {
-    display: "grid",
-    minWidth: 0,
-    gap: spacing.space3,
-    marginTop: spacing.space2,
-    paddingTop: spacing.space4,
-  },
-  title: {
-    margin: 0,
-    display: "inline-flex",
-    minWidth: 0,
-    alignItems: "center",
-    gap: spacing.space2,
-    fontSize: "inherit",
-  },
-  titleText: {
-    fontWeight: typography.weightBold,
-  },
-
-  list: {
+  steps: {
     margin: 0,
     display: "grid",
     listStyleType: "none",
-    gridTemplateColumns: "minmax(0,1fr)",
-    gap: spacing.space4,
     padding: 0,
-  },
-  steps: {
-    gap: 0,
   },
   step: {
     display: "grid",
     gridTemplateColumns: `${dimensions.sizeSmall} minmax(0,1fr)`,
     columnGap: spacing.space3,
-    paddingBottom: { default: spacing.space4, ":last-child": 0 },
+    paddingBottom: { default: spacing.space3, ":last-child": 0 },
   },
   marker: {
     display: "flex",
@@ -159,7 +221,7 @@ const styles = stylex.create({
   rail: {
     flex: "1",
     width: borders.borderRule,
-    marginBottom: `calc(-1 * ${spacing.space4})`,
+    marginBottom: `calc(-1 * ${spacing.space3})`,
     backgroundColor: colors.line,
   },
   railFill: {
@@ -178,116 +240,194 @@ const styles = stylex.create({
   delay: (steps: number) => ({
     transitionDelay: `calc(${Math.max(steps, 0)} * ${motion.durationStagger})`,
   }),
-  skill: {
-    display: "grid",
-    gap: spacing.space1,
-    color: colors.fg,
-    textDecoration: "none",
+  stepText: {
+    display: "flex",
+    flexWrap: "wrap",
+    minHeight: dimensions.sizeSmall,
+    alignItems: "center",
+    columnGap: spacing.space2,
   },
-  name: {
+  stepLink: {
     fontWeight: typography.weightBold,
-    overflowWrap: "anywhere",
-    transitionProperty: "color",
-    transitionDuration: motion.durationColor,
-    transitionTimingFunction: motion.easeColor,
     color: {
-      default: null,
-      [conditions.hover]: { default: null, [stylex.when.ancestor(":hover")]: colors.link },
-      [stylex.when.ancestor(":focus-visible")]: colors.link,
+      default: colors.fg,
+      [conditions.hover]: { default: null, ":hover": colors.link },
+      ":focus-visible": colors.link,
     },
   },
-  description: {
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-    color: colors.muted,
+  stepOutput: {
+    color: colors.faint,
+  },
+  arrow: {
+    color: colors.accent,
+  },
+  srOnly: {
+    position: "absolute",
+    width: dimensions.sizeScreenReader,
+    height: dimensions.sizeScreenReader,
+    padding: 0,
+    margin: spacing.screenReaderOffset,
+    overflow: "hidden",
+    clipPath: "inset(50%)",
+    whiteSpace: "nowrap",
+    borderWidth: 0,
   },
 });
 
 export function AgentsPage() {
-  const instructions = portfolio_agent_instructions();
-
   return (
     <Page styles={styles.root}>
-      <PageTitle>{m.page_agents()}</PageTitle>
-      <p {...stylex.attrs(styles.paragraph)}>{m.agents_intro()}</p>
-
-      <section aria-labelledby="instructions-heading" {...stylex.attrs(styles.section)}>
-        <Heading
-          level="h2"
-          id="instructions-heading"
-          name={instructions.name}
-          href={instructions.href}
-          value={instructions.license}
-        />
-        <p {...stylex.attrs(styles.note)}>{instructions.description}</p>
-        <nav aria-label={m.agents_instructions_contents()} {...stylex.attrs(styles.contents)}>
-          <ol {...stylex.attrs(styles.contentsList)}>
-            <For each={instructions.sections}>
-              {(section, index) => (
-                <li>
-                  <a
-                    href={`${instructions.fileHref}#${section.anchor}`}
-                    {...links_openInNewTab}
-                    {...stylex.attrs(styles.sectionLink, stylex.defaultMarker())}
-                  >
-                    <span {...stylex.attrs(styles.sectionTitle)}>{section.title}</span>
-                    <IndexList.Leader />
-                    <span
-                      aria-hidden="true"
-                      {...stylex.attrs(styles.repoValue, styles.sectionNumber)}
-                    >
-                      {String(index() + 1).padStart(2, "0")}
-                    </span>
-                  </a>
-                </li>
-              )}
-            </For>
-          </ol>
-        </nav>
-      </section>
-
-      <section id="skills" aria-label={m.agents_skills()} {...stylex.attrs(styles.section)}>
-        <For each={portfolio_agent_skill_groups()}>
-          {(group) => (
-            <section aria-labelledby={group.id} {...stylex.attrs(styles.group)}>
-              <SectionLabel
-                level="h3"
-                id={group.id}
-                count={m.agents_group_skill_count({ count: group.members.length })}
-              >
-                {group.label}
-              </SectionLabel>
-              <p {...stylex.attrs(styles.note)}>{group.description}</p>
-              <Show
-                when={group.kind === "steps"}
-                fallback={
-                  <ul {...stylex.attrs(styles.list)}>
-                    <For each={group.skills}>
-                      {(skill) => (
-                        <li>
-                          <Skill {...skill} />
-                        </li>
-                      )}
-                    </For>
-                  </ul>
-                }
-              >
-                <SkillSteps skills={group.skills} />
-              </Show>
-            </section>
-          )}
-        </For>
-      </section>
+      <div {...stylex.attrs(styles.top)}>
+        <PageTitle>{m.page_agents()}</PageTitle>
+        <p {...stylex.attrs(styles.paragraph)}>{m.agents_intro()}</p>
+        <Install />
+      </div>
+      <For each={portfolio_agent_sections()}>{(section) => <Section {...section} />}</For>
     </Page>
   );
 }
 
-type SkillEntry = { name: string; description: string };
+function Install() {
+  const install = portfolio_agent_install();
+  const [installerId, setInstallerId] = createSignal(install.installers[0].id);
+  const installer = () =>
+    install.installers.find((option) => option.id === installerId()) ?? install.installers[0];
+  const clipboard = createClipboardCopy();
+  const status = () =>
+    ({ idle: "", copied: m.agents_command_copied(), failed: m.agents_copy_command_failed() })[
+      clipboard.state()
+    ];
+
+  return (
+    <div {...stylex.attrs(styles.install)}>
+      <div role="group" aria-label={m.agents_installer()} {...stylex.attrs(styles.installers)}>
+        <For each={install.installers}>
+          {(option) => (
+            <Button
+              variant="toggle"
+              aria-pressed={option.id === installerId()}
+              onClick={() => setInstallerId(option.id)}
+            >
+              {option.label}
+            </Button>
+          )}
+        </For>
+      </div>
+      <div {...stylex.attrs(styles.command)}>
+        <code {...stylex.attrs(styles.commandText)}>
+          <For each={installer().commands}>
+            {(command) => {
+              const [program, ...args] = command.split(" ");
+
+              return (
+                <span {...stylex.attrs(styles.commandLine)}>
+                  <span {...stylex.attrs(styles.commandName)}>{program}</span> {args.join(" ")}
+                </span>
+              );
+            }}
+          </For>
+        </code>
+        <Button
+          variant="quiet"
+          aria-label={m.agents_copy_command()}
+          styles={styles.copy}
+          onClick={() => void clipboard.copy(installer().commands.join("\n"))}
+        >
+          <Show
+            when={clipboard.state() === "copied"}
+            fallback={<IconCopy size={16} aria-hidden="true" />}
+          >
+            <IconCheck size={16} aria-hidden="true" />
+          </Show>
+        </Button>
+        <span role="status" {...stylex.attrs(styles.srOnly)}>
+          {status()}
+        </span>
+      </div>
+      <div {...stylex.attrs(styles.links)}>
+        <For each={install.links}>
+          {(link) => (
+            <ButtonLink variant="secondary" href={link.href} {...links_openInNewTab}>
+              <IconBrandGithub size={16} aria-hidden="true" />
+              {link.label}
+            </ButtonLink>
+          )}
+        </For>
+      </div>
+    </div>
+  );
+}
+
+function Section(props: AgentSection) {
+  return (
+    <section aria-labelledby={props.id} {...stylex.attrs(styles.section)}>
+      <h2 id={props.id} {...stylex.attrs(styles.heading)}>
+        <a href={`#${props.id}`} {...stylex.attrs(styles.name, stylex.defaultMarker())}>
+          <IconLink size={16} aria-hidden="true" {...stylex.attrs(styles.anchorIcon)} />
+          <span aria-hidden="true" {...stylex.attrs(styles.slash)}>
+            /
+          </span>
+          {props.name}
+        </a>
+        <span aria-hidden="true" {...stylex.attrs(styles.hairline)} />
+        <Show when={props.note}>
+          {(note) => (
+            <span {...stylex.attrs(styles.note, note().emphasis && styles.noteEmphasis)}>
+              {note().text}
+            </span>
+          )}
+        </Show>
+      </h2>
+      <p {...stylex.attrs(styles.prose)}>
+        <Emphasis text={props.description} />
+      </p>
+      <Show when={props.example}>{(example) => <Example example={example()} />}</Show>
+    </section>
+  );
+}
+
+// Renders **marked** terms as emphasis, so translations keep control of which words stand out.
+function Emphasis(props: { text: string }) {
+  return (
+    <For each={props.text.split("**")}>
+      {(part, index) => (
+        <Show when={index() % 2 === 1} fallback={part}>
+          <strong {...stylex.attrs(styles.term)}>{part}</strong>
+        </Show>
+      )}
+    </For>
+  );
+}
+
+function Example(props: { example: AgentExample }) {
+  const example = props.example;
+
+  if (example.kind === "steps") return <Steps steps={example.steps} />;
+
+  return (
+    <pre {...stylex.attrs(styles.example)}>
+      <Show when={example.prompt}>
+        {(prompt) => (
+          <span {...stylex.attrs(styles.prompt)}>
+            <span aria-hidden="true" {...stylex.attrs(styles.promptMark)}>
+              {"> "}
+            </span>
+            {prompt()}
+            {"\n"}
+          </span>
+        )}
+      </Show>
+      {example.lines.join("\n")}
+    </pre>
+  );
+}
+
+type Step = Extract<AgentExample, { kind: "steps" }>["steps"][number];
 
 // The path lights steps 0..to. Segment k joins steps k and k + 1. Changes cascade one
 // segment at a time away from the previous end of the path, so only the segments that
 // change are delayed.
-function SkillSteps(props: { skills: readonly SkillEntry[] }) {
+function Steps(props: { steps: Step[] }) {
   const [hovered, setHovered] = createSignal(-1);
   const [focused, setFocused] = createSignal(-1);
   const path = createMemo<{ from: number; to: number }>(
@@ -302,14 +442,14 @@ function SkillSteps(props: { skills: readonly SkillEntry[] }) {
 
   return (
     <ol
-      {...stylex.attrs(styles.list, styles.steps)}
+      {...stylex.attrs(styles.steps)}
       onPointerLeave={() => setHovered(-1)}
       onFocusOut={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(-1);
       }}
     >
-      <For each={props.skills}>
-        {(skill, index) => (
+      <For each={props.steps}>
+        {(step, index) => (
           <li
             {...stylex.attrs(styles.step)}
             onPointerEnter={(event) => {
@@ -330,7 +470,7 @@ function SkillSteps(props: { skills: readonly SkillEntry[] }) {
               >
                 {index() + 1}
               </span>
-              <Show when={index() < props.skills.length - 1}>
+              <Show when={index() < props.steps.length - 1}>
                 <span {...stylex.attrs(styles.rail)}>
                   <span
                     {...dynamicAttrs(
@@ -342,7 +482,17 @@ function SkillSteps(props: { skills: readonly SkillEntry[] }) {
                 </span>
               </Show>
             </span>
-            <Skill {...skill} />
+            <span {...stylex.attrs(styles.stepText)}>
+              <a href={step.href} {...links_openInNewTab} {...stylex.attrs(styles.stepLink)}>
+                /{step.name}
+              </a>
+              <span {...stylex.attrs(styles.stepOutput)}>
+                <span aria-hidden="true" {...stylex.attrs(styles.arrow)}>
+                  →{" "}
+                </span>
+                {step.output}
+              </span>
+            </span>
           </li>
         )}
       </For>
@@ -356,47 +506,4 @@ function dynamicAttrs(...styles: stylex.StyleXStyles[]) {
   const { className, style } = stylex.props(...styles);
 
   return { class: className, style: style as JSX.CSSProperties | undefined };
-}
-
-// A section title: optionally what kind of thing it is (icon with a tooltip), its name, and a
-// trailing note.
-function Heading(props: {
-  level: "h2" | "h3";
-  id: string;
-  name: string;
-  href?: string;
-  value: JSX.Element;
-}) {
-  return (
-    <div {...stylex.attrs(styles.repo)}>
-      <Dynamic component={props.level} id={props.id} {...stylex.attrs(styles.title)}>
-        <Show
-          when={props.href}
-          fallback={<span {...stylex.attrs(styles.titleText)}>{props.name}</span>}
-        >
-          {(href) => (
-            <a href={href()} {...links_openInNewTab} {...stylex.attrs(styles.repoLink)}>
-              {props.name}
-            </a>
-          )}
-        </Show>
-      </Dynamic>
-      <IndexList.Leader />
-      <span {...stylex.attrs(styles.repoValue)}>{props.value}</span>
-    </div>
-  );
-}
-
-function Skill(props: SkillEntry) {
-  return (
-    <a
-      id={props.name}
-      href={`https://github.com/Frantss/frantss-skills/blob/main/skills/${props.name}/SKILL.md`}
-      {...links_openInNewTab}
-      {...stylex.attrs(styles.skill, stylex.defaultMarker())}
-    >
-      <span {...stylex.attrs(styles.name)}>{props.name}</span>
-      <span {...stylex.attrs(styles.description)}>{props.description}</span>
-    </a>
-  );
 }

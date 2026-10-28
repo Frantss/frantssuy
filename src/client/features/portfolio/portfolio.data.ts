@@ -321,91 +321,115 @@ export function portfolio_education() {
   ];
 }
 
-export function portfolio_agent_instructions() {
+const skillsRepo = "https://github.com/Frantss/frantss-skills";
+
+function skill_href(name: string) {
+  return `${skillsRepo}/blob/main/skills/${name}/SKILL.md`;
+}
+
+export function portfolio_agent_install() {
   return {
-    name: "agents.md",
-    href: "https://github.com/Frantss/agents.md",
-    fileHref: "https://github.com/Frantss/agents.md/blob/main/AGENTS.md",
-    license: "MIT",
-    description: m.agents_instructions_description(),
-    sections: [
-      { title: "Coding standards", anchor: "coding-standards" },
-      { title: "Communicating", anchor: "communicating" },
-      { title: "Autonomy", anchor: "autonomy" },
-      { title: "Proposing solutions", anchor: "proposing-solutions" },
-      { title: "Before changing code", anchor: "before-changing-code" },
-      { title: "Before reporting completion", anchor: "before-reporting-completion" },
-      { title: "Writing documentation", anchor: "writing-documentation" },
-      { title: "Git & GitHub", anchor: "git--github" },
+    installers: [
+      {
+        id: "claude",
+        label: "claude",
+        commands: [
+          "claude plugin marketplace add Frantss/frantss-skills",
+          "claude plugin install frantss-skills@frantss",
+        ],
+      },
+      {
+        id: "npx",
+        label: "npx skills",
+        commands: ["npx skills add Frantss/frantss-skills"],
+      },
+    ],
+    links: [
+      { label: "agents.md", href: "https://github.com/Frantss/agents.md" },
+      { label: "frantss-skills", href: skillsRepo },
     ],
   };
 }
 
-export function portfolio_agent_skill_groups() {
+export type AgentExample =
+  | { kind: "transcript"; prompt?: string; lines: string[] }
+  | { kind: "steps"; steps: { name: string; href: string; output: string }[] };
+
+export type AgentSection = {
+  id: string;
+  name: string;
+  // Text with **key terms** marked for emphasis.
+  description: string;
+  note?: { text: string; emphasis?: boolean };
+  example?: AgentExample;
+};
+
+// One section per thing the agent loads: the instructions file, the BDD workflow, and the
+// everyday skills.
+export function portfolio_agent_sections(): AgentSection[] {
   return [
     {
+      id: "agents-md",
+      name: "agents.md",
+      description: m.agents_md_description(),
+      note: { text: m.agents_every_session() },
+      example: {
+        kind: "transcript",
+        lines: [
+          m.agents_md_example_goal(),
+          m.agents_md_example_done(),
+          m.agents_md_example_next(),
+          m.agents_md_example_needs(),
+        ],
+      },
+    },
+    {
       id: "bdd",
-      label: m.agents_group_bdd(),
-      kind: "steps",
-      description: m.agents_group_bdd_description(),
-      members: [
-        "frame-problem",
-        "design-solution",
-        "discover-behavior",
-        "formulate-behavior",
-        "slice-work",
-        "implement-ticket",
-      ],
-      skills: [
-        { name: "frame-problem", description: m.skill_frame_description() },
-        { name: "design-solution", description: m.skill_design_description() },
-        { name: "discover-behavior", description: m.skill_discover_description() },
-        { name: "formulate-behavior", description: m.skill_formulate_description() },
-        { name: "slice-work", description: m.skill_slice_description() },
-        { name: "implement-ticket", description: m.skill_implement_description() },
-      ],
+      name: "bdd",
+      description: m.agents_bdd_description(),
+      note: { text: m.agents_bdd_status(), emphasis: true },
+      example: {
+        kind: "steps",
+        steps: [
+          { name: "frame-problem", output: m.skill_frame_output() },
+          { name: "design-solution", output: m.skill_design_output() },
+          { name: "discover-behavior", output: m.skill_discover_output() },
+          { name: "formulate-behavior", output: m.skill_formulate_output() },
+          { name: "slice-work", output: m.skill_slice_output() },
+          { name: "implement-ticket", output: m.skill_implement_output() },
+        ].map((step) => ({ ...step, href: skill_href(step.name) })),
+      },
     },
     {
-      id: "development",
-      label: m.agents_group_development(),
-      kind: "list",
-      description: m.agents_group_development_description(),
-      members: ["communicate", "refactoring", "atomic-commits"],
-      skills: [
-        { name: "communicate", description: m.skill_communicate_description() },
-        { name: "refactoring", description: m.skill_refactoring_description() },
-        { name: "atomic-commits", description: m.skill_atomic_commits_description() },
-      ],
+      id: "communicate",
+      name: "communicate",
+      description: m.skill_communicate_description(),
     },
     {
-      id: "tracking",
-      label: m.agents_group_tracking(),
-      kind: "list",
-      description: m.agents_group_tracking_description(),
-      members: [
-        "tasks",
-        "collect",
-        "report",
-        "team-digest",
-        "configure",
-        "update",
-        "records",
-        "obsidian",
-      ],
-      skills: [
-        { name: "tasks", description: m.skill_tasks_description() },
-        { name: "collect", description: m.skill_collect_description() },
-        { name: "report", description: m.skill_report_description() },
-      ],
+      id: "refactoring",
+      name: "refactoring",
+      description: m.skill_refactoring_description(),
     },
-  ] as const;
+    {
+      id: "atomic-commits",
+      name: "atomic-commits",
+      description: m.skill_atomic_commits_description(),
+      example: {
+        kind: "transcript",
+        prompt: "commit-a",
+        // Real commits from this site's history.
+        lines: [
+          "fix: draw index leaders as a run of middle dots",
+          "fix: search for text typed before the writing page finished loading",
+          "feat: animate the article list with the router's view transition",
+        ],
+      },
+    },
+  ];
 }
 
 export function portfolio_agents_outline() {
-  return [
-    { id: "instructions-heading", label: m.agents_instructions().toLowerCase() },
-    ...portfolio_agent_skill_groups().map((group) => ({ id: group.id, label: group.id })),
-  ];
+  return portfolio_agent_sections().map((section) => ({ id: section.id, label: section.name }));
 }
 
 export function portfolio_skills() {
