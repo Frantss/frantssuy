@@ -6,6 +6,8 @@ import { createEffect, createMemo, For, Show } from "solid-js";
 import { useQueries } from "@/client/orpc/orpc.query";
 import { IconCheck, IconHourglass } from "@tabler/icons-solidjs";
 import { createDelayedPending } from "@/client/lib/create-delayed-pending";
+import { aria_prefersReduced } from "@/client/lib/motion";
+import { cn } from "@/client/lib/cn";
 import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
@@ -167,7 +169,9 @@ function WritingArticles() {
       search: next,
       replace,
       resetScroll: false,
-      viewTransition: false,
+      // The loader waits for the new results, so the router's transition sees the old list and
+      // then the new one; global.css names the rows only for this transition type.
+      viewTransition: { types: () => (aria_prefersReduced() ? false : ["article-list"]) },
     });
   }
 
@@ -228,7 +232,10 @@ function WritingArticles() {
             <Show
               when={data()?.items.length}
               fallback={
-                <div {...stylex.attrs(styles.emptyResults)}>
+                <div
+                  {...stylex.attrs(styles.emptyResults)}
+                  class={cn("article-empty", stylex.attrs(styles.emptyResults).class)}
+                >
                   <p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>
                   <p {...stylex.attrs(styles.loading)}>{m.writing_no_results_hint()}</p>
                 </div>
@@ -239,12 +246,22 @@ function WritingArticles() {
                   {(group) => (
                     <section {...stylex.attrs(styles.year)}>
                       <Show when={group.year}>
-                        {(year) => <SectionLabel level="h2">{year()}</SectionLabel>}
+                        {(year) => (
+                          <div
+                            class="article-year"
+                            style={{ "--article-transition": `article-year-${year()}` }}
+                          >
+                            <SectionLabel level="h2">{year()}</SectionLabel>
+                          </div>
+                        )}
                       </Show>
                       <IndexList.Root>
                         <For each={group.articles}>
                           {(article) => (
-                            <IndexList.Row>
+                            <IndexList.Row
+                              class="article-row"
+                              style={{ "--article-transition": `article-${article.slug}` }}
+                            >
                               <div {...stylex.attrs(styles.entry)}>
                                 <Link
                                   to="/writing/$slug"

@@ -170,6 +170,24 @@
       view-transition-name: rail-marker;
     }
 
+    /* Article list updates: rows, year headings, and the empty message carry names only during
+       the router's article-list transition, so the same article slides and others fade. The page
+       content steps out so a scrolled list is never drawn over the header. */
+    :root:active-view-transition-type(article-list) .page-content {
+      view-transition-name: none;
+    }
+
+    :root:active-view-transition-type(article-list) :is(.article-row, .article-year) {
+      view-transition-name: var(--article-transition);
+      view-transition-class: article-item;
+    }
+
+    :root:active-view-transition-type(article-list) .article-empty {
+      view-transition-name: article-empty;
+      view-transition-class: article-item;
+    }
+
+    ::view-transition-group(*.article-item),
     ::view-transition-group(*.rail-item),
     ::view-transition-group(rail-marker) {
       animation-duration: var(--duration-dock-enter);
