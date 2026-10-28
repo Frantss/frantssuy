@@ -170,6 +170,12 @@
       view-transition-name: rail-marker;
     }
 
+    .article-results[data-swapping] .article-row {
+      view-transition-name: var(--article-transition);
+      view-transition-class: article-row;
+    }
+
+    ::view-transition-group(*.article-row),
     ::view-transition-group(*.rail-item),
     ::view-transition-group(rail-marker) {
       animation-duration: var(--duration-dock-enter);

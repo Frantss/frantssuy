@@ -2,7 +2,9 @@ import { colors, spacing, typography, dimensions, conditions } from "@/client/st
 import * as stylex from "@stylexjs/stylex";
 import { Link, useNavigate, useRouterState, useSearch } from "@tanstack/solid-router";
 import { useStore } from "@nanostores/solid";
-import { createEffect, createMemo, For, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, on, Show, untrack } from "solid-js";
+import { aria_prefersReduced } from "@/client/lib/motion";
+import { cn } from "@/client/lib/cn";
 import { useQueries } from "@/client/orpc/orpc.query";
 import { IconCheck, IconHourglass } from "@tabler/icons-solidjs";
 import { createDelayedPending } from "@/client/lib/create-delayed-pending";
@@ -151,12 +153,43 @@ function WritingArticles() {
   const tags = [...new Set(article_list().flatMap((article) => article.tags))].sort();
   const offset = () => search().offset ?? 0;
   const pending = () => isNavigating() || query().loading;
-  // Text search orders by relevance, so year headings only apply to the date-ordered list.
-  const groups = (): {
-    year?: string;
-    articles: NonNullable<ReturnType<typeof data>>["items"];
-  }[] =>
-    search().q ? [{ articles: data()?.items ?? [] }] : articles_groupByYear(data()?.items ?? []);
+
+  // The list shows its own copy of the results so new ones can be swapped in inside a view
+  // transition: articles that stay slide to their new place, others fade in or out. Rows only carry
+  // view-transition names while that swap runs, so other transitions are unaffected.
+  type Articles = ArticleSearchResult["items"];
+  const [shown, setShown] = createSignal<{ articles: Articles; grouped: boolean }>();
+  let results: HTMLDivElement | undefined;
+  let latest = 0;
+
+  createEffect(
+    on(data, (next) => {
+      // Text search orders by relevance, so year headings only apply to the date-ordered list.
+      const value = next && { articles: next.items, grouped: !search().q };
+
+      if (!untrack(shown) || !value || !document.startViewTransition || aria_prefersReduced()) {
+        setShown(value);
+
+        return;
+      }
+      const id = ++latest;
+
+      results?.setAttribute("data-swapping", "");
+      void document
+        .startViewTransition(() => setShown(value))
+        .finished.finally(() => {
+          if (id === latest) results?.removeAttribute("data-swapping");
+        });
+    }),
+  );
+
+  const groups = (): { year?: string; articles: Articles }[] => {
+    const value = shown();
+
+    if (!value) return [];
+
+    return value.grouped ? articles_groupByYear(value.articles) : [{ articles: value.articles }];
+  };
   const showLoading = createDelayedPending(pending);
 
   createEffect(() => cooldown.handle(query().error));
@@ -207,7 +240,12 @@ function WritingArticles() {
           </p>
         }
       >
-        <div {...stylex.attrs(styles.results)} aria-busy={pending()}>
+        <div
+          ref={results}
+          {...stylex.attrs(styles.results)}
+          class={cn("article-results", stylex.attrs(styles.results).class)}
+          aria-busy={pending()}
+        >
           <Show when={query().error}>
             <div {...stylex.attrs(styles.error)}>
               <Show when={!cooldown.limited()}>
@@ -226,7 +264,7 @@ function WritingArticles() {
           </Show>
           <Show when={!query().error}>
             <Show
-              when={data()?.items.length}
+              when={shown()?.articles.length}
               fallback={
                 <div {...stylex.attrs(styles.emptyResults)}>
                   <p {...stylex.attrs(styles.empty)}>{m.writing_no_results()}</p>
@@ -244,7 +282,10 @@ function WritingArticles() {
                       <IndexList.Root>
                         <For each={group.articles}>
                           {(article) => (
-                            <IndexList.Row>
+                            <IndexList.Row
+                              class="article-row"
+                              style={{ "--article-transition": `article-${article.slug}` }}
+                            >
                               <div {...stylex.attrs(styles.entry)}>
                                 <Link
                                   to="/writing/$slug"
