@@ -14,6 +14,7 @@ export const colors = stylex.defineVars({
   accentHover: (): string => `color-mix(in oklab, ${colors.accent} 85%, transparent)`,
   accentTint: (): string => `color-mix(in oklab, ${colors.accent} 10%, transparent)`,
   liked: "oklch(63.7% 0.237 25.331)",
+  live: "light-dark(#15803d, #4ade80)",
 });
 
 export const spacing = stylex.defineVars({
