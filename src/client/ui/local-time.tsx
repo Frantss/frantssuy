@@ -1,7 +1,6 @@
 import { colors } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createSignal, onCleanup, onMount } from "solid-js";
-import { cn } from "@/client/lib/cn";
 
 const styles = stylex.create({
   offset: {
@@ -40,7 +39,7 @@ export function LocalTime(props: { utcOffset: number }) {
         // UTC{props.utcOffset >= 0 ? "+" : ""}
         {props.utcOffset}
       </span>{" "}
-      <span aria-hidden="true" class={cn("local-time-live", stylex.attrs(styles.live).class)}>
+      <span aria-hidden="true" {...stylex.attrs(styles.live)}>
         ●
       </span>
     </span>

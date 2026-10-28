@@ -171,16 +171,6 @@
     .page-content > *:nth-child(5) {
       animation-delay: calc(var(--duration-stagger) * 4);
     }
-
-    .local-time-live {
-      animation: local-time-live 1.2s steps(2) infinite;
-    }
-  }
-
-  @keyframes local-time-live {
-    50% {
-      opacity: 0.2;
-    }
   }
 
   @keyframes enter {

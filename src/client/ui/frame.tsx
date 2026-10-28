@@ -86,7 +86,7 @@ const styles = stylex.create({
     zIndex: -1,
     display: { default: null, [conditions.print]: "none" },
     height: dimensions.sizeTexture,
-    backgroundImage: `radial-gradient(circle, ${colors.lineStrong} 0.75px, transparent 1px)`,
+    backgroundImage: `radial-gradient(circle, ${colors.texture} 0.75px, transparent 1px)`,
     backgroundSize: `${dimensions.sizeTextureTile} ${dimensions.sizeTextureTile}`,
     maskImage: "radial-gradient(120% 95% at 0% 0%, #000, transparent 72%)",
   },

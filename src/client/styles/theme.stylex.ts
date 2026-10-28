@@ -5,6 +5,7 @@ export const colors = stylex.defineVars({
   surface: "light-dark(#ffffff, #111111)",
   line: "light-dark(#e8e8e8, #232323)",
   lineStrong: "light-dark(#cccccc, #383838)",
+  texture: "light-dark(#e0e0e0, #232323)",
   fg: "light-dark(#171717, #ededed)",
   muted: "light-dark(#4d4d4d, #a1a1a1)",
   faint: "light-dark(#737373, #7d7d7d)",
