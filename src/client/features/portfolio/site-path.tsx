@@ -20,17 +20,13 @@ const styles = stylex.create({
     listStyleType: "none",
     padding: 0,
   },
+  // Same as other secondary links outside article text: link color on hover and focus, no underline.
   link: {
     color: {
       default: colors.faint,
-      [conditions.hover]: { default: null, ":hover": colors.fg },
-      ":focus-visible": colors.fg,
+      [conditions.hover]: { default: null, ":hover": colors.link },
+      ":focus-visible": colors.link,
     },
-    textDecorationLine: {
-      default: "none",
-      [conditions.hover]: { default: null, ":hover": "underline" },
-    },
-    textUnderlineOffset: "0.2em",
   },
   current: {
     color: colors.accent,
