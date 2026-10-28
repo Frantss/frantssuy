@@ -19,7 +19,7 @@
   "agents_command_copied": "Command copied",
   "agents_copy_command_failed": "Couldn't copy the command",
   "agents_every_session": "every session",
-  "agents_md_description": "Few rules, strictly applied. Build the simple thing first: **YAGNI**, **KISS**, **DIE** and **SOLID**, **delete aggressively**, leave code cleaner than you found it, and use **self-documenting names**. The agent proposes before it acts, checks its work before reporting it, and ends every reply with where things stand and what it needs from you.",
+  "agents_md_description": "Few rules, strictly applied. Build the simple thing first: **YAGNI**, **KISS**, **DIE** and **SOLID**, **delete aggressively**, leave code cleaner than you found it, and use **self-documenting names**. The agent proposes before it acts and checks its work before reporting it. It keeps the main context focused on the goal, constraints, decisions, and integration. When sub-agents are available and permitted, it delegates bounded tasks, asks for concise results with evidence, and verifies consequential findings. Replies end with Goal, Done, Next, and Needs you, omitting empty items.",
   "agents_md_example_goal": "Goal       redesign the Agents page",
   "agents_md_example_done": "Done       approach A built; tests pass",
   "agents_md_example_next": "Next       commit and deploy",

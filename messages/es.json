@@ -19,7 +19,7 @@
   "agents_command_copied": "Comando copiado",
   "agents_copy_command_failed": "No se pudo copiar el comando",
   "agents_every_session": "cada sesión",
-  "agents_md_description": "Pocas reglas, aplicadas con rigor. Construir primero lo simple: **YAGNI**, **KISS**, **DIE** y **SOLID**, **eliminar sin miedo**, dejar el código más limpio de lo que estaba y usar **nombres autodescriptivos**. El agente propone antes de actuar, verifica su trabajo antes de darlo por terminado y cierra cada respuesta con el estado de las cosas y lo que necesita de ti.",
+  "agents_md_description": "Pocas reglas, aplicadas con rigor. Construir primero lo simple: **YAGNI**, **KISS**, **DIE** y **SOLID**, **eliminar sin miedo**, dejar el código más limpio de lo que estaba y usar **nombres autodescriptivos**. El agente propone antes de actuar y verifica su trabajo antes de darlo por terminado. Mantiene el contexto principal centrado en el objetivo, las restricciones, las decisiones y la integración. Cuando hay subagentes disponibles y permitidos, delega tareas acotadas, pide resultados breves con evidencia y verifica las conclusiones importantes. Cierra las respuestas con Objetivo, Hecho, Siguiente y Necesito de ti, y omite los elementos vacíos.",
   "agents_md_example_goal": "Objetivo        rediseñar la página de agentes",
   "agents_md_example_done": "Hecho           enfoque A construido; pruebas pasan",
   "agents_md_example_next": "Siguiente       commit y despliegue",
