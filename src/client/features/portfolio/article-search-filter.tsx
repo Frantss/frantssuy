@@ -10,7 +10,7 @@ import {
 import * as stylex from "@stylexjs/stylex";
 import { IconCheck, IconSearch, IconAdjustmentsHorizontal, IconX } from "@tabler/icons-solidjs";
 import { createDebouncer } from "@tanstack/solid-pacer/debouncer";
-import { createEffect, createSignal, createUniqueId, For, Show, type JSX } from "solid-js";
+import { createEffect, createSignal, createUniqueId, For, Show, type JSX, onMount } from "solid-js";
 import { Button } from "@/client/ui/button";
 import { m } from "@/paraglide/messages";
 import type { ArticleSearch } from "@/client/features/portfolio/articles.query";
@@ -154,6 +154,14 @@ export function ArticleSearchFilter(props: {
     debouncedSearch.cancel();
     submittedQuery = query;
     setDraft(query);
+  });
+
+  // The field is usable before the app starts in the browser, and typing in that window fires no
+  // input events here. Adopt whatever the field holds once the app takes over, and search for it.
+  onMount(() => {
+    if (!input || input.value === draft()) return;
+    setDraft(input.value);
+    debouncedSearch.maybeExecute();
   });
 
   function change(tag: string | undefined, replace: boolean) {
