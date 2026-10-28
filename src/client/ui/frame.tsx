@@ -63,6 +63,8 @@ const styles = stylex.create({
     overflowX: { default: null, [conditions.print]: "visible" },
   },
   content: {
+    position: "relative",
+    isolation: "isolate",
     marginInline: "auto",
     display: "flex",
     minHeight: "100%",
@@ -74,6 +76,19 @@ const styles = stylex.create({
     borderLeftStyle: "solid",
     borderRightStyle: "solid",
     borderColor: { default: "transparent", [conditions.print]: colors.line },
+  },
+  // Dot grid that fades out from the top-left corner and scrolls away with the page.
+  texture: {
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    insetInline: 0,
+    zIndex: -1,
+    display: { default: null, [conditions.print]: "none" },
+    height: dimensions.sizeTexture,
+    backgroundImage: `radial-gradient(circle, ${colors.lineStrong} 0.75px, transparent 1px)`,
+    backgroundSize: `${dimensions.sizeTextureTile} ${dimensions.sizeTextureTile}`,
+    maskImage: "radial-gradient(120% 95% at 0% 0%, #000, transparent 72%)",
   },
 });
 
@@ -107,7 +122,10 @@ function FrameFill(props: ParentProps<{ overlay?: JSX.Element }>) {
         {props.overlay}
       </div>
       <div id={fillId} {...stylex.attrs(styles.scroller)}>
-        <div {...stylex.attrs(styles.content)}>{props.children}</div>
+        <div {...stylex.attrs(styles.content)}>
+          <div aria-hidden="true" {...stylex.attrs(styles.texture)} />
+          {props.children}
+        </div>
       </div>
     </div>
   );
