@@ -178,6 +178,18 @@ export function portfolio_featured_projects(): Project[] {
       href: "https://github.com/Frantss/calendar-tsx",
       kind: "experiments",
     },
+  ];
+}
+
+function portfolio_other_projects(): Project[] {
+  return [
+    {
+      name: "fumadocs-theme",
+      year: "2026",
+      description: m.project_fumadocs_theme_description(),
+      href: "https://github.com/Frantss/fumadocs-theme",
+      kind: "oss",
+    },
     {
       name: "temporal-fns",
       year: "2026",
@@ -190,18 +202,6 @@ export function portfolio_featured_projects(): Project[] {
       year: "2026",
       description: m.project_agents_md_description(),
       href: "https://github.com/Frantss/agents.md",
-      kind: "oss",
-    },
-  ];
-}
-
-function portfolio_other_projects(): Project[] {
-  return [
-    {
-      name: "fumadocs-theme",
-      year: "2026",
-      description: m.project_fumadocs_theme_description(),
-      href: "https://github.com/Frantss/fumadocs-theme",
       kind: "oss",
     },
     {
