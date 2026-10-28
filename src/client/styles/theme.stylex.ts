@@ -5,7 +5,6 @@ export const colors = stylex.defineVars({
   surface: "light-dark(#ffffff, #111111)",
   line: "light-dark(#e8e8e8, #232323)",
   lineStrong: "light-dark(#cccccc, #383838)",
-  texture: "light-dark(#e0e0e0, #232323)",
   // Bottom edge of raised buttons.
   edge: "light-dark(#bdbdbd, #4a4a4a)",
   accentEdge: "light-dark(#4c1d95, #7c5fd6)",
@@ -18,6 +17,8 @@ export const colors = stylex.defineVars({
   accentHover: (): string => `color-mix(in oklab, ${colors.accent} 85%, transparent)`,
   accentTint: (): string => `color-mix(in oklab, ${colors.accent} 10%, transparent)`,
   surfaceHover: (): string => `color-mix(in oklab, ${colors.surface} 94%, ${colors.fg})`,
+  // Background dots: 8% of the way from the page toward the text color, in either theme.
+  texture: (): string => `color-mix(in oklab, ${colors.fg} 8%, ${colors.bg})`,
   liked: "oklch(63.7% 0.237 25.331)",
   live: "light-dark(#15803d, #4ade80)",
 });
@@ -82,7 +83,6 @@ export const dimensions = stylex.defineVars({
   sizeIcon: "18px",
   sizeScreenReader: "1px",
   sizeFrame: "56rem",
-  sizeTexture: "32rem",
   sizeTextureTile: "8px",
   sizeRail: "9rem",
   sizeArticle: "64ch",
