@@ -265,7 +265,8 @@ export function ArticleSearchFilter(props: {
       </div>
       <div {...stylex.attrs(styles.summary)}>
         {props.children}
-        <Show when={props.search.tag}>
+        {/* The open tag list already marks the active tag, so only show it here while closed. */}
+        <Show when={!expanded() && props.search.tag}>
           {(tag) => (
             <Button
               variant="toggle"

@@ -127,6 +127,16 @@ describe("article search filters", () => {
     expect(container.querySelector('[aria-label="Remove tag: web"]')).toBeNull();
   });
 
+  it("shows the active tag once while the filter panel is open", () => {
+    const { container, button } = mount({ tag: "web" });
+
+    button("Filters").click();
+    expect(container.querySelector('[aria-label="Remove tag: web"]')).toBeNull();
+    expect(button("web").getAttribute("aria-pressed")).toBe("true");
+    button("Filters").click();
+    expect(button("Remove tag: web")).not.toBeNull();
+  });
+
   it("clears every filter and returns focus to search", () => {
     const { input, button, change } = mount({ q: "solid", tag: "web", offset: 20 });
 
