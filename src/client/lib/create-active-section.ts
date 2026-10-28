@@ -59,12 +59,15 @@ export function createActiveSection(
       if (!frame) frame = requestAnimationFrame(update);
     };
 
+    // A section link holds its section; any other link releases the hold, since it either leaves
+    // the page or scrolls it somewhere the reading line should decide.
     const pin = (event: MouseEvent) => {
-      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
-      const id = link?.hash.slice(1);
+      const link = (event.target as Element).closest<HTMLAnchorElement>("a[href]");
 
-      if (!id || !ids().includes(id)) return;
-      pinned = id;
+      if (!link) return;
+      const id = link.hash.slice(1);
+
+      pinned = link.getAttribute("href")?.startsWith("#") && ids().includes(id) ? id : undefined;
       schedule();
     };
 
