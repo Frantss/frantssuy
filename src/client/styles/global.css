@@ -148,10 +148,14 @@
     }
 
     /* Rail links and the Agents outline glide to their new places; the marker travels between links. */
-    .rail-link,
-    .rail-outline {
+    .rail-link {
       view-transition-name: match-element;
       view-transition-class: rail-item;
+    }
+
+    .rail-outline {
+      view-transition-name: match-element;
+      view-transition-class: rail-outline;
     }
 
     .rail-marker {
@@ -159,9 +163,19 @@
     }
 
     ::view-transition-group(*.rail-item),
+    ::view-transition-group(*.rail-outline),
     ::view-transition-group(rail-marker) {
       animation-duration: var(--duration-dock-enter);
       animation-timing-function: var(--ease-dock);
+    }
+
+    /* The outline unfolds from the top while the links below it slide down, and folds back up. */
+    ::view-transition-new(*.rail-outline) {
+      animation: rail-outline-unfold var(--duration-dock-enter) var(--ease-dock) both;
+    }
+
+    ::view-transition-old(*.rail-outline) {
+      animation: rail-outline-unfold var(--duration-dock-enter) var(--ease-dock) reverse both;
     }
 
     ::view-transition-group(page-content),
@@ -187,6 +201,13 @@
     }
     .page-content > *:nth-child(5) {
       animation-delay: calc(var(--duration-stagger) * 4);
+    }
+  }
+
+  @keyframes rail-outline-unfold {
+    from {
+      clip-path: inset(0 0 100% 0);
+      opacity: 0;
     }
   }
 
@@ -240,9 +261,13 @@
     content: "❯ ";
     color: var(--accent);
   }
+  /* Positioned outside the link so the link keeps its width; resizing links stretch their snapshots. */
+  .rail-link {
+    position: relative;
+  }
   .rail-marker {
-    display: inline-block;
-    margin-inline-end: 1ch;
+    position: absolute;
+    right: calc(100% + 1ch);
     color: var(--accent);
   }
 
