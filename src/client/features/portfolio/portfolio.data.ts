@@ -279,7 +279,7 @@ export function portfolio_other_project_groups() {
     .filter((group) => group.projects.length > 0);
 }
 
-export function portfolio_project_kind_label(kind: ProjectKind) {
+function portfolio_project_kind_label(kind: ProjectKind) {
   return {
     oss: m.project_kind_oss,
     client: m.project_kind_client,

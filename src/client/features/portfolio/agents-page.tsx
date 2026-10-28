@@ -8,10 +8,9 @@ import {
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { createMemo, createSignal, For, Show, type Component, type JSX } from "solid-js";
-import { IconFileText, IconPuzzle } from "@tabler/icons-solidjs";
+import { createMemo, createSignal, For, Show, type JSX } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { Tooltip } from "@/client/ui/tooltip";
+import { SectionLabel } from "@/client/ui/section-label";
 import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
@@ -31,20 +30,6 @@ const styles = stylex.create({
     minWidth: 0,
     gridTemplateColumns: "minmax(0,1fr)",
     gap: spacing.space4,
-  },
-  icon: {
-    display: "inline-flex",
-    flexShrink: 0,
-    alignSelf: "center",
-    borderWidth: 0,
-    backgroundColor: "transparent",
-    padding: 0,
-    font: "inherit",
-    color: {
-      default: colors.faint,
-      [conditions.hover]: { default: null, ":hover": colors.muted },
-      ":focus-visible": colors.muted,
-    },
   },
   repo: {
     display: "flex",
@@ -233,8 +218,6 @@ export function AgentsPage() {
           name={instructions.name}
           href={instructions.href}
           value={instructions.license}
-          kind={m.agents_instructions()}
-          icon={IconFileText}
         />
         <p {...stylex.attrs(styles.note)}>{instructions.description}</p>
         <nav aria-label={m.agents_instructions_contents()} {...stylex.attrs(styles.contents)}>
@@ -267,14 +250,13 @@ export function AgentsPage() {
         <For each={portfolio_agent_skill_groups()}>
           {(group) => (
             <section aria-labelledby={group.id} {...stylex.attrs(styles.group)}>
-              <Heading
+              <SectionLabel
                 level="h3"
                 id={group.id}
-                name={group.label}
-                value={m.agents_group_skill_count({ count: group.members.length })}
-                kind={m.agents_skills()}
-                icon={IconPuzzle}
-              />
+                count={m.agents_group_skill_count({ count: group.members.length })}
+              >
+                {group.label}
+              </SectionLabel>
               <p {...stylex.attrs(styles.note)}>{group.description}</p>
               <Show
                 when={group.kind === "steps"}
@@ -384,26 +366,10 @@ function Heading(props: {
   name: string;
   href?: string;
   value: JSX.Element;
-  kind?: string;
-  icon?: Component<{ size?: number; "aria-hidden"?: boolean | "true" }>;
 }) {
   return (
     <div {...stylex.attrs(styles.repo)}>
       <Dynamic component={props.level} id={props.id} {...stylex.attrs(styles.title)}>
-        <Show when={props.kind && props.icon}>
-          <Tooltip label={props.kind!}>
-            {(triggerProps) => (
-              <button
-                {...triggerProps()}
-                type="button"
-                aria-label={props.kind}
-                {...stylex.attrs(styles.icon)}
-              >
-                <Dynamic component={props.icon} size={14} aria-hidden="true" />
-              </button>
-            )}
-          </Tooltip>
-        </Show>
         <Show
           when={props.href}
           fallback={<span {...stylex.attrs(styles.titleText)}>{props.name}</span>}

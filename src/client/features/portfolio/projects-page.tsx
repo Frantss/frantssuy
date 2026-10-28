@@ -9,24 +9,14 @@ import {
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { For, Show } from "solid-js";
-import { Dynamic } from "solid-js/web";
-import {
-  IconArchive,
-  IconBrandOpenSource,
-  IconBriefcase,
-  IconCode,
-  IconFlask,
-} from "@tabler/icons-solidjs";
 import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
-import { Tooltip } from "@/client/ui/tooltip";
+import { SectionLabel } from "@/client/ui/section-label";
 import {
   portfolio_featured_projects,
   portfolio_other_project_groups,
-  portfolio_project_kind_label,
   type Project,
-  type ProjectKind,
 } from "./portfolio.data";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
@@ -42,13 +32,6 @@ const styles = stylex.create({
     scrollMarginTop: spacing.space6,
     gridTemplateColumns: "minmax(0,1fr)",
     gap: spacing.space3,
-  },
-  heading: {
-    margin: 0,
-    fontSize: typography.fontLabel,
-    fontWeight: typography.weightNormal,
-    textTransform: "uppercase",
-    color: colors.faint,
   },
   featured: {
     margin: 0,
@@ -69,8 +52,8 @@ const styles = stylex.create({
     borderStyle: "solid",
     borderColor: {
       default: colors.line,
-      [conditions.hover]: { default: null, ":hover": colors.lineStrong },
-      [stylex.when.descendant(":focus-visible")]: colors.lineStrong,
+      [conditions.hover]: { default: null, ":hover": colors.accent },
+      [stylex.when.descendant(":focus-visible")]: colors.accent,
     },
     padding: spacing.space4,
     transitionProperty: "border-color",
@@ -152,12 +135,6 @@ const styles = stylex.create({
       ":focus-visible": colors.link,
     },
   },
-  kindIcon: {
-    display: "inline-flex",
-    marginInlineEnd: spacing.space1_5,
-    verticalAlign: "-0.125em",
-    color: colors.faint,
-  },
   name: {
     minWidth: 0,
     overflowWrap: "break-word",
@@ -186,33 +163,6 @@ const styles = stylex.create({
     color: colors.muted,
   },
 });
-
-const kindIcons = {
-  oss: IconBrandOpenSource,
-  client: IconBriefcase,
-  experiments: IconFlask,
-  snippets: IconCode,
-  archived: IconArchive,
-} satisfies Record<ProjectKind, unknown>;
-
-function ProjectKindIcon(props: { kind: ProjectKind }) {
-  const label = () => portfolio_project_kind_label(props.kind);
-
-  return (
-    <Tooltip label={label()}>
-      {(triggerProps) => (
-        <span
-          {...triggerProps()}
-          role="img"
-          aria-label={label()}
-          {...stylex.attrs(styles.kindIcon, styles.raised)}
-        >
-          <Dynamic component={kindIcons[props.kind]} size={14} aria-hidden="true" />
-        </span>
-      )}
-    </Tooltip>
-  );
-}
 
 function captureProjectClick(project: Project, link: "website" | "source") {
   analytics_capture("project_clicked", {
@@ -264,19 +214,16 @@ export function ProjectsPage() {
     <Page styles={styles.root}>
       <PageTitle>{m.page_projects()}</PageTitle>
       <section aria-labelledby="featured-heading" {...stylex.attrs(styles.section)}>
-        <h2 id="featured-heading" {...stylex.attrs(styles.heading)}>
+        <SectionLabel level="h2" id="featured-heading" count={portfolio_featured_projects().length}>
           {m.project_featured_heading()}
-        </h2>
+        </SectionLabel>
         <ul {...stylex.attrs(styles.featured)}>
           <For each={portfolio_featured_projects()}>
             {(project) => (
               <li {...stylex.attrs(styles.card, stylex.defaultMarker())}>
                 <span {...stylex.attrs(styles.cardHeader)}>
                   <ProjectLink project={project} styles={styles.cardName} />
-                  <span {...stylex.attrs(styles.year)}>
-                    <ProjectKindIcon kind={project.kind} />
-                    {project.year}
-                  </span>
+                  <span {...stylex.attrs(styles.year)}>{project.year}</span>
                 </span>
                 <span {...stylex.attrs(styles.description)}>{project.description}</span>
                 <ProjectWebsite project={project} />
@@ -286,21 +233,15 @@ export function ProjectsPage() {
         </ul>
       </section>
       <section id="more" aria-labelledby="more-heading" {...stylex.attrs(styles.section)}>
-        <h2 id="more-heading" {...stylex.attrs(styles.heading)}>
+        <SectionLabel level="h2" id="more-heading">
           {m.project_more_heading()}
-        </h2>
+        </SectionLabel>
         <div {...stylex.attrs(styles.groups)}>
           <For each={portfolio_other_project_groups()}>
             {(group) => (
               <div {...stylex.attrs(styles.group)}>
                 <h3 {...stylex.attrs(styles.groupHeading)}>
-                  <Dynamic
-                    component={kindIcons[group.kind]}
-                    size={14}
-                    aria-hidden="true"
-                    {...stylex.attrs(styles.kindIcon)}
-                  />
-                  {group.label}
+                  {group.label} <span {...stylex.attrs(styles.year)}>{group.projects.length}</span>
                 </h3>
                 <ul {...stylex.attrs(styles.index)}>
                   <For each={group.projects}>
