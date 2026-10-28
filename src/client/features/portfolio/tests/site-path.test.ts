@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vite-plus/test";
-import { sitePath_segments } from "../site-path";
+import { sitePath_crumbs } from "../site-path";
 
-describe("site path segments", () => {
+describe("site path crumbs", () => {
   it("names the home route after the about page", () => {
-    expect(sitePath_segments("/")).toEqual(["about"]);
+    expect(sitePath_crumbs("/")).toEqual([{ label: "about", href: "/" }]);
   });
 
-  it("splits nested routes and ignores a trailing slash", () => {
-    expect(sitePath_segments("/writing/til-string-raw/")).toEqual(["writing", "til-string-raw"]);
+  it("links each segment to its own route and ignores a trailing slash", () => {
+    expect(sitePath_crumbs("/writing/til-string-raw/")).toEqual([
+      { label: "writing", href: "/writing" },
+      { label: "til-string-raw", href: "/writing/til-string-raw" },
+    ]);
   });
 });
