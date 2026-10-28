@@ -7,15 +7,25 @@ import {
   conditions,
 } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { For, Show } from "solid-js";
+import { For } from "solid-js";
+import { Dynamic } from "solid-js/web";
+import {
+  IconBrandOpenSource,
+  IconBriefcase,
+  IconCode,
+  IconDots,
+  IconFlask,
+} from "@tabler/icons-solidjs";
 import { links_openInNewTab } from "@/client/lib/links";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
+import { Tooltip } from "@/client/ui/tooltip";
 import {
   portfolio_featured_projects,
   portfolio_other_projects,
   portfolio_project_kind_label,
   type Project,
+  type ProjectKind,
 } from "./portfolio.data";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
@@ -76,6 +86,11 @@ const styles = stylex.create({
     justifyContent: "space-between",
     gap: spacing.space3,
   },
+  kindIcon: {
+    display: "inline-flex",
+    marginInlineEnd: spacing.space1_5,
+    verticalAlign: "-0.125em",
+  },
   name: {
     minWidth: 0,
     fontWeight: typography.weightBold,
@@ -110,6 +125,33 @@ const styles = stylex.create({
   },
 });
 
+const kindIcons = {
+  oss: IconBrandOpenSource,
+  client: IconBriefcase,
+  experiments: IconFlask,
+  snippets: IconCode,
+  misc: IconDots,
+} satisfies Record<ProjectKind, unknown>;
+
+function ProjectKindIcon(props: { kind: ProjectKind }) {
+  const label = () => portfolio_project_kind_label(props.kind);
+
+  return (
+    <Tooltip label={label()}>
+      {(triggerProps) => (
+        <span
+          {...triggerProps()}
+          role="img"
+          aria-label={label()}
+          {...stylex.attrs(styles.kindIcon)}
+        >
+          <Dynamic component={kindIcons[props.kind]} size={14} aria-hidden="true" />
+        </span>
+      )}
+    </Tooltip>
+  );
+}
+
 function captureProjectClick(project: Project) {
   analytics_capture("project_clicked", {
     locale: getLocale(),
@@ -138,7 +180,10 @@ export function ProjectsPage() {
                 >
                   <span {...stylex.attrs(styles.cardHeader)}>
                     <span {...stylex.attrs(styles.name)}>{project.name}</span>
-                    <span {...stylex.attrs(styles.year)}>{project.year}</span>
+                    <span {...stylex.attrs(styles.year)}>
+                      <ProjectKindIcon kind={project.kind} />
+                      {project.year}
+                    </span>
                   </span>
                   <span {...stylex.attrs(styles.description)}>{project.description}</span>
                 </a>
@@ -155,19 +200,19 @@ export function ProjectsPage() {
           <For each={portfolio_other_projects()}>
             {(project) => (
               <IndexList.Row>
-                <a
-                  href={project.href}
-                  {...links_openInNewTab}
-                  onClick={() => captureProjectClick(project)}
-                  {...stylex.attrs(styles.link)}
-                >
-                  {project.name}
-                </a>
+                <span>
+                  <ProjectKindIcon kind={project.kind} />
+                  <a
+                    href={project.href}
+                    {...links_openInNewTab}
+                    onClick={() => captureProjectClick(project)}
+                    {...stylex.attrs(styles.link)}
+                  >
+                    {project.name}
+                  </a>
+                </span>
                 <IndexList.Leader />
-                <IndexList.Value>
-                  {portfolio_project_kind_label(project.kind)}
-                  <Show when={project.year}>{(year) => ` · ${year()}`}</Show>
-                </IndexList.Value>
+                <IndexList.Value>{project.year}</IndexList.Value>
               </IndexList.Row>
             )}
           </For>

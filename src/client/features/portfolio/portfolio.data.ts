@@ -138,7 +138,7 @@ export function portfolio_jobs(): Job[] {
   ];
 }
 
-type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "misc";
+export type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "misc";
 
 export type Project = {
   name: string;
@@ -234,11 +234,11 @@ export function portfolio_other_projects(): Project[] {
 
 export function portfolio_project_kind_label(kind: ProjectKind) {
   return {
-    oss: m.project_group_oss,
-    client: m.project_group_client,
-    experiments: m.project_group_experiments,
-    snippets: m.project_group_snippets,
-    misc: m.project_group_misc,
+    oss: m.project_kind_oss,
+    client: m.project_kind_client,
+    experiments: m.project_kind_experiments,
+    snippets: m.project_kind_snippets,
+    misc: m.project_kind_misc,
   }[kind]();
 }
 
