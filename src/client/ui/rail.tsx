@@ -188,7 +188,7 @@ function RailOutline(props: ParentProps<{ label: string; activeIndex?: number }>
   );
 }
 
-function RailOutlineLink(props: ParentProps<{ href: string; nested?: boolean; current: boolean }>) {
+function RailOutlineLink(props: ParentProps<{ href: string; current: boolean }>) {
   return (
     <li {...stylex.attrs(styles.outlineItem)}>
       <a

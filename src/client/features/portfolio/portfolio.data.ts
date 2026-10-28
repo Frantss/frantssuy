@@ -401,13 +401,8 @@ export function portfolio_agent_skill_groups() {
 
 export function portfolio_agents_outline() {
   return [
-    { id: "instructions-heading", label: m.agents_instructions().toLowerCase(), nested: false },
-    { id: "skills", label: m.agents_skills().toLowerCase(), nested: false },
-    ...portfolio_agent_skill_groups().map((group) => ({
-      id: group.id,
-      label: group.id,
-      nested: true,
-    })),
+    { id: "instructions-heading", label: m.agents_instructions().toLowerCase() },
+    ...portfolio_agent_skill_groups().map((group) => ({ id: group.id, label: group.id })),
   ];
 }
 

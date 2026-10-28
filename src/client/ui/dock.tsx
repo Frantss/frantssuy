@@ -125,9 +125,6 @@ const styles = stylex.create({
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
   },
-  outlineNested: {
-    paddingLeft: spacing.space4,
-  },
   outlineCurrent: {
     color: colors.link,
   },
@@ -236,9 +233,9 @@ function DockOutline(props: ParentProps<{ label: string }>) {
   );
 }
 
-function DockOutlineLink(props: ParentProps<{ href: string; nested?: boolean; current: boolean }>) {
+function DockOutlineLink(props: ParentProps<{ href: string; current: boolean }>) {
   return (
-    <li {...stylex.attrs(props.nested && styles.outlineNested)}>
+    <li>
       <a
         href={props.href}
         aria-current={props.current ? "location" : undefined}

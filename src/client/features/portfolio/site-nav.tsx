@@ -28,7 +28,7 @@ const pages = [
   { to: "/writing", label: m.nav_writing },
 ] as const;
 
-type OutlineItem = { id: string; label: string; nested: boolean };
+type OutlineItem = { id: string; label: string };
 
 function page_isCurrent(page: (typeof pages)[number], pathname: string) {
   return page.to === "/"
@@ -58,7 +58,7 @@ function PageOutline(props: {
     <props.container label={m.nav_outline()} activeIndex={activeIndex()}>
       <For each={items()}>
         {(item) => (
-          <props.link href={`#${item.id}`} nested={item.nested} current={active() === item.id}>
+          <props.link href={`#${item.id}`} current={active() === item.id}>
             {item.label}
           </props.link>
         )}
