@@ -1,4 +1,4 @@
-import { colors, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
+import { colors, dimensions, borders, conditions, spacing } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import type { JSX, ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
@@ -56,9 +56,11 @@ const styles = stylex.create({
     borderRightStyle: "solid",
     borderColor: colors.line,
   },
-  // Anchor links glide to their section; the router's own scroll to top stays instant.
+  // Anchor links glide to their section and stop short of the top edge; the router's own scroll
+  // to top stays instant.
   scroller: {
     scrollBehavior: { default: null, [conditions.motion]: "smooth" },
+    scrollPaddingTop: spacing.space8,
     minHeight: 0,
     flex: "1",
     overflowY: { default: "auto", [conditions.print]: "visible" },
