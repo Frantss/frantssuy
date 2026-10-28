@@ -13,6 +13,8 @@ import { ToastProvider } from "@/client/ui/toast";
 import { Tags } from "@/client/ui/tags";
 import { Button } from "@/client/ui/button";
 import { ArticleDate } from "@/client/features/portfolio/article-date";
+import { articles_groupByYear } from "@/client/features/portfolio/articles-by-year";
+import { SectionLabel } from "@/client/ui/section-label";
 import { ArticleLikeButton } from "@/client/features/portfolio/article-like-button";
 import { ArticleSearchFilter } from "@/client/features/portfolio/article-search-filter";
 import {
@@ -68,6 +70,14 @@ const styles = stylex.create({
     clipPath: "inset(50%)",
     whiteSpace: "nowrap",
     borderWidth: 0,
+  },
+  years: {
+    display: "grid",
+    gap: spacing.space8,
+  },
+  year: {
+    display: "grid",
+    gap: spacing.space3,
   },
   results: {
     display: "grid",
@@ -141,6 +151,12 @@ function WritingArticles() {
   const tags = [...new Set(article_list().flatMap((article) => article.tags))].sort();
   const offset = () => search().offset ?? 0;
   const pending = () => isNavigating() || query().loading;
+  // Text search orders by relevance, so year headings only apply to the date-ordered list.
+  const groups = (): {
+    year?: string;
+    articles: NonNullable<ReturnType<typeof data>>["items"];
+  }[] =>
+    search().q ? [{ articles: data()?.items ?? [] }] : articles_groupByYear(data()?.items ?? []);
   const showLoading = createDelayedPending(pending);
 
   createEffect(() => cooldown.handle(query().error));
@@ -218,61 +234,72 @@ function WritingArticles() {
                 </div>
               }
             >
-              <IndexList.Root>
-                <For each={data()?.items ?? []}>
-                  {(article) => (
-                    <IndexList.Row>
-                      <div {...stylex.attrs(styles.entry)}>
-                        <Link
-                          to="/writing/$slug"
-                          params={{ slug: article.slug }}
-                          {...stylex.attrs(styles.link)}
-                          {...analytics_autocapture({
-                            id: "article-link",
-                            article_slug: article.slug,
-                          })}
-                        >
-                          {article.title}
-                        </Link>
-                        <div {...stylex.attrs(styles.tags)}>
-                          <Tags.List>
-                            <For each={article.tags}>
-                              {(tag) => {
-                                const selected = () => search().tag === tag;
+              <div {...stylex.attrs(styles.years)}>
+                <For each={groups()}>
+                  {(group) => (
+                    <section {...stylex.attrs(styles.year)}>
+                      <Show when={group.year}>
+                        {(year) => <SectionLabel level="h2">{year()}</SectionLabel>}
+                      </Show>
+                      <IndexList.Root>
+                        <For each={group.articles}>
+                          {(article) => (
+                            <IndexList.Row>
+                              <div {...stylex.attrs(styles.entry)}>
+                                <Link
+                                  to="/writing/$slug"
+                                  params={{ slug: article.slug }}
+                                  {...stylex.attrs(styles.link)}
+                                  {...analytics_autocapture({
+                                    id: "article-link",
+                                    article_slug: article.slug,
+                                  })}
+                                >
+                                  {article.title}
+                                </Link>
+                                <div {...stylex.attrs(styles.tags)}>
+                                  <Tags.List>
+                                    <For each={article.tags}>
+                                      {(tag) => {
+                                        const selected = () => search().tag === tag;
 
-                                return (
-                                  <li>
-                                    <Button
-                                      variant="toggle"
-                                      aria-pressed={selected()}
-                                      onClick={() =>
-                                        change({
-                                          q: search().q,
-                                          tag: selected() ? undefined : tag,
-                                        })
-                                      }
-                                    >
-                                      <Show when={selected()}>
-                                        <IconCheck size={12} aria-hidden="true" />
-                                      </Show>
-                                      {tag}
-                                    </Button>
-                                  </li>
-                                );
-                              }}
-                            </For>
-                          </Tags.List>
-                          <ArticleLikeButton slug={article.slug} size="sm" />
-                        </div>
-                      </div>
-                      <IndexList.Leader />
-                      <IndexList.Value>
-                        <ArticleDate date={article.date} />
-                      </IndexList.Value>
-                    </IndexList.Row>
+                                        return (
+                                          <li>
+                                            <Button
+                                              variant="toggle"
+                                              aria-pressed={selected()}
+                                              onClick={() =>
+                                                change({
+                                                  q: search().q,
+                                                  tag: selected() ? undefined : tag,
+                                                })
+                                              }
+                                            >
+                                              <Show when={selected()}>
+                                                <IconCheck size={12} aria-hidden="true" />
+                                              </Show>
+                                              {tag}
+                                            </Button>
+                                          </li>
+                                        );
+                                      }}
+                                    </For>
+                                  </Tags.List>
+                                  <ArticleLikeButton slug={article.slug} size="sm" />
+                                </div>
+                              </div>
+                              <IndexList.Leader />
+                              <IndexList.Value>
+                                <ArticleDate date={article.date} short={!!group.year} />
+                              </IndexList.Value>
+                            </IndexList.Row>
+                          )}
+                        </For>
+                      </IndexList.Root>
+                    </section>
                   )}
                 </For>
-              </IndexList.Root>
+              </div>
             </Show>
             <Show when={(data()?.total ?? 0) > 20 || offset() > 0}>
               <nav aria-label={m.writing_pagination()} {...stylex.attrs(styles.pagination)}>
