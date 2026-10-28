@@ -1,11 +1,4 @@
-import {
-  colors,
-  spacing,
-  typography,
-  dimensions,
-  borders,
-  conditions,
-} from "@/client/styles/theme.stylex";
+import { colors, spacing, typography, borders, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import type { JSX, ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
@@ -23,26 +16,29 @@ const styles = stylex.create({
     flexDirection: { default: "column", [conditions.wide]: "row" },
     alignItems: { default: null, [conditions.wide]: "baseline" },
   },
-  // Round dots drawn as a background, matching the page texture; a 1px dotted border renders as
-  // dense, soft dashes. Print keeps the dotted border the CV is laid out with.
+  // A run of middle dots in the text's own font, clipped to the space between label and value: it
+  // stays crisp at any zoom and sits on the text line. Print keeps the dotted border the CV uses.
   leader: {
     marginInline: spacing.space3,
     minWidth: spacing.space4,
     flex: "1",
     display: { default: null, [conditions.narrow]: "none" },
-    height: { default: dimensions.sizeLeaderDot, [conditions.print]: "auto" },
-    // Whole-pixel lift keeps the dots crisp; -0.35em lands between pixel rows.
-    translate: { default: "0 round(-0.35em, 1px)", [conditions.print]: "0 -0.35em" },
+    // The dot run must not widen the row: only the leftover space decides its width.
+    contain: { default: "inline-size", [conditions.print]: "none" },
+    overflow: { default: "hidden", [conditions.print]: "visible" },
+    whiteSpace: { default: "nowrap", [conditions.print]: "normal" },
+    color: colors.lineStrong,
+    translate: { default: null, [conditions.print]: "0 -0.35em" },
     borderBottomWidth: { default: 0, [conditions.print]: borders.borderRule },
-    borderStyle: "dotted",
+    borderStyle: { default: "none", [conditions.print]: "dotted" },
     borderColor: colors.lineStrong,
-    backgroundImage: {
-      default: `radial-gradient(circle, ${colors.lineStrong} 0.75px, transparent 1px)`,
-      [conditions.print]: "none",
+    "::before": {
+      content: {
+        default:
+          '"················································································································································································································································"',
+        [conditions.print]: "none",
+      },
     },
-    backgroundSize: `${dimensions.sizeLeaderGap} ${dimensions.sizeLeaderDot}`,
-    backgroundRepeat: "repeat-x",
-    backgroundPosition: "0 50%",
   },
   value: {
     flexShrink: 0,

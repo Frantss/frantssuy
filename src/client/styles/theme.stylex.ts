@@ -84,8 +84,6 @@ export const dimensions = stylex.defineVars({
   sizeScreenReader: "1px",
   sizeFrame: "56rem",
   sizeTextureTile: "8px",
-  sizeLeaderDot: "2px",
-  sizeLeaderGap: "6px",
   sizeTextureEdgeX: "min(18rem, 20vw)",
   sizeTextureEdgeY: "16rem",
   sizeRail: "9rem",
