@@ -26,11 +26,10 @@ export function EducationPage() {
         {(education) => (
           <Entry.Root>
             <Entry.Header>
-              <Entry.Title>
-                {education.degree} · {education.school}
-              </Entry.Title>
+              <Entry.Title>{education.degree}</Entry.Title>
               <Entry.Aside>{education.years}</Entry.Aside>
             </Entry.Header>
+            <Entry.Subtitle>{education.school}</Entry.Subtitle>
             <Entry.Meta>
               <span>{education.level ?? education.field}</span>
             </Entry.Meta>
