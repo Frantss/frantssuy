@@ -47,13 +47,17 @@ function PageOutline(props: {
   link: typeof Rail.OutlineLink;
 }) {
   const items = () => props.outline();
-  const active = createActiveSection(() => items().map((item) => item.id), Frame.fillSelector);
+  const section = createActiveSection(() => items().map((item) => item.id), Frame.fillSelector);
 
   return (
-    <props.container label={m.nav_outline()}>
+    <props.container label={m.nav_outline()} position={section.position()}>
       <For each={items()}>
         {(item) => (
-          <props.link href={`#${item.id}`} nested={item.nested} current={active() === item.id}>
+          <props.link
+            href={`#${item.id}`}
+            nested={item.nested}
+            current={section.active() === item.id}
+          >
             {item.label}
           </props.link>
         )}

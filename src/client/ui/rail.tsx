@@ -58,7 +58,11 @@ const styles = stylex.create({
   item: {
     whiteSpace: "nowrap",
   },
+  outlineRoot: {
+    position: "relative",
+  },
   outline: {
+    position: "relative",
     margin: 0,
     marginBlock: spacing.space1,
     display: "flex",
@@ -87,20 +91,20 @@ const styles = stylex.create({
   outlineCurrent: {
     color: colors.fg,
   },
-  // Sits on the rail's right rule: past the nav's inline padding and its transparent border.
+  // One bar for the whole outline, on the rail's right rule: past the nav's inline padding and its
+  // transparent border. It follows the scroll position between items.
   outlineBar: {
     position: "absolute",
-    insetBlock: 0,
+    top: 0,
     right: `calc(-1 * (${spacing.space4} + ${borders.borderRule}))`,
     width: borders.borderEmphasis,
     backgroundColor: colors.accent,
-    opacity: 0,
-    transitionProperty: { default: null, [conditions.motion]: "opacity" },
+    transitionProperty: { default: null, [conditions.motion]: "transform, height, opacity" },
     transitionDuration: motion.durationColor,
     transitionTimingFunction: motion.easeColor,
   },
-  outlineBarCurrent: {
-    opacity: 1,
+  outlineBarHidden: {
+    opacity: 0,
   },
   content: {
     paddingInline: { default: spacing.space4, [conditions.wide]: spacing.space8 },
@@ -148,17 +152,44 @@ function RailAnchor(props: ComponentProps<"a"> & { current: boolean }) {
   );
 }
 
-// Section links for the current page, nested under its link.
-function RailOutline(props: ParentProps<{ label: string }>) {
+// Section links for the current page, nested under its link. `position` is the fractional item
+// index the bar sits at, so it can travel between items as the page scrolls.
+function RailOutline(props: ParentProps<{ label: string; position?: number }>) {
+  let list: HTMLUListElement | undefined;
+  const placement = () => {
+    const items = list ? [...list.querySelectorAll<HTMLElement>(":scope > li")] : [];
+    const index = Math.floor(props.position ?? 0);
+    const from = items[index];
+
+    if (props.position === undefined || !from) return undefined;
+    const to = items[index + 1] ?? from;
+    const progress = props.position - index;
+
+    return {
+      top: list!.offsetTop + from.offsetTop + (to.offsetTop - from.offsetTop) * progress,
+      height: from.offsetHeight + (to.offsetHeight - from.offsetHeight) * progress,
+    };
+  };
+
   return (
-    <li {...stylex.attrs(styles.item)}>
+    <li {...stylex.attrs(styles.item, styles.outlineRoot)}>
       <ul
+        ref={list}
         aria-label={props.label}
         {...stylex.attrs(styles.outline)}
         class={cn("rail-outline", stylex.attrs(styles.outline).class)}
       >
         {props.children}
       </ul>
+      {/* Measured positions change every scroll frame, so they go inline rather than through StyleX. */}
+      <span
+        aria-hidden="true"
+        {...stylex.attrs(styles.outlineBar, !placement() && styles.outlineBarHidden)}
+        style={{
+          height: `${placement()?.height ?? 0}px`,
+          transform: `translateY(${placement()?.top ?? 0}px)`,
+        }}
+      />
     </li>
   );
 }
@@ -173,10 +204,6 @@ function RailOutlineLink(props: ParentProps<{ href: string; nested?: boolean; cu
       >
         {props.children}
       </a>
-      <span
-        aria-hidden="true"
-        {...stylex.attrs(styles.outlineBar, props.current && styles.outlineBarCurrent)}
-      />
     </li>
   );
 }
