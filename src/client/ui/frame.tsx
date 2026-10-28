@@ -1,6 +1,6 @@
 import { colors, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
-import { onCleanup, onMount, type JSX, type ParentProps } from "solid-js";
+import type { JSX, ParentProps } from "solid-js";
 import { cn } from "@/client/lib/cn";
 
 const styles = stylex.create({
@@ -78,8 +78,8 @@ const styles = stylex.create({
     borderColor: { default: "transparent", [conditions.print]: colors.line },
   },
   // Dot grid behind the whole window that fades in from the edges of the page: the screen's left
-  // and right sides, the top of the page, and the end of the page. The top and bottom fades move
-  // with the scroll, so they follow the full scrollable height instead of the window.
+  // and right sides, the top of the page, and the end of the page. global.css drives --page-above
+  // and --page-below from the scroll, so the top and bottom fades follow the full page height.
   texture: {
     pointerEvents: "none",
     position: "fixed",
@@ -95,42 +95,16 @@ const styles = stylex.create({
 // Full-bleed horizontal rules with a centered column framed by vertical rules.
 // Viewport-tall: the bands stay put and only the fill scrolls. Print falls back to document flow.
 function FrameRoot(props: ParentProps) {
-  let texture: HTMLDivElement | undefined;
-
-  // Tells the texture how much page sits above and below the window, so its top and bottom fades
-  // sit at the page's real edges. Content that grows or shrinks moves the bottom edge too.
-  onMount(() => {
-    const scroller = document.getElementById(fillId);
-
-    if (!scroller || !texture) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const below = scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop;
-
-      texture!.style.setProperty("--page-above", `${scroller.scrollTop}px`);
-      texture!.style.setProperty("--page-below", `${Math.max(0, below)}px`);
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    const resize = new ResizeObserver(schedule);
-
-    scroller.addEventListener("scroll", schedule, { passive: true });
-    resize.observe(scroller);
-    if (scroller.firstElementChild) resize.observe(scroller.firstElementChild);
-    update();
-
-    onCleanup(() => {
-      scroller.removeEventListener("scroll", schedule);
-      resize.disconnect();
-      cancelAnimationFrame(frame);
-    });
-  });
-
   return (
-    <div {...stylex.attrs(styles.root)}>
-      <div ref={texture} aria-hidden="true" {...stylex.attrs(styles.texture)} />
+    <div
+      {...stylex.attrs(styles.root)}
+      class={cn("page-timeline", stylex.attrs(styles.root).class)}
+    >
+      <div
+        aria-hidden="true"
+        {...stylex.attrs(styles.texture)}
+        class={cn("page-texture", stylex.attrs(styles.texture).class)}
+      />
       {props.children}
     </div>
   );

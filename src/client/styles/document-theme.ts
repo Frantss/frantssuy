@@ -1,5 +1,5 @@
 import * as stylex from "@stylexjs/stylex";
-import { colors, spacing, typography, borders, motion } from "./theme.stylex";
+import { colors, spacing, typography, borders, motion, dimensions } from "./theme.stylex";
 
 // Bind the retained document and content CSS to StyleX's generated variables.
 export const documentTheme = stylex.create({
@@ -8,6 +8,7 @@ export const documentTheme = stylex.create({
     "--surface": colors.surface,
     "--line": colors.line,
     "--line-strong": colors.lineStrong,
+    "--texture-edge-y": dimensions.sizeTextureEdgeY,
     "--fg": colors.fg,
     "--muted": colors.muted,
     "--faint": colors.faint,

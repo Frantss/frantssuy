@@ -1,5 +1,18 @@
 @layer base, components, stylex, states;
 
+/* How much page sits above and below the window, driven by the content scroll (see .page-texture). */
+@property --page-above {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --page-below {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @import "./reset.css";
 @import "@fontsource-variable/geist-mono";
 
@@ -243,6 +256,56 @@
     }
     100% {
       transform: scale(1) rotate(0deg);
+    }
+  }
+}
+
+/* The content scroller publishes its scroll as a timeline the fixed dot layer can follow. The top
+   fade leaves over the first fade-length of scroll and the bottom fade arrives over the last, so
+   both stay pinned to the page's real edges. A page that does not scroll keeps both at the window
+   edges. Browsers without scroll timelines keep a still top fade. */
+@layer components {
+  .page-timeline {
+    timeline-scope: --page;
+  }
+
+  #frame-fill {
+    scroll-timeline: --page block;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .page-texture {
+      animation:
+        page-top-away linear both,
+        page-bottom-in linear both;
+      animation-timeline: --page, --page;
+      animation-range:
+        0 var(--texture-edge-y),
+        calc(100% - var(--texture-edge-y)) 100%;
+    }
+  }
+
+  @supports not (animation-timeline: scroll()) {
+    .page-texture {
+      --page-below: var(--texture-edge-y);
+    }
+  }
+
+  @keyframes page-top-away {
+    from {
+      --page-above: 0px;
+    }
+    to {
+      --page-above: var(--texture-edge-y);
+    }
+  }
+
+  @keyframes page-bottom-in {
+    from {
+      --page-below: var(--texture-edge-y);
+    }
+    to {
+      --page-below: 0px;
     }
   }
 }
