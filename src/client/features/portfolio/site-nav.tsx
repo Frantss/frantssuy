@@ -104,7 +104,7 @@ export function SiteDock() {
           menuLabel={m.dock_menu()}
           closeLabel={m.dock_close()}
         >
-          ▸ {current()?.label()}
+          ❯ {current()?.label()}
         </Dock.Trigger>
       </Dock.Bar>
       <Dock.Sheet label={m.nav_pages()}>

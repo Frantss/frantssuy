@@ -215,7 +215,8 @@
     color: var(--fg);
   }
   .nav-link[aria-current="page"]::before {
-    content: "▸ ";
+    content: "❯ ";
+    color: var(--accent);
   }
 
   .dock-root:has(:popover-open) .dock-menu-label {
