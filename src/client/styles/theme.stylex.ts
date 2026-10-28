@@ -105,6 +105,7 @@ export const motion = stylex.defineVars({
   durationFast: "200ms",
   durationDockEnter: "300ms",
   durationEnter: "400ms",
+  durationBreathe: "2.4s",
   durationStagger: "60ms",
   easeColor: "cubic-bezier(0.4, 0, 0.2, 1)",
   easeIn: "cubic-bezier(0.4, 0, 1, 1)",

@@ -1,13 +1,24 @@
-import { colors } from "@/client/styles/theme.stylex";
+import { colors, motion, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createSignal, onCleanup, onMount } from "solid-js";
+
+const breathe = stylex.keyframes({
+  "0%, 100%": { opacity: 1 },
+  "50%": { opacity: 0.35 },
+});
 
 const styles = stylex.create({
   offset: {
     color: colors.faint,
   },
+  // A slow breath says the clock is live; it stays still when the visitor reduces motion.
   live: {
+    display: "inline-block",
     color: colors.live,
+    animationName: { default: null, [conditions.motion]: breathe },
+    animationDuration: motion.durationBreathe,
+    animationTimingFunction: "ease-in-out",
+    animationIterationCount: "infinite",
   },
 });
 
