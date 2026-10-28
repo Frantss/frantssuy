@@ -78,6 +78,7 @@ export const dimensions = stylex.defineVars({
   sizeLabel: "3rem",
   sizeCvLabel: "7.5rem",
   sizeIconSmall: "0.875rem",
+  sizeLiveDot: "0.5em",
   sizeIcon: "18px",
   sizeScreenReader: "1px",
   sizeFrame: "56rem",

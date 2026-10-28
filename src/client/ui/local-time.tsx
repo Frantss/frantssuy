@@ -1,4 +1,4 @@
-import { colors, motion, conditions } from "@/client/styles/theme.stylex";
+import { colors, dimensions, motion, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createSignal, onCleanup, onMount } from "solid-js";
 
@@ -12,9 +12,15 @@ const styles = stylex.create({
     color: colors.faint,
   },
   // A slow breath says the clock is live; it stays still when the visitor reduces motion.
+  // Drawn rather than typed: Geist Mono has no "●", and the fallback glyph sits off-center.
+  // Lifting it by half the gap between the digits' cap height and its size centers it on them.
   live: {
     display: "inline-block",
-    color: colors.live,
+    width: dimensions.sizeLiveDot,
+    height: dimensions.sizeLiveDot,
+    borderRadius: "50%",
+    backgroundColor: colors.live,
+    verticalAlign: `calc((1cap - ${dimensions.sizeLiveDot}) / 2)`,
     animationName: { default: null, [conditions.motion]: breathe },
     animationDuration: motion.durationBreathe,
     animationTimingFunction: "ease-in-out",
@@ -50,9 +56,7 @@ export function LocalTime(props: { utcOffset: number }) {
         // UTC{props.utcOffset >= 0 ? "+" : ""}
         {props.utcOffset}
       </span>{" "}
-      <span aria-hidden="true" {...stylex.attrs(styles.live)}>
-        ●
-      </span>
+      <span aria-hidden="true" {...stylex.attrs(styles.live)} />
     </span>
   );
 }
