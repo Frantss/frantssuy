@@ -35,7 +35,7 @@
     view-transition-name: root;
   }
 
-  :root[data-theme-transition] :is(.page-content, .rail-link, .rail-marker) {
+  :root[data-theme-transition] :is(#frame-fill, .rail-link, .rail-marker) {
     view-transition-name: none;
   }
 
@@ -156,7 +156,7 @@
       animation: article-like-heart var(--duration-enter) ease-out;
     }
 
-    .page-content {
+    #frame-fill {
       view-transition-name: page-content;
     }
 
@@ -172,8 +172,8 @@
 
     /* Article list updates: rows, year headings, and the empty message carry names only during
        the router's article-list transition, so the same article slides and others fade. The page
-       content steps out so a scrolled list is never drawn over the header. */
-    :root:active-view-transition-type(article-list) .page-content {
+       scroller steps out so a scrolled list is never drawn over the header. */
+    :root:active-view-transition-type(article-list) #frame-fill {
       view-transition-name: none;
     }
 

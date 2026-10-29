@@ -67,11 +67,11 @@ describe("theme", () => {
     "reveals %s from the button across the viewport",
     async (theme) => {
       const button = document.createElement("button");
-      const page = document.createElement("div");
+      const scroller = document.createElement("div");
 
       button.style.cssText = "position:fixed;left:40px;top:60px;width:44px;height:44px";
-      page.className = "page-content";
-      document.body.append(button, page);
+      scroller.id = "frame-fill";
+      document.body.append(button, scroller);
       theme_set(theme === "light" ? "dark" : "light");
       const reveal = theme_reveal(theme, button);
 
@@ -95,7 +95,7 @@ describe("theme", () => {
         animation.pause();
         animation.currentTime = 275;
         expect(theme_current()).toBe(theme);
-        expect(getComputedStyle(page).viewTransitionName).toBe("none");
+        expect(getComputedStyle(scroller).viewTransitionName).toBe("none");
         expect(
           getComputedStyle(document.documentElement, "::view-transition-old(root)").opacity,
         ).toBe("1");
@@ -111,7 +111,7 @@ describe("theme", () => {
         animation.finish();
         await reveal;
         expect(document.documentElement.hasAttribute("data-theme-transition")).toBe(false);
-        expect(getComputedStyle(page).viewTransitionName).toBe("page-content");
+        expect(getComputedStyle(scroller).viewTransitionName).toBe("page-content");
         delete document.documentElement.dataset.theme;
         theme_applyStored();
         expect(theme_current()).toBe(theme);
@@ -119,7 +119,7 @@ describe("theme", () => {
         for (const animation of document.getAnimations()) animation.finish();
         await reveal;
         button.remove();
-        page.remove();
+        scroller.remove();
       }
     },
   );
