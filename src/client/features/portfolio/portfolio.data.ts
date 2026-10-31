@@ -189,6 +189,13 @@ export function portfolio_featured_projects(): Project[] {
 function portfolio_other_projects(): Project[] {
   return [
     {
+      name: "frantss-herdr",
+      year: "2026",
+      description: m.project_frantss_herdr_description(),
+      href: "https://github.com/Frantss/frantss-herdr",
+      kind: "oss",
+    },
+    {
       name: "fumadocs-theme",
       year: "2026",
       description: m.project_fumadocs_theme_description(),
