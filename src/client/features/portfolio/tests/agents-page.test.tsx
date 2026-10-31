@@ -26,7 +26,7 @@ function section(page: HTMLElement, id: string) {
 }
 
 describe("agents page", () => {
-  it("gives agents.md, the BDD workflow, and each everyday skill a heading that links to itself", () => {
+  it("gives the instruction files, the BDD workflow, and each everyday skill a heading that links to itself", () => {
     const page = renderPage();
     const headings = [...page.querySelectorAll<HTMLAnchorElement>("section h2 a")].map((link) => [
       link.textContent,
@@ -36,6 +36,7 @@ describe("agents page", () => {
 
     expect(headings).toEqual([
       ["/agents.md", "#agents-md", "agents-md"],
+      ["/orchestration.md", "#orchestration-md", "orchestration-md"],
       ["/bdd", "#bdd", "bdd"],
       ["/communicate", "#communicate", "communicate"],
       ["/refactoring", "#refactoring", "refactoring"],
@@ -98,6 +99,7 @@ describe("agents page", () => {
   it("outlines every section", () => {
     expect(portfolio_agents_outline()).toEqual([
       { id: "agents-md", label: "agents.md" },
+      { id: "orchestration-md", label: "orchestration.md" },
       { id: "bdd", label: "bdd" },
       { id: "communicate", label: "communicate" },
       { id: "refactoring", label: "refactoring" },

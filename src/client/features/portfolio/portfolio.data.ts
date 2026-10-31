@@ -371,8 +371,6 @@ export type AgentSection = {
   example?: AgentExample;
 };
 
-// One section per thing the agent loads: the instructions file, the BDD workflow, and the
-// everyday skills.
 export function portfolio_agent_sections(): AgentSection[] {
   return [
     {
@@ -389,6 +387,11 @@ export function portfolio_agent_sections(): AgentSection[] {
           m.agents_md_example_needs(),
         ],
       },
+    },
+    {
+      id: "orchestration-md",
+      name: "orchestration.md",
+      description: m.agents_orchestration_description(),
     },
     {
       id: "bdd",
