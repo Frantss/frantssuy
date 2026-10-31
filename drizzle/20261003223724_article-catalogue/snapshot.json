@@ -3,17 +3,11 @@
   "version": "9",
   "dialect": "postgres",
   "id": "2129c0e1-d9eb-4b85-8d21-5ef14831e7e9",
-  "prevIds": [
-    "1b3335a4-0f4a-4082-b975-5ded8bcfd2ce"
-  ],
+  "prevIds": ["1b3335a4-0f4a-4082-b975-5ded8bcfd2ce"],
   "footprints": [
     {
       "statementType": "create_table",
-      "statementTarget": [
-        "table",
-        "public",
-        "article_catalogues"
-      ],
+      "statementTarget": ["table", "public", "article_catalogues"],
       "writes": [
         "s|tbl|public.article_catalogues",
         "n|tbl|public.article_catalogues",
@@ -22,17 +16,11 @@
         "n|type|public.article_catalogues",
         "n|rel|public.article_catalogues_pkey"
       ],
-      "reads": [
-        "n|sch|public"
-      ]
+      "reads": ["n|sch|public"]
     },
     {
       "statementType": "create_table",
-      "statementTarget": [
-        "table",
-        "public",
-        "article_index"
-      ],
+      "statementTarget": ["table", "public", "article_index"],
       "writes": [
         "s|tbl|public.article_index",
         "n|tbl|public.article_index",
@@ -41,18 +29,11 @@
         "n|type|public.article_index",
         "n|rel|public.article_index_pkey"
       ],
-      "reads": [
-        "n|sch|public"
-      ]
+      "reads": ["n|sch|public"]
     },
     {
       "statementType": "create_index",
-      "statementTarget": [
-        "index",
-        "public",
-        "article_index",
-        "article_index_date"
-      ],
+      "statementTarget": ["index", "public", "article_index", "article_index_date"],
       "writes": [
         "s|idx|public.article_index_date",
         "n|idx|public.article_index_date",
@@ -69,32 +50,18 @@
     },
     {
       "statementType": "create_index",
-      "statementTarget": [
-        "index",
-        "public",
-        "article_index",
-        "article_index_tags"
-      ],
+      "statementTarget": ["index", "public", "article_index", "article_index_tags"],
       "writes": [
         "s|idx|public.article_index_tags",
         "n|idx|public.article_index_tags",
         "e|idx|public.article_index_tags",
         "n|rel|public.article_index_tags"
       ],
-      "reads": [
-        "n|tbl|public.article_index",
-        "n|sch|public",
-        "n|col|public.article_index.tags"
-      ]
+      "reads": ["n|tbl|public.article_index", "n|sch|public", "n|col|public.article_index.tags"]
     },
     {
       "statementType": "create_index",
-      "statementTarget": [
-        "index",
-        "public",
-        "article_index",
-        "article_index_search"
-      ],
+      "statementTarget": ["index", "public", "article_index", "article_index_search"],
       "writes": [
         "s|idx|public.article_index_search",
         "n|idx|public.article_index_search",
@@ -109,11 +76,7 @@
     },
     {
       "statementType": "create_fk",
-      "statementTarget": [
-        "table",
-        "public",
-        "article_index"
-      ],
+      "statementTarget": ["table", "public", "article_index"],
       "writes": [
         "s|fk|public.article_index.article_index_revision_article_catalogues_revision_fkey",
         "n|fk|public.article_index.article_index_revision_article_catalogues_revision_fkey",
@@ -451,14 +414,10 @@
         "table": "article_index",
         "name": "article_index_revision_article_catalogues_revision_fkey",
         "nameExplicit": false,
-        "columns": [
-          "revision"
-        ],
+        "columns": ["revision"],
         "schemaTo": "public",
         "tableTo": "article_catalogues",
-        "columnsTo": [
-          "revision"
-        ],
+        "columnsTo": ["revision"],
         "onUpdate": "NO ACTION",
         "onDelete": "CASCADE",
         "entityType": "fks"
@@ -470,10 +429,7 @@
         "schema": "public",
         "table": "article_index",
         "name": "article_index_pkey",
-        "columns": [
-          "revision",
-          "slug"
-        ],
+        "columns": ["revision", "slug"],
         "nameExplicit": false,
         "entityType": "pks"
       }
@@ -484,9 +440,7 @@
         "schema": "public",
         "table": "article_catalogues",
         "name": "article_catalogues_pkey",
-        "columns": [
-          "revision"
-        ],
+        "columns": ["revision"],
         "nameExplicit": false,
         "entityType": "pks"
       }

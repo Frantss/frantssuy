@@ -3,17 +3,11 @@
   "version": "9",
   "dialect": "postgres",
   "id": "1b3335a4-0f4a-4082-b975-5ded8bcfd2ce",
-  "prevIds": [
-    "57e546c0-f577-402a-b6ab-38d954e943da"
-  ],
+  "prevIds": ["57e546c0-f577-402a-b6ab-38d954e943da"],
   "footprints": [
     {
       "statementType": "rename_table",
-      "statementTarget": [
-        "table",
-        "public",
-        "post_like_counts"
-      ],
+      "statementTarget": ["table", "public", "post_like_counts"],
       "writes": [
         "s|tbl|public.post_like_counts",
         "n|tbl|public.post_like_counts",
@@ -24,36 +18,22 @@
         "n|rel|public.article_like_counts",
         "n|type|public.article_like_counts"
       ],
-      "reads": [
-        "n|sch|public"
-      ]
+      "reads": ["n|sch|public"]
     },
     {
       "statementType": "rename_column",
-      "statementTarget": [
-        "column",
-        "public",
-        "article_like_counts",
-        "post_slug"
-      ],
+      "statementTarget": ["column", "public", "article_like_counts", "post_slug"],
       "writes": [
         "s|col|public.article_like_counts.post_slug",
         "n|col|public.article_like_counts.post_slug",
         "s|col|public.article_like_counts.article_slug",
         "n|col|public.article_like_counts.article_slug"
       ],
-      "reads": [
-        "n|tbl|public.article_like_counts",
-        "n|sch|public"
-      ]
+      "reads": ["n|tbl|public.article_like_counts", "n|sch|public"]
     },
     {
       "statementType": "rename_constraint",
-      "statementTarget": [
-        "table",
-        "public",
-        "article_like_counts"
-      ],
+      "statementTarget": ["table", "public", "article_like_counts"],
       "writes": [
         "s|ck|public.article_like_counts.post_like_counts_count_nonnegative",
         "n|ck|public.article_like_counts.post_like_counts_count_nonnegative",

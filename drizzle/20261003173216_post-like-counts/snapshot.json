@@ -3,17 +3,11 @@
   "version": "9",
   "dialect": "postgres",
   "id": "57e546c0-f577-402a-b6ab-38d954e943da",
-  "prevIds": [
-    "00000000-0000-0000-0000-000000000000"
-  ],
+  "prevIds": ["00000000-0000-0000-0000-000000000000"],
   "footprints": [
     {
       "statementType": "create_table",
-      "statementTarget": [
-        "table",
-        "public",
-        "post_like_counts"
-      ],
+      "statementTarget": ["table", "public", "post_like_counts"],
       "writes": [
         "s|tbl|public.post_like_counts",
         "n|tbl|public.post_like_counts",
@@ -22,9 +16,7 @@
         "n|type|public.post_like_counts",
         "n|rel|public.post_like_counts_pkey"
       ],
-      "reads": [
-        "n|sch|public"
-      ]
+      "reads": ["n|sch|public"]
     }
   ],
   "ddl": [
@@ -64,9 +56,7 @@
       "schema": "public",
       "table": "post_like_counts",
       "name": "post_like_counts_pkey",
-      "columns": [
-        "post_slug"
-      ],
+      "columns": ["post_slug"],
       "nameExplicit": false,
       "entityType": "pks"
     },
