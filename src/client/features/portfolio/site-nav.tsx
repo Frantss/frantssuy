@@ -36,6 +36,14 @@ function page_isCurrent(page: (typeof pages)[number], pathname: string) {
     : pathname === page.to || pathname.startsWith(`${page.to}/`);
 }
 
+export function page_findCurrentIndex(pathname: string) {
+  return pages.findIndex((page) => page_isCurrent(page, pathname));
+}
+
+export function page_label(index: number) {
+  return pages[index]?.label();
+}
+
 function pageOutline(page: (typeof pages)[number]) {
   return "outline" in page ? page.outline : undefined;
 }
@@ -113,7 +121,7 @@ export function SiteNav() {
 
 export function SiteDock() {
   const location = useLocation();
-  const current = () => pages.find((page) => page_isCurrent(page, location().pathname));
+  const currentLabel = () => page_label(page_findCurrentIndex(location().pathname));
 
   return (
     <Dock.Root>
@@ -123,7 +131,7 @@ export function SiteDock() {
           menuLabel={m.dock_menu()}
           closeLabel={m.dock_close()}
         >
-          ❯ {current()?.label()}
+          ❯ {currentLabel()}
         </Dock.Trigger>
       </Dock.Bar>
       <Dock.Sheet label={m.nav_pages()}>
