@@ -5,8 +5,9 @@ hosts the `frantssb` app in `production`.
 `.railway/railway.ts` manages the app configuration. The site uses TanStack Start
 SSR, an oRPC API, and PostgreSQL through Drizzle.
 
-Use Railway CLI 5.42.1 or newer and the repo's pnpm 12.8.1. Install dependencies
-with `pnpm install`; the `railway` SDK is a development dependency.
+Use Railway CLI 5.42.1 or newer and the pnpm version declared in `package.json`.
+Install dependencies with `pnpm install`; the `railway` SDK is a development
+dependency.
 
 Link another checkout:
 
@@ -32,8 +33,8 @@ declared separately; review its attachment in the plan before applying.
 
 Drizzle commands are `pnpm db:generate`, `pnpm db:migrate`, and `pnpm db:studio`.
 Table definitions belong in `src/server/db/db.schema.ts`; migrations are written
-to `drizzle/`. No application tables are defined yet. Run migrations with a
-database URL reachable from the machine executing the command.
+to `drizzle/`. Run migrations with a database URL reachable from the machine
+executing the command.
 
 Deploy local source:
 
@@ -47,5 +48,6 @@ Wait for `SUCCESS` in the deployment list. Railway checks `/` for HTTP 200.
 Browser analytics use `VITE_POSTHOG_HOST` directly; set it to the PostHog
 ingestion host instead of the removed `/api/angry-ankylosaurus` proxy.
 
-There is no Git remote, so deployments use the local checkout. No automatic
-GitHub deployment is configured.
+The Git remote is [Frantss/frantssuy](https://github.com/Frantss/frantssuy).
+Production deployments use the local checkout through `railway up`; pushing
+to GitHub does not deploy the site automatically.
