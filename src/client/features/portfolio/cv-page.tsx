@@ -17,6 +17,7 @@ import { site } from "@/shared/seo/site";
 import {
   portfolio_bio,
   portfolio_education,
+  portfolio_featured_projects,
   portfolio_jobs,
   portfolio_skills,
   profile,
@@ -248,23 +249,13 @@ export function CvPage() {
 
       <CvSection title={m.page_projects()}>
         <ul {...stylex.attrs(styles.projects)}>
-          <CvProject name="safeish" href="https://github.com/Frantss/safeish">
-            {m.project_safeish_description()}
-          </CvProject>
-          <CvProject name="oxform" href="https://github.com/Frantss/oxform">
-            {m.project_oxform_description()}
-          </CvProject>
-          <li>
-            <span {...stylex.attrs(styles.strong)}>{m.cv_client_websites()}</span>{" "}
-            <a href="https://altereco.com.uy" {...links_openInNewTab}>
-              altereco.com.uy
-            </a>{" "}
-            ({m.cv_altereco()}),{" "}
-            <a href="https://atenea-coffee.com" {...links_openInNewTab}>
-              atenea-coffee.com
-            </a>{" "}
-            ({m.cv_atenea()}).
-          </li>
+          <For each={portfolio_featured_projects()}>
+            {(project) => (
+              <CvProject name={project.name} href={project.href}>
+                {project.description}
+              </CvProject>
+            )}
+          </For>
         </ul>
       </CvSection>
 
@@ -332,10 +323,10 @@ function CvClient(props: { job: Job; text: string }) {
 function CvProject(props: ParentProps<{ name: string; href: string }>) {
   return (
     <li>
-      <span {...stylex.attrs(styles.strong)}>{props.name}</span> {props.children}{" "}
-      <a href={props.href} {...links_openInNewTab}>
-        {cv_url(props.href)}
-      </a>
+      <a href={props.href} {...links_openInNewTab} {...stylex.attrs(styles.strong)}>
+        {props.name}
+      </a>{" "}
+      {props.children}
     </li>
   );
 }
