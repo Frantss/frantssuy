@@ -36,7 +36,7 @@ const styles = stylex.create({
     marginInline: "auto",
     display: "grid",
     maxWidth: { default: dimensions.sizeCvPage, [conditions.print]: "none" },
-    gap: { default: spacing.space6, [conditions.print]: spacing.space3 },
+    gap: { default: spacing.space6, [conditions.print]: spacing.space2 },
     paddingInline: {
       default: spacing.space4,
       [conditions.wide]: { default: spacing.spaceCvHorizontal, [conditions.print]: 0 },
@@ -200,7 +200,9 @@ export function CvPage() {
       </header>
 
       <CvSection title={m.cv_summary()}>
-        <p {...stylex.attrs(styles.paragraph)}>{m.cv_summary_text()}</p>
+        <p {...stylex.attrs(styles.paragraph)}>
+          {m.profile_about_intro()} {m.profile_about_ai()}
+        </p>
       </CvSection>
 
       <CvSection title={m.cv_experience()}>

@@ -171,7 +171,6 @@
   "cv_education": "Educación",
   "cv_stack": "Habilidades técnicas",
   "cv_summary": "Perfil profesional",
-  "cv_summary_text": "Ingeniero de producto con más de 7 años desarrollando aplicaciones web con TypeScript, React, Next.js y Node.js. Me interesa sobre todo la parte técnica: mejorar bases de código para que los desarrolladores que trabajan en ellas puedan atender mejor a los usuarios. Actualmente en Guildara, un emprendimiento social que amplía el acceso a la educación fuera de la escuela, ayudando a que su base de código pase de proyecto de startup a plataforma consolidada. Ex líder técnico: diseñé arquitecturas, realicé entrevistas técnicas y acompañé a desarrolladores junior.",
   "cv_experience": "Experiencia profesional",
   "cv_present": "Actualidad",
   "cv_guildara_typescript": "Propuse y llevé a cabo la migración del código de JavaScript a TypeScript.",
