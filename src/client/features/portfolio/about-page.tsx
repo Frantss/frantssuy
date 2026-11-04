@@ -61,6 +61,7 @@ export function AboutPage() {
         </Facts.Item>
       </Facts.List>
       <p {...stylex.attrs(styles.paragraph)}>{m.profile_about_intro()}</p>
+      <p {...stylex.attrs(styles.paragraph)}>{m.profile_about_ai()}</p>
       <p {...stylex.attrs(styles.paragraph)}>
         <LocalizedMessage message={m.profile_about_background} />
       </p>
