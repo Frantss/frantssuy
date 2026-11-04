@@ -32,4 +32,20 @@ describe("locale detection", () => {
     expect(getLocale()).toBe("es");
     expect(window.location.pathname).not.toMatch(/^\/es(?:\/|$)/);
   });
+
+  it("keeps the CV English without changing the site's Spanish preference", () => {
+    const originalUrl = window.location.href;
+
+    document.cookie = "x-frantss-locale=es; Path=/";
+    try {
+      window.history.replaceState(null, "", "/cv?print=1");
+      expect(getLocale()).toBe("en");
+      expect(document.cookie).toContain("x-frantss-locale=es");
+
+      window.history.replaceState(null, "", "/work");
+      expect(getLocale()).toBe("es");
+    } finally {
+      window.history.replaceState(null, "", originalUrl);
+    }
+  });
 });

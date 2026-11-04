@@ -47,6 +47,7 @@ function posthogSourceMapsPlugin() {
 
 export default defineConfig(({ mode }) => ({
   server: { preTransformRequests: mode !== "test" },
+  optimizeDeps: { include: ["@inlang/paraglide-js/urlpattern-polyfill"] },
   pack: {
     entry: ["scripts/articles-sync.ts"],
     outDir: ".output/server",

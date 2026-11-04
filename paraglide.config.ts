@@ -4,6 +4,10 @@ export default {
   project: "./project.inlang",
   outdir: "./src/paraglide",
   strategy: ["cookie", "baseLocale"],
+  routeStrategies: [
+    { match: "/cv", strategy: ["baseLocale"] },
+    { match: "/cv/", strategy: ["baseLocale"] },
+  ],
   cookieName: "x-frantss-locale",
   emitTsDeclarations: true,
 } satisfies CompilerOptions;

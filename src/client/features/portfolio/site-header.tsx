@@ -102,12 +102,12 @@ export function SiteHeader() {
         <ButtonLink
           variant="secondary"
           styles={styles.cv}
-          href={portfolio_cv(getLocale()).href}
-          download={portfolio_cv(getLocale()).filename}
+          href={portfolio_cv().href}
+          download={portfolio_cv().filename}
           onClick={() =>
             analytics_capture("cv_download_clicked", {
               locale: getLocale(),
-              cv_locale: getLocale(),
+              cv_locale: "en",
               placement: "header",
             })
           }

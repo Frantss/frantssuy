@@ -1,8 +1,6 @@
 import { spawn } from "node:child_process";
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
-import paraglideOptions from "../paraglide.config.ts";
-import projectSettings from "../project.inlang/settings.json" with { type: "json" };
 
 const port = 3334;
 const origin = `http://localhost:${port}`;
@@ -20,24 +18,20 @@ try {
   const browser = await chromium.launch();
 
   try {
-    for (const locale of projectSettings.locales) {
-      const context = await browser.newContext({ reducedMotion: "reduce", colorScheme: "light" });
+    const context = await browser.newContext({ reducedMotion: "reduce", colorScheme: "light" });
+    const page = await context.newPage();
 
-      await context.addCookies([{ name: paraglideOptions.cookieName, value: locale, url: origin }]);
-      const page = await context.newPage();
-
-      await page.goto(`${origin}/cv`, { waitUntil: "networkidle" });
-      await page.evaluate(() => document.fonts.ready);
-      await page.pdf({
-        path: `public/cv-${locale}.pdf`,
-        preferCSSPageSize: true,
-        printBackground: true,
-        tagged: true,
-        outline: true,
-      });
-      await context.close();
-      console.log(`public/cv-${locale}.pdf`);
-    }
+    await page.goto(`${origin}/cv`, { waitUntil: "networkidle" });
+    await page.evaluate(() => document.fonts.ready);
+    await page.pdf({
+      path: "public/cv-en.pdf",
+      preferCSSPageSize: true,
+      printBackground: true,
+      tagged: true,
+      outline: true,
+    });
+    await context.close();
+    console.log("public/cv-en.pdf");
   } finally {
     await browser.close();
   }

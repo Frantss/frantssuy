@@ -1,11 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 
-const mocks = vi.hoisted(() => ({ capture: vi.fn(), setLocale: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  capture: vi.fn(),
+  getLocale: vi.fn(() => "en"),
+  setLocale: vi.fn(),
+}));
 
 vi.mock("@/client/analytics/analytics", () => ({ analytics_capture: mocks.capture }));
 vi.mock("@/paraglide/runtime", async (original) => ({
   ...(await original<typeof import("@/paraglide/runtime")>()),
-  getLocale: () => "en",
+  getLocale: mocks.getLocale,
   setLocale: mocks.setLocale,
 }));
 
@@ -17,6 +21,7 @@ const logged = () => log.mock.calls.map(([message]) => String(message)).join("\n
 
 afterEach(() => {
   vi.clearAllMocks();
+  mocks.getLocale.mockReturnValue("en");
   document.cookie = "theme=; Path=/; Max-Age=0";
   delete document.documentElement.dataset.theme;
 });
@@ -50,7 +55,9 @@ describe("console easter egg", () => {
     expect(logged()).toContain("https://github.com/Frantss/");
   });
 
-  it("downloads the cv for the current locale", () => {
+  it.each(["en", "es"])("downloads the English cv for the %s locale", (locale) => {
+    mocks.getLocale.mockReturnValue(locale);
+
     const click = vi
       .spyOn(HTMLAnchorElement.prototype, "click")
       .mockImplementation(() => undefined);

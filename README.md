@@ -44,8 +44,9 @@ and search results.
 
 ## Generate the CV
 
-The CV summary reuses the About introduction and AI paragraph from
-`messages/en.json` and `messages/es.json`. The featured project selection comes
-from `src/client/features/portfolio/portfolio.data.ts`. After changing these,
-run `pnpm generate:cv` to refresh `public/cv-en.pdf` and `public/cv-es.pdf`.
-Check that both PDFs still fit on one A4 page.
+The CV is English-only, regardless of the site's selected language. Its summary
+reuses the About introduction and AI paragraph from `messages/en.json`. The
+featured project selection comes from
+`src/client/features/portfolio/portfolio.data.ts`. After changing these, run
+`pnpm generate:cv` to refresh `public/cv-en.pdf`.
+Check that the PDF still fits on one A4 page.

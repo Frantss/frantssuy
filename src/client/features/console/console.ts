@@ -53,7 +53,7 @@ const commands = {
   cv: {
     description: "download the cv",
     run() {
-      const cv = portfolio_cv(getLocale());
+      const cv = portfolio_cv();
       const anchor = document.createElement("a");
 
       anchor.href = cv.href;

@@ -54,6 +54,23 @@ describe("server locale", () => {
     await expect(response.text()).resolves.toBe(text);
   });
 
+  it.each([
+    ["/cv?print=1", "en"],
+    ["/cv/", "en"],
+    ["/cv-extra", "es"],
+  ])("uses the correct locale for a Spanish request to %s", async (path, locale) => {
+    vi.mocked(handler.fetch).mockImplementation(async () => new Response(getLocale()));
+
+    const response = await server.fetch(
+      new Request(`http://localhost${path}`, {
+        headers: { cookie: "x-frantss-locale=es" },
+      }),
+    );
+
+    await expect(response.text()).resolves.toBe(locale);
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
   it("isolates overlapping English and Spanish requests across async work", async () => {
     let release: () => void = () => {};
     const gate = new Promise<void>((resolve) => {
