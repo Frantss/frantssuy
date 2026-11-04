@@ -104,7 +104,7 @@
   "job_datum_mvp": "As part of the Qubika team, helped deliver an MVP through changing product requirements while keeping the codebase maintainable and consistent.",
   "job_hulu_services": "As part of the Qubika team, developed frontend and backend services, designed new web services, and reduced technical debt.",
   "job_hulu_practices": "Helped the team adopt better coding practices.",
-  "project_frantssuy_description": "This website, built with Solid and TanStack Start.",
+  "project_frantssuy_description": "Personal website built with Solid and TanStack Start.",
   "project_calendar_tsx_description": "Experimental headless calendar library with React and Solid bindings.",
   "project_temporal_fns_description": "Experimental date-fns-style utilities for the Temporal API.",
   "project_agents_md_description": "The instructions I use with coding agents.",
