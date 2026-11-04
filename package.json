@@ -29,9 +29,9 @@
     "db:studio": "varlock run -- drizzle-kit studio"
   },
   "dependencies": {
-    "@ark-ui/solid": "5.39.3",
+    "@ark-ui/solid": "5.40.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
-    "@inlang/paraglide-js-solid": "1.0.3",
+    "@inlang/paraglide-js-solid": "1.0.4",
     "@nanostores/query": "0.3.4",
     "@nanostores/solid": "1.1.1",
     "@orpc/client": "2.0.0-beta.46",
@@ -40,23 +40,23 @@
     "@orpc/ratelimit": "2.0.0-beta.46",
     "@orpc/server": "2.0.0-beta.46",
     "@stylexjs/stylex": "0.19.1",
-    "@tabler/icons-solidjs": "3.49.0",
+    "@tabler/icons-solidjs": "3.50.0",
     "@tanstack/solid-pacer": "0.24.0",
     "@tanstack/solid-router": "1.170.43",
     "@tanstack/solid-start": "1.169.4",
-    "@varlock/vite-integration": "^1.5.4",
+    "@varlock/vite-integration": "^1.5.5",
     "drizzle-orm": "1.0.0-rc.5",
     "nanostores": "1.5.5",
-    "nitro": "3.0.260903-beta",
+    "nitro": "3.0.261102-rc",
     "pg": "8.23.1",
-    "posthog-js": "1.438.24",
-    "solid-js": "1.9.17",
+    "posthog-js": "1.444.4",
+    "solid-js": "1.9.18",
     "valibot": "1.5.0",
-    "varlock": "^1.23.0"
+    "varlock": "^1.24.0"
   },
   "devDependencies": {
-    "@babel/core": "8.0.9",
-    "@inlang/paraglide-js": "2.29.2",
+    "@babel/core": "8.1.0",
+    "@inlang/paraglide-js": "3.0.0",
     "@mdx-js/mdx": "3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@playwright/test": "1.64.1",
@@ -65,13 +65,13 @@
     "@stylexjs/eslint-plugin": "0.19.1",
     "@stylexjs/postcss-plugin": "0.19.1",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@takumi-rs/core": "2.18.2",
-    "@tanstack/highlight": "^1.2.0",
+    "@takumi-rs/core": "2.19.0",
+    "@tanstack/highlight": "^1.2.11",
     "@tanstack/router-cli": "^1.167.46",
     "@types/pg": "8.23.1",
     "@vitest/browser-playwright": "catalog:",
     "drizzle-kit": "1.0.0-rc.5",
-    "knip": "6.43.0",
+    "knip": "6.44.1",
     "playwright": "1.64.1",
     "postcss": "8.5.32",
     "railway": "3.16.0",
@@ -81,7 +81,7 @@
     "tsx": "4.23.15",
     "typescript": "^7.0.2",
     "vite": "catalog:",
-    "vite-plugin-solid": "2.11.14",
+    "vite-plugin-solid": "2.11.15",
     "vite-plus": "catalog:",
     "vitest": "catalog:",
     "yaml": "^2.9.1"
@@ -89,7 +89,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "12.15.0",
+      "version": "12.16.1",
       "onFail": "download"
     }
   }
