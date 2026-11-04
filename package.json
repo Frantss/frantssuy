@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm generate:articles && varlock run -- vp dev --port 3000",
+    "dev": "pnpm generate:articles && varlock run -- portless run vp dev",
     "prebuild": "pnpm generate:cv",
     "build": "pnpm generate:articles && varlock run -- vp build && varlock run -- vp pack",
     "start": "varlock run -- node .output/server/index.mjs",

@@ -4,7 +4,19 @@ Personal website with an about page, work history, projects, and writing.
 
 ## Run locally
 
-Requires Node.js, pnpm, and Docker running. Add this to `.env`:
+Requires Node.js 24+, pnpm, Portless, and Docker running. Install Portless once:
+
+```bash
+pnpm add --global portless
+```
+
+On macOS, start a per-user HTTP proxy without administrator permissions:
+
+```bash
+portless proxy start --unprivileged --port 80
+```
+
+Add this to `.env`:
 
 ```dotenv
 DATABASE_URL=postgresql://frantssb:frantssb@localhost:5432/frantssb
@@ -18,8 +30,14 @@ pnpm articles:sync:dev
 pnpm dev
 ```
 
-Open [localhost:3000](http://localhost:3000). Other settings are optional;
-see [`.env.schema`](.env.schema).
+Open the URL printed by Portless. The main checkout uses `frantssuy.localhost`;
+linked Git worktrees get a branch-name subdomain. Portless assigns the app port
+and starts its shared proxy when needed, reusing the existing proxy settings.
+With the HTTP proxy above, open [frantssuy.localhost](http://frantssuy.localhost).
+See [Portless setup](https://github.com/vercel-labs/portless#run-your-app) for
+HTTPS, other platforms, and administrator permission requirements.
+
+Other settings are optional; see [`.env.schema`](.env.schema).
 
 After editing articles, run `pnpm articles:sync:dev` to update local filtering
 and search results.
