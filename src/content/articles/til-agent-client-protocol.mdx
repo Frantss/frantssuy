@@ -12,8 +12,34 @@ keywords:
   - Herdr
 ---
 
+import { ArticleDate } from "@/client/features/portfolio/article-date";
+
 I learned about the [Agent Client Protocol (ACP)](https://agentclientprotocol.com/get-started/introduction) while using tern. It gives editors and coding agents a common language, so developers don't need to build a custom integration for every editor-agent pair.
 
 It's a similar idea to LSP: an editor implements the protocol and can work with agents that support it, instead of handling each one differently.
 
 Herdr is my daily driver, so I'm now exploring how ACP could improve the experience there. I'm still figuring out what that integration would look like.
+
+<section class="ai-review" aria-labelledby="ai-assistance">
+  <h2 id="ai-assistance">AI assistance</h2>
+  <p>AI tools assisted with writing and editing.</p>
+
+<div class="ai-review-result">
+  <strong class="ai-review-score">100%</strong>
+  <span>of text flagged as possibly AI</span>
+</div>
+<div class="ai-review-bar" aria-hidden="true">
+  <span />
+</div>
+
+  <p class="ai-review-meta">
+    {"Pangram 4.1 · Last checked: "}<ArticleDate date="2026.11.04" />
+  </p>
+  <p class="ai-review-note">
+    {"Less accurate on short text. Pangram can't classify this input with certainty. The score is an estimate, not a measure of authorship."}
+  </p>
+  <p class="ai-review-note">
+    <a href="https://www.pangram.com/">Run your own check on Pangram</a>
+    {". Paste the article body above, excluding the title and this section; results may differ."}
+  </p>
+</section>
