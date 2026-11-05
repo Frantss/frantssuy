@@ -11,7 +11,7 @@ import {
   type ComponentProps,
 } from "solid-js";
 import { useQueries } from "@/client/orpc/orpc.query";
-import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
+import { createRateLimitNotice } from "@/client/orpc/orpc.ratelimit";
 import { Button } from "@/client/ui/button";
 import { Tooltip } from "@/client/ui/tooltip";
 import { cn } from "@/client/lib/cn";
@@ -125,14 +125,14 @@ export function ArticleLikeButton(props: { slug: string; size?: "sm" | "md" }) {
 }
 
 function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "sm" | "md" }) {
-  const cooldown = createRateLimitCooldown();
+  const rateLimit = createRateLimitNotice();
   const errorId = createUniqueId();
 
-  onMount(() => cooldown.handle(props.error));
+  onMount(() => rateLimit.handle(props.error));
 
   return (
     <div {...stylex.attrs(styles.error)}>
-      <Show when={!cooldown.limited()}>
+      <Show when={!rateLimit.limited()}>
         <p id={errorId} role="alert" {...stylex.attrs(styles.loadError)}>
           {m.article_likes_load_error()}
         </p>
@@ -142,9 +142,8 @@ function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "s
           <Button
             {...triggerProps({ onClick: props.reset })}
             variant="icon"
-            disabled={cooldown.remaining() > 0}
             aria-label={m.article_likes_retry()}
-            aria-describedby={!cooldown.limited() ? errorId : undefined}
+            aria-describedby={!rateLimit.limited() ? errorId : undefined}
             styles={[styles.retry, props.size === "sm" ? styles.retrySmall : styles.retryMedium]}
           >
             <IconRefresh size={props.size === "sm" ? 14 : 18} aria-hidden="true" />
@@ -157,7 +156,7 @@ function ArticleLikesError(props: { error: unknown; reset: () => void; size?: "s
 
 function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
   const queries = useQueries();
-  const cooldown = createRateLimitCooldown();
+  const rateLimit = createRateLimitNotice();
   const [failed, setFailed] = createSignal(false);
   const [liked, setLiked] = createSignal(false);
   const [animationKey, setAnimationKey] = createSignal(1);
@@ -175,7 +174,6 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
   });
 
   async function addLike() {
-    if (cooldown.remaining()) return;
     const input = { slug: props.slug };
 
     setFailed(false);
@@ -184,7 +182,7 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
 
       if (!output) throw mutation().error;
     } catch (error) {
-      setFailed(!cooldown.handle(error));
+      setFailed(!rateLimit.handle(error));
 
       return;
     }
@@ -217,7 +215,6 @@ function ArticleLikeCounter(props: { slug: string; size?: "sm" | "md" }) {
             size={props.size}
             liked={liked()}
             animationKey={animationKey()}
-            disabled={cooldown.remaining() > 0}
             aria-label={m.article_like({ count: query().data?.count ?? 0 })}
             aria-describedby={failed() ? errorId : undefined}
             onClick={addLike}

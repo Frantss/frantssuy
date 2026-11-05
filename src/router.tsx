@@ -3,6 +3,7 @@ import { createQueries, QueryContext } from "@/client/orpc/orpc.query";
 import { aria_prefersReduced } from "@/client/lib/motion";
 import { Frame } from "@/client/ui/frame";
 import { routeTree } from "@/routeTree.gen";
+import type { ServerRegistration } from "@/server/request-context";
 
 export function getRouter() {
   const queries = createQueries();
@@ -30,8 +31,9 @@ export function getRouter() {
   return router;
 }
 
-declare module "@tanstack/solid-router" {
+declare module "@tanstack/router-core" {
   interface Register {
     router: ReturnType<typeof getRouter>;
+    server: ServerRegistration;
   }
 }

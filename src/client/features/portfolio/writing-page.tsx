@@ -8,7 +8,7 @@ import { IconCheck, IconHourglass } from "@tabler/icons-solidjs";
 import { createDelayedPending } from "@/client/lib/create-delayed-pending";
 import { aria_prefersReduced } from "@/client/lib/motion";
 import { cn } from "@/client/lib/cn";
-import { createRateLimitCooldown } from "@/client/orpc/orpc.ratelimit";
+import { createRateLimitNotice } from "@/client/orpc/orpc.ratelimit";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { ToastProvider } from "@/client/ui/toast";
@@ -149,7 +149,7 @@ function WritingArticles() {
   const data = createMemo<ArticleSearchResult | undefined>(
     (previous) => query().data ?? (query().loading ? previous : undefined),
   );
-  const cooldown = createRateLimitCooldown();
+  const rateLimit = createRateLimitNotice();
   const tags = [...new Set(article_list().flatMap((article) => article.tags))].sort();
   const offset = () => search().offset ?? 0;
   const pending = () => isNavigating() || query().loading;
@@ -161,7 +161,7 @@ function WritingArticles() {
     search().q ? [{ articles: data()?.items ?? [] }] : articles_groupByYear(data()?.items ?? []);
   const showLoading = createDelayedPending(pending);
 
-  createEffect(() => cooldown.handle(query().error));
+  createEffect(() => rateLimit.handle(query().error));
 
   function change(next: ArticleSearch, replace = false) {
     void navigate({
@@ -214,16 +214,12 @@ function WritingArticles() {
         <div {...stylex.attrs(styles.results)} aria-busy={pending()}>
           <Show when={query().error}>
             <div {...stylex.attrs(styles.error)}>
-              <Show when={!cooldown.limited()}>
+              <Show when={!rateLimit.limited()}>
                 <p role="alert" {...stylex.attrs(styles.errorMessage)}>
                   {m.writing_search_error()}
                 </p>
               </Show>
-              <Button
-                variant="secondary"
-                disabled={cooldown.remaining() > 0}
-                onClick={() => store().revalidate()}
-              >
+              <Button variant="secondary" onClick={() => store().revalidate()}>
                 {m.writing_retry()}
               </Button>
             </div>

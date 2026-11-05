@@ -1,5 +1,6 @@
 {
   "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".cloudflare", "cloudflare.config.ts", "src/worker"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "preserve",

@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["./**/*.ts", "../../article-modules.d.ts", "../../../.cloudflare/types/index.d.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client", "@cloudflare/workers-types", "@cloudflare/vitest-plugin/types"]
+  }
+}

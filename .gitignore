@@ -8,6 +8,8 @@ env.d.ts
 .nitro
 .tanstack
 .wrangler
+.cloudflare
+.dev.vars*
 .output
 .vinxi
 __unconfig*
@@ -19,4 +21,5 @@ output/playwright/
 .vitest/
 src/paraglide/
 .generated/
+/public/og/articles/
 .scratch/

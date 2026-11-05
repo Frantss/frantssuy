@@ -3,7 +3,7 @@ import type { RouterContractClient } from "@orpc/contract";
 import type { JsonifiedClient } from "@orpc/openapi";
 import { OpenAPILink } from "@orpc/openapi/fetch";
 import { createRouterClient } from "@orpc/server";
-import { createIsomorphicFn } from "@tanstack/solid-start";
+import { createIsomorphicFn, getGlobalStartContext } from "@tanstack/solid-start";
 import { getRequestHeaders } from "@tanstack/solid-start/server";
 import { createContext } from "@/server/orpc/orpc.context";
 import { router } from "@/server/orpc/orpc.router";
@@ -15,7 +15,12 @@ const getClient = createIsomorphicFn()
   )
   .server(() =>
     createRouterClient(router, {
-      context: () => createContext({ headers: getRequestHeaders(), source: "ssr" }),
+      context: () =>
+        createContext({
+          headers: getRequestHeaders(),
+          services: getGlobalStartContext()!.services,
+          source: "ssr",
+        }),
     }),
   );
 

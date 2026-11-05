@@ -4,7 +4,7 @@ Personal website with an about page, work history, projects, and writing.
 
 ## Run locally
 
-Requires Node.js 24+, pnpm, Portless, and Docker running. Install Portless once:
+Requires Node.js 24+, pnpm, and Portless. Install Portless once:
 
 ```bash
 pnpm add --global portless
@@ -16,17 +16,8 @@ On macOS, start a per-user HTTP proxy without administrator permissions:
 portless proxy start --unprivileged --port 80
 ```
 
-Add this to `.env`:
-
-```dotenv
-DATABASE_URL=postgresql://frantssb:frantssb@localhost:5432/frantssb
-```
-
 ```bash
 pnpm install
-pnpm db:up
-pnpm db:migrate
-pnpm articles:sync:dev
 pnpm dev
 ```
 
@@ -37,10 +28,67 @@ With the HTTP proxy above, open [frantssuy.localhost](http://frantssuy.localhost
 See [Portless setup](https://github.com/vercel-labs/portless#run-your-app) for
 HTTPS, other platforms, and administrator permission requirements.
 
-Other settings are optional; see [`.env.schema`](.env.schema).
+All environment settings are optional; see [`.env.schema`](.env.schema).
+No database server, Docker container, or `DATABASE_URL` is required.
 
-After editing articles, run `pnpm articles:sync:dev` to update local filtering
-and search results.
+The app runs in the local Cloudflare Workers runtime through `cf` and the
+Cloudflare Vite plugin. SQLite-backed Durable Objects store article likes;
+their local state is separate from production and persists across server
+restarts. Remote bindings are disabled.
+
+Native Cloudflare rate-limit bindings protect the public API through oRPC's
+`CloudflareRateLimiter`. Limits are approximate and apply per Cloudflare
+location, not globally. Rejected calls return HTTP 429 without remaining-count
+or reset-time metadata, so the UI offers manual retry without a countdown.
+
+Local like counters start at zero unless this checkout already has saved
+Durable Object state. Existing PostgreSQL counts are not imported.
+
+If another checkout or dev server already owns the Portless hostname, use:
+
+```bash
+pnpm generate:articles
+pnpm exec varlock run -- vp dev --host 127.0.0.1 --port 5174 --strictPort
+```
+
+Open `http://127.0.0.1:5174`. Stop that server before reusing the port.
+
+Article edits regenerate the bundled search index and reload the development
+server automatically. Builds generate the index too; there is no sync command.
+
+## Check and preview the Worker
+
+```bash
+pnpm check
+pnpm build
+pnpm preview --host 127.0.0.1 --port 5175 --strictPort
+```
+
+Open `http://127.0.0.1:5175` to exercise the built Worker locally. Build and
+preview do not deploy the application. No production domain is configured.
+The CLI and Vite integration are pinned beta releases.
+
+`pnpm check` generates binding types and checks browser and Worker TypeScript
+projects separately. Worker runtime globals must not be added to the browser
+project because they conflict with DOM types.
+
+To add a server dependency, extend `WorkerServices` in `src/worker/services.ts`
+and construct it in `src/worker/index.ts`. The Worker supplies services through
+TanStack's request context; API handlers and SSR clients receive them in oRPC
+context. Keep service objects server-only: do not include binding handles or
+functions in dehydrated query data.
+
+Run the Node, browser, and Workers-runtime tests without a database:
+
+```bash
+pnpm test
+```
+
+The Workers suite uses `@cloudflare/vitest-plugin` to run API transport,
+search, and rate-limit tests in `workerd`. Rate-limit tests use native bindings;
+likes tests use local SQLite Durable Objects to check concurrency and persistence
+across eviction. To run these tests alone, use `pnpm test:workers`; no Cloudflare
+login is needed.
 
 ## Generate the CV
 

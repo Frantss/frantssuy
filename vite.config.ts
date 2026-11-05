@@ -9,21 +9,9 @@ import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import { tanstackStart } from "@tanstack/solid-start/plugin/vite";
 
 import solidPlugin from "vite-plugin-solid";
-import { nitro } from "nitro/vite";
-import { cache_personalContent } from "./src/shared/cache-control";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import paraglideOptions from "./paraglide.config";
 import { mdxPlugins } from "./mdx.config";
-
-const pages = [
-  "/",
-  "/work",
-  "/education",
-  "/projects",
-  "/skills",
-  "/writing",
-  "/writing/**",
-  "/cv",
-];
 
 function posthogSourceMapsPlugin() {
   const personalApiKey = process.env.POSTHOG_API_KEY?.trim();
@@ -48,19 +36,6 @@ function posthogSourceMapsPlugin() {
 export default defineConfig(({ mode }) => ({
   server: { preTransformRequests: mode !== "test" },
   optimizeDeps: { include: ["@inlang/paraglide-js/urlpattern-polyfill"] },
-  pack: {
-    entry: ["scripts/articles-sync.ts"],
-    outDir: ".output/server",
-    clean: false,
-    format: "esm",
-    platform: "node",
-    deps: {
-      alwaysBundle: [/.*/],
-      neverBundle: ["pg"],
-      onlyImport: ["pg"],
-    },
-    copy: { from: ".generated/articles/catalogue.json", rename: "articles.json" },
-  },
   test: {
     fileParallelism: false,
     environment: "node",
@@ -178,25 +153,18 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: lazyPlugins(() => [
     varlockVitePlugin({ ssrInjectMode: "init-only" }),
+    ...(mode === "test"
+      ? []
+      : cloudflare({
+          viteEnvironment: { name: "ssr" },
+          remoteBindings: false,
+          types: { includeRuntime: false },
+        })),
     stylexPlugin(),
     paraglideVitePlugin(paraglideOptions),
     ...mdxPlugins,
     tanstackStart({ server: { build: { inlineCss: true } } }),
     posthogSourceMapsPlugin(),
-    ...(mode === "test"
-      ? []
-      : [
-          nitro({
-            preset: "node-server",
-            compressPublicAssets: { gzip: true, brotli: true },
-            publicAssets: [
-              { dir: ".generated/social/articles", baseURL: "/og/articles", maxAge: 31536000 },
-            ],
-            routeRules: Object.fromEntries(
-              pages.map((page) => [page, { headers: { "cache-control": cache_personalContent } }]),
-            ),
-          }),
-        ]),
     solidPlugin({ ssr: mode !== "test", extensions: [".md", ".mdx"] }),
   ]),
 }));

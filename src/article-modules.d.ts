@@ -6,3 +6,9 @@ declare module "virtual:article-metadata" {
 
   export default metadata;
 }
+
+declare module "virtual:article-search" {
+  const search: import("@/lib/articles/article-search").ArticleSearchBundle;
+
+  export default search;
+}

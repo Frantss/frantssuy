@@ -105,8 +105,8 @@ describe("oRPC with Nano Query", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
-  it("hydrates failed queries with their oRPC error and cooldown data", async () => {
-    const data = { limit: 30, remaining: 0, reset: Date.now() + 2000 };
+  it("hydrates failed queries with their typed rate-limit error", async () => {
+    const data = {};
     const fetch = vi.fn(async () =>
       Response.json(
         {

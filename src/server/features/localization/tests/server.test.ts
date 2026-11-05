@@ -1,5 +1,4 @@
 import handler, { type ServerEntry } from "@tanstack/solid-start/server-entry";
-import { gunzipSync } from "node:zlib";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import server from "@/server";
 import { m } from "@/paraglide/messages";
@@ -12,12 +11,27 @@ vi.mock("@tanstack/solid-start/server-entry", () => ({
   createServerEntry: (entry: ServerEntry) => entry,
 }));
 
+const limiter = { limit: vi.fn() };
+const options = {
+  context: {
+    services: {
+      likes: { get: vi.fn(), add: vi.fn() },
+      rateLimits: {
+        search: limiter,
+        likesRead: limiter,
+        likesWriteBurst: limiter,
+        likesWrite: limiter,
+      },
+    },
+  },
+};
+
 beforeEach(() => {
   vi.mocked(handler.fetch).mockReset();
 });
 
 describe("server locale", () => {
-  it("compresses HTML after rendering in the request locale", async () => {
+  it("renders readable localized HTML when gzip is accepted", async () => {
     vi.mocked(handler.fetch).mockImplementation(
       async () =>
         new Response(m.page_work(), { headers: { "content-type": "text/html; charset=utf-8" } }),
@@ -26,10 +40,11 @@ describe("server locale", () => {
       new Request("http://localhost/work", {
         headers: { cookie: "x-frantss-locale=es", "accept-encoding": "gzip" },
       }),
+      options,
     );
 
-    expect(response.headers.get("content-encoding")).toBe("gzip");
-    expect(gunzipSync(Buffer.from(await response.arrayBuffer())).toString()).toBe("Experiencia");
+    expect(response.headers.get("cache-control")).toBe("private, no-cache");
+    await expect(response.text()).resolves.toBe("Experiencia");
   });
 
   it.each([
@@ -41,15 +56,14 @@ describe("server locale", () => {
   ])("renders %s using %s", async (cookie, locale, text) => {
     const request = new Request("http://localhost/work", { headers: { cookie } });
 
-    vi.mocked(handler.fetch).mockImplementation(async (incoming) => {
-      expect(incoming).toBe(request);
+    vi.mocked(handler.fetch).mockImplementation(async () => {
       await Promise.resolve();
       expect(getLocale()).toBe(locale);
 
       return new Response(m.page_work());
     });
 
-    const response = await server.fetch(request);
+    const response = await server.fetch(request, options);
 
     await expect(response.text()).resolves.toBe(text);
   });
@@ -65,6 +79,7 @@ describe("server locale", () => {
       new Request(`http://localhost${path}`, {
         headers: { cookie: "x-frantss-locale=es" },
       }),
+      options,
     );
 
     await expect(response.text()).resolves.toBe(locale);
@@ -91,6 +106,7 @@ describe("server locale", () => {
           new Request("http://localhost/work", {
             headers: { cookie: `x-frantss-locale=${locale}` },
           }),
+          options,
         ),
       ),
     );
@@ -119,6 +135,7 @@ describe("server locale", () => {
 
     const response = await server.fetch(
       new Request("http://localhost/work", { headers: { cookie } }),
+      options,
     );
     const metadata = await response.json();
 

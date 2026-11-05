@@ -4,7 +4,7 @@ import { handleAPI } from "@/server/orpc/orpc.handler";
 export const Route = createFileRoute("/api/$")({
   server: {
     handlers: {
-      ANY: ({ request }) => handleAPI(request),
+      ANY: ({ request, context }) => handleAPI(request, context.services),
     },
   },
 });

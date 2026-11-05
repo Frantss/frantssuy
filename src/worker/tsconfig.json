@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "./*.ts",
+    "../article-modules.d.ts",
+    "../../cloudflare.config.ts",
+    "../../.cloudflare/types/index.d.ts"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "types": ["node", "vite/client", "@cloudflare/workers-types"]
+  }
+}

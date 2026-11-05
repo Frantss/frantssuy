@@ -18,15 +18,18 @@ import { createThemeCss, themeTokenClasses, type HighlightTheme } from "@tanstac
 import { githubLightTheme } from "@tanstack/highlight/themes/github-light";
 import { githubDarkTheme } from "@tanstack/highlight/themes/github-dark";
 import { tsImport } from "tsx/esm/api";
+import type { ArticleGeneration } from "./lib/articles/article-generate";
 
 const { article_generate } = (await tsImport(
   "@/lib/articles/article-generate",
   import.meta.url,
 )) as typeof import("@/lib/articles/article-generate");
-let generation: ReturnType<typeof article_generate> | undefined;
+let generation: Promise<ArticleGeneration> | undefined;
 const generate = () => (generation ??= article_generate());
 const metadataId = "virtual:article-metadata";
 const resolvedMetadataId = `\0${metadataId}`;
+const searchId = "virtual:article-search";
+const resolvedSearchId = `\0${searchId}`;
 const articleDirectory = fileURLToPath(new URL("./src/content/articles/", import.meta.url));
 
 const highlighter = createHighlighter({
@@ -56,12 +59,13 @@ export const mdxPlugins: PluginOption[] = [
     enforce: "pre",
     resolveId(id) {
       if (id === metadataId) return resolvedMetadataId;
+      if (id === searchId) return resolvedSearchId;
     },
     async load(id) {
-      if (id !== resolvedMetadataId) return;
-      const { metadata } = await generate();
+      if (id !== resolvedMetadataId && id !== resolvedSearchId) return;
+      const generated = await generate();
 
-      return `export default ${JSON.stringify(metadata)}`;
+      return `export default ${JSON.stringify(id === resolvedMetadataId ? generated.metadata : generated.search)}`;
     },
     configureServer(server) {
       let refresh = Promise.resolve();
@@ -89,7 +93,7 @@ export const mdxPlugins: PluginOption[] = [
     ...compiler,
     enforce: "pre",
     transform(code, id) {
-      if (id === resolvedMetadataId) return;
+      if (id === resolvedMetadataId || id === resolvedSearchId) return;
 
       return compiler.transform(code, id);
     },

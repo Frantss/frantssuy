@@ -33,7 +33,4 @@ export const getArticles = oc
       total: v.pipe(v.number(), v.integer(), v.minValue(0)),
     }),
   )
-  .errors({
-    ...rateLimitErrors,
-    SERVICE_UNAVAILABLE: { message: "Article catalogue not indexed" },
-  });
+  .errors(rateLimitErrors);

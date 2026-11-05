@@ -4,10 +4,7 @@ import { Renderer, type Node } from "@takumi-rs/core";
 import { site } from "@/shared/seo/site";
 import type { ArticleFrontmatter } from "@/lib/articles/article-frontmatter";
 
-export const article_socialDirectory = new URL(
-  "../../.generated/social/articles/",
-  import.meta.url,
-);
+export const article_socialDirectory = new URL("../../public/og/articles/", import.meta.url);
 
 let rendererPromise: Promise<Renderer> | undefined;
 

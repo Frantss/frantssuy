@@ -165,7 +165,7 @@
   "article_likes_retry": "Recargar me gusta",
   "article_likes_load_error": "Me gusta no disponibles",
   "article_likes_save_error": "No se pudo guardar un me gusta. Tocá el corazón para volver a intentarlo.",
-  "api_rate_limited": "Demasiadas solicitudes. Volvé a intentarlo en {seconds}s.",
+  "api_rate_limited": "Demasiadas solicitudes. Volvé a intentarlo en un momento.",
   "toast_notifications": "Notificaciones",
   "toast_dismiss": "Cerrar notificación",
   "cv_education": "Educación",

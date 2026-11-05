@@ -54,7 +54,7 @@ function mount(size: "sm" | "md" = "md") {
 }
 
 describe("article like button", () => {
-  it("shows a cooldown for a rejected like, keeps the count and heart unchanged, and waits for another click", async () => {
+  it("keeps a rejected like unchanged and lets the reader retry without reset metadata", async () => {
     const fetch = vi
       .fn()
       .mockResolvedValueOnce(Response.json({ count: 4 }))
@@ -64,7 +64,7 @@ describe("article like button", () => {
             defined: true,
             code: "TOO_MANY_REQUESTS",
             message: "Too many requests",
-            data: { limit: 30, remaining: 0, reset: Date.now() + 2000 },
+            data: {},
           },
           { status: 429 },
         ),
@@ -75,30 +75,16 @@ describe("article like button", () => {
     const { container } = mount();
 
     await vi.waitFor(() => expect(container.querySelector("button")?.textContent).toBe("4"));
-    vi.useFakeTimers({ toFake: ["Date", "setTimeout", "clearTimeout"] });
     const button = container.querySelector("button")!;
 
     expect(getComputedStyle(button).cursor).toBe("pointer");
     button.click();
-    await vi.waitFor(() => expect(button.disabled).toBe(true));
-    expect(getComputedStyle(button).cursor).toBe("wait");
-    expect(document.querySelector("[data-part='title']")?.textContent).toContain("Try again in 2s");
+    await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+    expect(button.disabled).toBe(false);
     expect(container.querySelector("[role='alert']")).toBeNull();
     expect(button.textContent).toBe("4");
     expect(button.querySelector(".tabler-icon-heart-filled")).toBeNull();
     expect(localStorage.getItem("article:liked:first")).toBeNull();
-    button.click();
-    expect(fetch).toHaveBeenCalledTimes(2);
-    document.querySelector<HTMLButtonElement>("[data-part='close-trigger']")!.click();
-    await vi.advanceTimersByTimeAsync(200);
-    expect(
-      document.querySelector("[data-scope='toast'][data-part='root']")?.getAttribute("data-state"),
-    ).toBe("closed");
-    expect(button.disabled).toBe(true);
-    await vi.advanceTimersByTimeAsync(1800);
-    expect(button.disabled).toBe(false);
-    expect(getComputedStyle(button).cursor).toBe("pointer");
-    expect(fetch).toHaveBeenCalledTimes(2);
     button.click();
     await vi.waitFor(() => expect(button.textContent).toBe("5"));
     expect(button.querySelector(".tabler-icon-heart-filled")).not.toBeNull();

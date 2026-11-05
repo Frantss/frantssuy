@@ -3,6 +3,7 @@ allowBuilds:
   core-js: false
   esbuild: true
   lightningcss: true
+  workerd: true
 catalog:
   # Keep Vitest packages at the version required by vite-plus.
   "@vitest/browser-playwright": 5.0.5

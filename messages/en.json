@@ -165,7 +165,7 @@
   "article_likes_retry": "Reload likes",
   "article_likes_load_error": "Likes unavailable",
   "article_likes_save_error": "Could not save a like. Click the heart to try again.",
-  "api_rate_limited": "Too many requests. Try again in {seconds}s.",
+  "api_rate_limited": "Too many requests. Try again shortly.",
   "toast_notifications": "Notifications",
   "toast_dismiss": "Dismiss notification",
   "cv_education": "Education",
