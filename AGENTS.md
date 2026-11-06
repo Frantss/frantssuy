@@ -26,7 +26,7 @@
 
 ## Orchestration
 
-- Use Herdr Core (`hc`) when delegation benefits the task. Before delegating, read [ORCHESTRATION.md](ORCHESTRATION.md) for worker coordination and strongly recommended model and reasoning choices. Handle trivial work directly.
+- Before starting or resuming project work, read [ORCHESTRATION.md](ORCHESTRATION.md).
 
 ## Proposing solutions
 
