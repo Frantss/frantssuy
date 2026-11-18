@@ -42,7 +42,7 @@ location, not globally. Rejected calls return HTTP 429 without remaining-count
 or reset-time metadata, so the UI offers manual retry without a countdown.
 
 Local like counters start at zero unless this checkout already has saved
-Durable Object state. Existing PostgreSQL counts are not imported.
+Durable Object state. Local development does not import production like counts.
 
 If another checkout or dev server already owns the Portless hostname, use:
 
