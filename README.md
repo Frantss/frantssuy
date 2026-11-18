@@ -65,7 +65,7 @@ pnpm preview --host 127.0.0.1 --port 5175 --strictPort
 ```
 
 Open `http://127.0.0.1:5175` to exercise the built Worker locally. Build and
-preview do not deploy the application. No production domain is configured.
+preview do not deploy the application.
 The CLI and Vite integration are pinned beta releases.
 
 `pnpm check` generates binding types and checks browser and Worker TypeScript
@@ -89,6 +89,28 @@ search, and rate-limit tests in `workerd`. Rate-limit tests use native bindings;
 likes tests use local SQLite Durable Objects to check concurrency and persistence
 across eviction. To run these tests alone, use `pnpm test:workers`; no Cloudflare
 login is needed.
+
+## Deploy to production
+
+Production uses the `frantssuy` Worker. `cloudflare.config.ts` declares
+`frantss.uy` only in `production` mode; development and staging do not claim it.
+Cloudflare manages the custom domain's DNS and TLS certificate. Before the
+first cutover, wait for an active edge certificate.
+
+```bash
+APP_ENV=production pnpm build
+pnpm exec cf deploy --prebuilt --mode production
+```
+
+The Cloudflare zone's `Canonical domain redirects` ruleset handles `www` to
+apex and HTTP to HTTPS for the portfolio and documentation subdomains,
+preserving paths and query strings. These zone rules are separate from
+Worker deployments. Cloudflare manages the sites' DNS records.
+
+Production's migrated like counters retain the imported PostgreSQL total in
+`likes.legacy_count`. To repeat an import, atomically add only the increase
+above that watermark and advance it. Never overwrite `count` with a legacy
+total or lower the watermark; that would lose new likes or double-count imports.
 
 ## Generate the CV
 

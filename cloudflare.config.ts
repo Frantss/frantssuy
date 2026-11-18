@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
   return {
     worker: {
       name,
+      domains: mode === "production" ? ["frantss.uy"] : [],
+      workersDev: true,
       entrypoint,
       compatibilityDate: "2026-11-04",
       compatibilityFlags: ["nodejs_compat"],
