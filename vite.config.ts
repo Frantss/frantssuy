@@ -66,7 +66,15 @@ export default defineConfig(({ mode }) => ({
       },
     ],
   },
-  fmt: { ignorePatterns: ["src/routeTree.gen.ts", "src/paraglide/**", "env.d.ts"] },
+  fmt: {
+    ignorePatterns: [
+      "src/routeTree.gen.ts",
+      "src/paraglide/**",
+      "env.d.ts",
+      "AGENTS.md",
+      "ORCHESTRATION.md",
+    ],
+  },
   lint: {
     jsPlugins: [
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
