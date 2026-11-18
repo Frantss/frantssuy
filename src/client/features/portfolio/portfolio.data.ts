@@ -415,6 +415,16 @@ export function portfolio_agent_sections(): AgentSection[] {
       description: m.skill_communicate_description(),
     },
     {
+      id: "break-down",
+      name: "break-down",
+      description: m.skill_break_down_description(),
+    },
+    {
+      id: "spelunk",
+      name: "spelunk",
+      description: m.skill_spelunk_description(),
+    },
+    {
       id: "refactoring",
       name: "refactoring",
       description: m.skill_refactoring_description(),
@@ -433,6 +443,16 @@ export function portfolio_agent_sections(): AgentSection[] {
           "feat: animate the article list with the router's view transition",
         ],
       },
+    },
+    {
+      id: "weird-shit",
+      name: "weird-shit",
+      description: m.skill_weird_shit_description(),
+    },
+    {
+      id: "ship-it",
+      name: "ship-it",
+      description: m.skill_ship_it_description(),
     },
   ];
 }

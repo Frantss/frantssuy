@@ -39,8 +39,12 @@ describe("agents page", () => {
       ["/orchestration.md", "#orchestration-md", "orchestration-md"],
       ["/bdd", "#bdd", "bdd"],
       ["/communicate", "#communicate", "communicate"],
+      ["/break-down", "#break-down", "break-down"],
+      ["/spelunk", "#spelunk", "spelunk"],
       ["/refactoring", "#refactoring", "refactoring"],
       ["/atomic-commits", "#atomic-commits", "atomic-commits"],
+      ["/weird-shit", "#weird-shit", "weird-shit"],
+      ["/ship-it", "#ship-it", "ship-it"],
     ]);
     expect(page.textContent).not.toContain("team-digest");
   });
@@ -102,8 +106,12 @@ describe("agents page", () => {
       { id: "orchestration-md", label: "orchestration.md" },
       { id: "bdd", label: "bdd" },
       { id: "communicate", label: "communicate" },
+      { id: "break-down", label: "break-down" },
+      { id: "spelunk", label: "spelunk" },
       { id: "refactoring", label: "refactoring" },
       { id: "atomic-commits", label: "atomic-commits" },
+      { id: "weird-shit", label: "weird-shit" },
+      { id: "ship-it", label: "ship-it" },
     ]);
   });
 });
