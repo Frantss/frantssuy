@@ -10,11 +10,13 @@ import {
 import * as stylex from "@stylexjs/stylex";
 import { For, Show } from "solid-js";
 import { links_openInNewTab } from "@/client/lib/links";
+import { ButtonLink } from "@/client/ui/button";
 import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { SectionLabel } from "@/client/ui/section-label";
 import {
   portfolio_featured_projects,
+  portfolio_main_project,
   portfolio_other_project_groups,
   type Project,
 } from "./portfolio.data";
@@ -32,6 +34,54 @@ const styles = stylex.create({
     scrollMarginTop: spacing.space6,
     gridTemplateColumns: "minmax(0,1fr)",
     gap: spacing.space3,
+  },
+  // The only tinted, accent-bordered block on the page, so the main project reads first.
+  main: {
+    display: "grid",
+    minWidth: 0,
+    justifyItems: "start",
+    gap: spacing.space4,
+    borderWidth: borders.borderEmphasis,
+    borderStyle: "solid",
+    borderColor: colors.accent,
+    backgroundColor: colors.accentTint,
+    padding: { default: spacing.space5, [conditions.wide]: spacing.space8 },
+  },
+  mainHeader: {
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.space3,
+  },
+  mainName: {
+    margin: 0,
+    display: "flex",
+    alignItems: "center",
+    gap: spacing.space3,
+    fontSize: typography.fontTitle,
+    lineHeight: typography.leadingTitle,
+    fontWeight: typography.weightBold,
+    letterSpacing: typography.trackingTitle,
+  },
+  // Yaade's mark is a single-color shape, so masking it lets it follow the theme.
+  mainLogo: {
+    width: dimensions.sizeTouch,
+    height: dimensions.sizeTouch,
+    flexShrink: 0,
+    backgroundColor: "currentColor",
+    maskImage: "url('/yaade-mark.webp')",
+    maskPosition: "center",
+    maskRepeat: "no-repeat",
+    maskSize: "contain",
+  },
+  mainYear: {
+    color: colors.muted,
+  },
+  mainDescription: {
+    margin: 0,
+    maxWidth: dimensions.sizeProse,
+    color: colors.muted,
   },
   featured: {
     margin: 0,
@@ -164,7 +214,7 @@ const styles = stylex.create({
   },
 });
 
-function captureProjectClick(project: Project, link: "website" | "source") {
+function captureProjectClick(project: { name: string; kind: string }, link: "website" | "source") {
   analytics_capture("project_clicked", {
     locale: getLocale(),
     project_id: project.name,
@@ -209,14 +259,44 @@ function ProjectWebsite(props: { project: Project }) {
   );
 }
 
+function MainProject() {
+  const project = () => portfolio_main_project();
+
+  return (
+    <article aria-labelledby="main-project-name" {...stylex.attrs(styles.main)}>
+      <div {...stylex.attrs(styles.mainHeader)}>
+        <h3 id="main-project-name" {...stylex.attrs(styles.mainName)}>
+          <span aria-hidden="true" {...stylex.attrs(styles.mainLogo)} />
+          {project().name}
+        </h3>
+        <span {...stylex.attrs(styles.year, styles.mainYear)}>{project().year}</span>
+      </div>
+      <p {...stylex.attrs(styles.mainDescription)}>{project().description}</p>
+      <ButtonLink
+        variant="primary"
+        href={project().href}
+        {...links_openInNewTab}
+        onClick={() => captureProjectClick(project(), "website")}
+      >
+        {m.project_visit({ host: new URL(project().href).host })}
+      </ButtonLink>
+    </article>
+  );
+}
+
 export function ProjectsPage() {
   return (
     <Page styles={styles.root}>
       <PageTitle>{m.page_projects()}</PageTitle>
       <section aria-labelledby="featured-heading" {...stylex.attrs(styles.section)}>
-        <SectionLabel level="h2" id="featured-heading" count={portfolio_featured_projects().length}>
+        <SectionLabel
+          level="h2"
+          id="featured-heading"
+          count={portfolio_featured_projects().length + 1}
+        >
           {m.project_featured_heading()}
         </SectionLabel>
+        <MainProject />
         <ul {...stylex.attrs(styles.featured)}>
           <For each={portfolio_featured_projects()}>
             {(project) => (

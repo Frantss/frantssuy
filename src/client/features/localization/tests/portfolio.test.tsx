@@ -42,6 +42,14 @@ describe("localized portfolio", () => {
     ));
 
     expect(container.textContent).toContain("Guildara");
+    const featuredLinks = container.querySelectorAll<HTMLAnchorElement>(
+      "section[aria-labelledby=featured-heading] a",
+    );
+
+    expect(featuredLinks[0]?.href).toBe("https://yaade.dev/");
+    expect(featuredLinks[0]?.textContent).toBe(
+      locale === "en" ? "Visit yaade.dev" : "Visitar yaade.dev",
+    );
     if (locale === "en") {
       expect(container.textContent).toContain("Product Engineer");
       expect(container.textContent).toContain("1y 8m");

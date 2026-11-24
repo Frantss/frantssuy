@@ -150,6 +150,16 @@ export type Project = {
   kind: ProjectKind;
 };
 
+export function portfolio_main_project() {
+  return {
+    name: "yaade",
+    year: "2026",
+    description: m.project_yaade_description(),
+    href: "https://yaade.dev",
+    kind: "product",
+  };
+}
+
 export function portfolio_featured_projects(): Project[] {
   return [
     {

@@ -16,7 +16,7 @@ export function createLlmText(
       "Work history in product engineering, fullstack development, and technical leadership.",
     ],
     ["Education", "/education", "Education and qualifications."],
-    ["Projects", "/projects", "Open-source libraries, client websites, and other projects."],
+    ["Projects", "/projects", "Yaade, open-source libraries, client websites, and other projects."],
     ["Agents", "/agents", "AGENTS.md instructions and personal agent skills for coding agents."],
     ["Writing", "/writing", "Articles by Francisco Bongiovanni."],
     ["CV", "/cv", "Professional experience, technical skills, education, and projects."],

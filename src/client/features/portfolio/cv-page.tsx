@@ -19,6 +19,7 @@ import {
   portfolio_education,
   portfolio_featured_projects,
   portfolio_jobs,
+  portfolio_main_project,
   portfolio_skills,
   profile,
   type Job,
@@ -251,7 +252,7 @@ export function CvPage() {
 
       <CvSection title={m.page_projects()}>
         <ul {...stylex.attrs(styles.projects)}>
-          <For each={portfolio_featured_projects()}>
+          <For each={[portfolio_main_project(), ...portfolio_featured_projects()]}>
             {(project) => (
               <CvProject name={project.name} href={project.href}>
                 {project.description}
