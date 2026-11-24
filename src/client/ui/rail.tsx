@@ -1,12 +1,4 @@
-import {
-  colors,
-  spacing,
-  typography,
-  dimensions,
-  borders,
-  motion,
-  conditions,
-} from "@/client/styles/theme.stylex";
+import { colors, spacing, dimensions, borders, conditions } from "@/client/styles/theme.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { createLink } from "@tanstack/solid-router";
 import { Show, splitProps, type ComponentProps, type ParentProps } from "solid-js";
@@ -58,54 +50,6 @@ const styles = stylex.create({
   item: {
     whiteSpace: "nowrap",
   },
-  outlineRoot: {
-    position: "relative",
-  },
-  outline: {
-    position: "relative",
-    margin: 0,
-    marginBlock: spacing.space1,
-    display: "flex",
-    listStyleType: "none",
-    flexDirection: "column",
-    alignItems: "flex-end",
-    gap: spacing.space1,
-    padding: 0,
-    fontSize: typography.fontXs,
-    lineHeight: typography.leadingXs,
-  },
-  outlineItem: {
-    position: "relative",
-  },
-  outlineLink: {
-    color: {
-      default: colors.faint,
-      [conditions.hover]: { default: null, ":hover": colors.muted },
-      ":focus-visible": colors.muted,
-    },
-    textDecoration: "none",
-    transitionProperty: "color",
-    transitionDuration: motion.durationColor,
-    transitionTimingFunction: motion.easeColor,
-  },
-  outlineCurrent: {
-    color: colors.fg,
-  },
-  // One bar for the whole outline, on the rail's right rule: past the nav's inline padding and its
-  // transparent border.
-  outlineBar: {
-    position: "absolute",
-    top: 0,
-    right: `calc(-1 * (${spacing.space4} + ${borders.borderRule}))`,
-    width: borders.borderEmphasis,
-    backgroundColor: colors.accent,
-    transitionProperty: { default: null, [conditions.motion]: "transform, height, opacity" },
-    transitionDuration: motion.durationDockEnter,
-    transitionTimingFunction: motion.easeDock,
-  },
-  outlineBarHidden: {
-    opacity: 0,
-  },
   content: {
     paddingInline: { default: spacing.space4, [conditions.wide]: spacing.space8 },
     paddingBlock: spacing.space6,
@@ -152,56 +96,6 @@ function RailAnchor(props: ComponentProps<"a"> & { current: boolean }) {
   );
 }
 
-// Section links for the current page, nested under its link. One bar marks the active item and
-// slides to the next one when the active section changes.
-function RailOutline(props: ParentProps<{ label: string; activeIndex?: number }>) {
-  let list: HTMLUListElement | undefined;
-  const placement = () => {
-    const item =
-      props.activeIndex === undefined
-        ? undefined
-        : list?.querySelectorAll<HTMLElement>(":scope > li")[props.activeIndex];
-
-    return item && { top: list!.offsetTop + item.offsetTop, height: item.offsetHeight };
-  };
-
-  return (
-    <li {...stylex.attrs(styles.item, styles.outlineRoot)}>
-      <ul
-        ref={list}
-        aria-label={props.label}
-        {...stylex.attrs(styles.outline)}
-        class={cn("rail-outline", stylex.attrs(styles.outline).class)}
-      >
-        {props.children}
-      </ul>
-      {/* Measured from the layout, so the position goes inline rather than through StyleX. */}
-      <span
-        aria-hidden="true"
-        {...stylex.attrs(styles.outlineBar, !placement() && styles.outlineBarHidden)}
-        style={{
-          height: `${placement()?.height ?? 0}px`,
-          transform: `translateY(${placement()?.top ?? 0}px)`,
-        }}
-      />
-    </li>
-  );
-}
-
-function RailOutlineLink(props: ParentProps<{ href: string; current: boolean }>) {
-  return (
-    <li {...stylex.attrs(styles.outlineItem)}>
-      <a
-        href={props.href}
-        aria-current={props.current ? "location" : undefined}
-        {...stylex.attrs(styles.outlineLink, props.current && styles.outlineCurrent)}
-      >
-        {props.children}
-      </a>
-    </li>
-  );
-}
-
 function RailContent(props: ParentProps) {
   return <main {...stylex.attrs(styles.content)}>{props.children}</main>;
 }
@@ -211,7 +105,5 @@ export const Rail = {
   Rule: RailRule,
   Nav: RailNav,
   Link: createLink(RailAnchor),
-  Outline: RailOutline,
-  OutlineLink: RailOutlineLink,
   Content: RailContent,
 };

@@ -49,29 +49,20 @@ function pageOutline(page: (typeof pages)[number]) {
 }
 
 // Shows the page's section links while that page is open, marking the one in view.
-function PageOutline(props: {
-  outline: () => OutlineItem[];
-  container: typeof Rail.Outline;
-  link: typeof Rail.OutlineLink;
-}) {
+function PageOutline(props: { outline: () => OutlineItem[] }) {
   const items = () => props.outline();
   const active = createActiveSection(() => items().map((item) => item.id), Frame.fillSelector);
-  const activeIndex = () => {
-    const index = items().findIndex((item) => item.id === active());
-
-    return index === -1 ? undefined : index;
-  };
 
   return (
-    <props.container label={m.nav_outline()} activeIndex={activeIndex()}>
+    <Dock.Outline label={m.nav_outline()}>
       <For each={items()}>
         {(item) => (
-          <props.link href={`#${item.id}`} current={active() === item.id}>
+          <Dock.OutlineLink href={`#${item.id}`} current={active() === item.id}>
             {item.label}
-          </props.link>
+          </Dock.OutlineLink>
         )}
       </For>
-    </props.container>
+    </Dock.Outline>
   );
 }
 
@@ -87,32 +78,25 @@ export function SiteNav() {
     <Rail.Nav label={m.nav_pages()}>
       <For each={pages}>
         {(page) => (
-          <>
-            <Rail.Link
-              to={page.to}
-              current={page_isCurrent(page, pathname())}
-              onClick={(event: MouseEvent) => {
-                // On the open page, glide back to the top ourselves: the router would ignore the click,
-                // or, with a section hash in the URL, jump to the top instantly while dropping it.
-                if (pathname() !== page.to) return;
-                event.preventDefault();
-                document.querySelector(Frame.fillSelector)?.scrollTo({ top: 0 });
-                if (window.location.hash) void router.navigate({ to: page.to, resetScroll: false });
-              }}
-              {...analytics_autocapture({
-                id: "nav-link",
-                destination: page.to,
-                placement: "sidebar",
-              })}
-            >
-              {page.label()}
-            </Rail.Link>
-            <Show when={pathname() === page.to && pageOutline(page)}>
-              {(outline) => (
-                <PageOutline outline={outline()} container={Rail.Outline} link={Rail.OutlineLink} />
-              )}
-            </Show>
-          </>
+          <Rail.Link
+            to={page.to}
+            current={page_isCurrent(page, pathname())}
+            onClick={(event: MouseEvent) => {
+              // On the open page, glide back to the top ourselves: the router would ignore the click,
+              // or, with a section hash in the URL, jump to the top instantly while dropping it.
+              if (pathname() !== page.to) return;
+              event.preventDefault();
+              document.querySelector(Frame.fillSelector)?.scrollTo({ top: 0 });
+              if (window.location.hash) void router.navigate({ to: page.to, resetScroll: false });
+            }}
+            {...analytics_autocapture({
+              id: "nav-link",
+              destination: page.to,
+              placement: "sidebar",
+            })}
+          >
+            {page.label()}
+          </Rail.Link>
         )}
       </For>
     </Rail.Nav>
@@ -151,13 +135,7 @@ export function SiteDock() {
                   {page.label()}
                 </Dock.Link>
                 <Show when={location().pathname === page.to && pageOutline(page)}>
-                  {(outline) => (
-                    <PageOutline
-                      outline={outline()}
-                      container={Dock.Outline}
-                      link={Dock.OutlineLink}
-                    />
-                  )}
+                  {(outline) => <PageOutline outline={outline()} />}
                 </Show>
               </>
             )}

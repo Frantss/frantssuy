@@ -160,7 +160,7 @@
       view-transition-name: page-content;
     }
 
-    /* Rail links and the Agents outline glide to their new places; the marker travels between links. */
+    /* The marker travels between rail links. */
     .rail-link {
       view-transition-name: match-element;
       view-transition-class: rail-item;
@@ -194,26 +194,6 @@
       animation-timing-function: var(--ease-dock);
     }
 
-    /* Outline items drop in one by one after the links below them have slid out of the way. */
-    .rail-outline > li {
-      animation: rail-subitem-in var(--duration-fast) var(--ease-dock) both;
-    }
-    .rail-outline > li:nth-child(1) {
-      animation-delay: calc(var(--duration-stagger) * 2);
-    }
-    .rail-outline > li:nth-child(2) {
-      animation-delay: calc(var(--duration-stagger) * 3);
-    }
-    .rail-outline > li:nth-child(3) {
-      animation-delay: calc(var(--duration-stagger) * 4);
-    }
-    .rail-outline > li:nth-child(4) {
-      animation-delay: calc(var(--duration-stagger) * 5);
-    }
-    .rail-outline > li:nth-child(n + 5) {
-      animation-delay: calc(var(--duration-stagger) * 6);
-    }
-
     ::view-transition-group(page-content),
     ::view-transition-new(page-content) {
       animation: none;
@@ -237,13 +217,6 @@
     }
     .page-content > *:nth-child(5) {
       animation-delay: calc(var(--duration-stagger) * 4);
-    }
-  }
-
-  @keyframes rail-subitem-in {
-    from {
-      opacity: 0;
-      transform: translateY(-4px);
     }
   }
 
