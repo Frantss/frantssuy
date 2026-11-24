@@ -143,7 +143,6 @@ export type ProjectKind = "oss" | "client" | "experiments" | "snippets" | "archi
 
 export type Project = {
   name: string;
-  year?: string;
   description: string;
   href: string;
   website?: string;
@@ -153,7 +152,6 @@ export type Project = {
 export function portfolio_main_project() {
   return {
     name: "yaade",
-    year: "2026",
     description: m.project_yaade_description(),
     href: "https://yaade.dev",
     kind: "product",
@@ -164,14 +162,12 @@ export function portfolio_featured_projects(): Project[] {
   return [
     {
       name: "frantssuy",
-      year: "2026",
       description: m.project_frantssuy_description(),
       href: "https://github.com/Frantss/frantssuy",
       kind: "oss",
     },
     {
       name: "oxform",
-      year: "2025",
       description: m.project_oxform_description(),
       href: "https://github.com/Frantss/oxform",
       website: "https://oxform.frantss.uy",
@@ -179,14 +175,12 @@ export function portfolio_featured_projects(): Project[] {
     },
     {
       name: "frantss-skills",
-      year: "2026",
       description: m.project_frantss_skills_description(),
       href: "https://github.com/Frantss/frantss-skills",
       kind: "oss",
     },
     {
       name: "calendar-tsx",
-      year: "2026",
       description: m.project_calendar_tsx_description(),
       href: "https://github.com/Frantss/calendar-tsx",
       website: "https://calendar-tsx.frantss.uy",
@@ -199,21 +193,18 @@ function portfolio_other_projects(): Project[] {
   return [
     {
       name: "frantss-herdr",
-      year: "2026",
       description: m.project_frantss_herdr_description(),
       href: "https://github.com/Frantss/frantss-herdr",
       kind: "oss",
     },
     {
       name: "fumadocs-theme",
-      year: "2026",
       description: m.project_fumadocs_theme_description(),
       href: "https://github.com/Frantss/fumadocs-theme",
       kind: "oss",
     },
     {
       name: "temporal-fns",
-      year: "2026",
       description: m.project_temporal_fns_description(),
       href: "https://github.com/Frantss/temporal-fns",
       website: "https://temporal-fns.frantss.uy",
@@ -221,28 +212,24 @@ function portfolio_other_projects(): Project[] {
     },
     {
       name: "agents.md",
-      year: "2026",
       description: m.project_agents_md_description(),
       href: "https://github.com/Frantss/agents.md",
       kind: "oss",
     },
     {
       name: "archy",
-      year: "2026",
       description: m.project_archy_description(),
       href: "https://github.com/Frantss/archy",
       kind: "experiments",
     },
     {
       name: "StoreAttachment",
-      year: "2026",
       description: m.project_store_attachment_description(),
       href: "https://gist.github.com/Frantss/7c71fa69fd8cf754a55acf4557e2111f",
       kind: "snippets",
     },
     {
       name: "safeish",
-      year: "2025",
       description: m.project_safeish_description(),
       href: "https://github.com/Frantss/safeish",
       kind: "oss",
@@ -261,21 +248,18 @@ function portfolio_other_projects(): Project[] {
     },
     {
       name: "npms-lib",
-      year: "2021",
       description: m.project_npms_lib_description(),
       href: "https://github.com/Frantss/npms-lib",
       kind: "archived",
     },
     {
       name: "react-hookful",
-      year: "2020",
       description: m.project_react_hookful_description(),
       href: "https://github.com/Frantss/react-hookful",
       kind: "archived",
     },
     {
       name: "ruby-memcached",
-      year: "2019",
       description: m.project_ruby_memcached_description(),
       href: "https://github.com/Frantss/ruby-memcached",
       kind: "archived",

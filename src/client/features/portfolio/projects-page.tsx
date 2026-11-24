@@ -11,7 +11,6 @@ import * as stylex from "@stylexjs/stylex";
 import { For, Show } from "solid-js";
 import { links_openInNewTab } from "@/client/lib/links";
 import { ButtonLink } from "@/client/ui/button";
-import { IndexList } from "@/client/ui/index-list";
 import { Page, PageTitle } from "@/client/ui/page";
 import { SectionLabel } from "@/client/ui/section-label";
 import {
@@ -47,13 +46,6 @@ const styles = stylex.create({
     backgroundColor: colors.accentTint,
     padding: { default: spacing.space5, [conditions.wide]: spacing.space8 },
   },
-  mainHeader: {
-    display: "flex",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing.space3,
-  },
   mainName: {
     margin: 0,
     display: "flex",
@@ -74,9 +66,6 @@ const styles = stylex.create({
     maskPosition: "center",
     maskRepeat: "no-repeat",
     maskSize: "contain",
-  },
-  mainYear: {
-    color: colors.muted,
   },
   mainDescription: {
     margin: 0,
@@ -110,12 +99,6 @@ const styles = stylex.create({
     transitionDuration: motion.durationColor,
     transitionTimingFunction: motion.easeColor,
   },
-  cardHeader: {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    gap: spacing.space3,
-  },
   groups: {
     display: "grid",
     gap: spacing.space5,
@@ -145,11 +128,6 @@ const styles = stylex.create({
     boxSizing: "border-box",
     alignContent: "center",
     paddingBlock: spacing.space1,
-  },
-  entryHeader: {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
   },
   // Stretches the primary link over its card or row, so the whole block stays clickable.
   stretchedLink: {
@@ -200,7 +178,7 @@ const styles = stylex.create({
   cardName: {
     fontWeight: typography.weightBold,
   },
-  year: {
+  groupCount: {
     flexShrink: 0,
     fontSize: typography.fontXs,
     lineHeight: typography.leadingXs,
@@ -264,13 +242,10 @@ function MainProject() {
 
   return (
     <article aria-labelledby="main-project-name" {...stylex.attrs(styles.main)}>
-      <div {...stylex.attrs(styles.mainHeader)}>
-        <h3 id="main-project-name" {...stylex.attrs(styles.mainName)}>
-          <span aria-hidden="true" {...stylex.attrs(styles.mainLogo)} />
-          {project().name}
-        </h3>
-        <span {...stylex.attrs(styles.year, styles.mainYear)}>{project().year}</span>
-      </div>
+      <h3 id="main-project-name" {...stylex.attrs(styles.mainName)}>
+        <span aria-hidden="true" {...stylex.attrs(styles.mainLogo)} />
+        {project().name}
+      </h3>
       <p {...stylex.attrs(styles.mainDescription)}>{project().description}</p>
       <ButtonLink
         variant="primary"
@@ -301,10 +276,7 @@ export function ProjectsPage() {
           <For each={portfolio_featured_projects()}>
             {(project) => (
               <li {...stylex.attrs(styles.card, stylex.defaultMarker())}>
-                <span {...stylex.attrs(styles.cardHeader)}>
-                  <ProjectLink project={project} styles={styles.cardName} />
-                  <span {...stylex.attrs(styles.year)}>{project.year}</span>
-                </span>
+                <ProjectLink project={project} styles={styles.cardName} />
                 <span {...stylex.attrs(styles.description)}>{project.description}</span>
                 <ProjectWebsite project={project} />
               </li>
@@ -321,19 +293,14 @@ export function ProjectsPage() {
             {(group) => (
               <div {...stylex.attrs(styles.group)}>
                 <h3 {...stylex.attrs(styles.groupHeading)}>
-                  {group.label} <span {...stylex.attrs(styles.year)}>{group.projects.length}</span>
+                  {group.label}{" "}
+                  <span {...stylex.attrs(styles.groupCount)}>{group.projects.length}</span>
                 </h3>
                 <ul {...stylex.attrs(styles.index)}>
                   <For each={group.projects}>
                     {(project) => (
                       <li {...stylex.attrs(styles.entry, stylex.defaultMarker())}>
-                        <span {...stylex.attrs(styles.entryHeader)}>
-                          <ProjectLink project={project} />
-                          <Show when={project.year}>
-                            <IndexList.Leader />
-                            <IndexList.Value>{project.year}</IndexList.Value>
-                          </Show>
-                        </span>
+                        <ProjectLink project={project} />
                         <span {...stylex.attrs(styles.description)}>{project.description}</span>
                         <ProjectWebsite project={project} />
                       </li>
